@@ -1,6 +1,6 @@
 <?php
 // Configuración de la conexión a la base de datos
-include("base de datos/con_db.php");
+include("../base de datos/con_db.php");
 
 // Recibir datos del formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result_num_identificacion_check->num_rows > 0) {
             session_start();
             $_SESSION['mensaje'] = 'El numero de identificación ya existe';
-            header('Location: registro.php');
+            header('Location: form.php');
             exit;
         } else {
             // Preparar la consulta SQL de inserción
@@ -26,12 +26,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($conex->query($sql_insert) === TRUE) {
                 session_start();
                 $_SESSION['mensaje'] = 'Usuario registrado correctamente.';
-                header('Location: registro.php');
+                header('Location: ./form.php');
                 exit;
             } else {
                 session_start();
                 $_SESSION['mensaje'] = 'Error al registrar el usuario: ' . $conex->error;
-                header('Location: registro.php');
+                header('Location: ./form.php');
                 exit;
             }
         }

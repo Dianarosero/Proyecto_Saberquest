@@ -74,7 +74,7 @@ if (isset($_SESSION['mensaje'])) {
           <div class="tab-content mt-3" id="loginTabsContent">
               <!-- Formulario de Administrador -->
               <div class="tab-pane fade show active" id="admin" role="tabpanel">
-                  <form action="loguear.php" method="post" novalidate>
+                  <form action="login/loguear.php" method="post" novalidate>
                       <div class="input-group mb-3">
                           <span class="input-group-text"><i class="fas fa-user"></i></span>
                           <input name="usuario" type="text" class="form-control" placeholder="Usuario" required>
@@ -84,7 +84,7 @@ if (isset($_SESSION['mensaje'])) {
                           <input name="contraseña" type="password" class="form-control" placeholder="Clave" required>
                       </div>
                       <button type="submit" class="btn btn-primary">ACCEDER</button>
-                      <p class="mt-2">¿No tienes cuenta? <a href="registro.php">Regístrate aquí</a></p>
+                      <p class="mt-2">¿No tienes cuenta? <a href="login/form.php">Regístrate aquí</a></p>
                   </form>
               </div>
       </div>

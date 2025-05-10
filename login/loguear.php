@@ -3,7 +3,7 @@
 session_start();
 
 // Conexión a la base de datos
-include("base de datos/con_db.php");
+include("../base de datos/con_db.php");
 
 // Obtener datos del formulario de inicio de sesión
 $usuario = trim($_POST['usuario']);
@@ -23,20 +23,20 @@ if (mysqli_num_rows($resultado) > 0) {
 
     // Redirigir según el tipo de usuario (id_cargo)
     if ($filas['id_rol'] == 1) { // Admin
-        header('Location: inicio_administrador.php');
+        header('Location: ../Admin/index_admin.php');
         exit();
     } elseif ($filas['id_rol'] == 2) { // Docente
-        header('Location: inicio_docente.php');
+        header('Location: ../Docente/index_docente.php');
         exit();
     }
     elseif ($filas['id_rol'] == 3 ) { // Estudiante
-        header('Location: inicio_estudiante.php');
+        header('Location: ../Estudiante/index_estudiante.php');
         exit();
     }
 } else {
     session_start();
     $_SESSION['mensaje'] = 'Error en la autenticación, ingrese nuevamente los datos.';
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit;
 }
 

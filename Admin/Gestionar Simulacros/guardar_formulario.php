@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("base de datos/con_db.php");
+include(".../base de datos/con_db.php");
 
 // 1. Guardar encabezado del formulario
 $titulo = $_POST['titulo'];

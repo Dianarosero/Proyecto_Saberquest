@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("base de datos/con_db.php");
+include(".../base de datos/con_db.php"); 
 
 // Consulta para obtener todos los formularios
 $sql = "SELECT id, titulo, descripcion FROM formularios ORDER BY id DESC";

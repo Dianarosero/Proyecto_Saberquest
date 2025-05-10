@@ -1,5 +1,5 @@
 <?php
-include("base de datos/con_db.php");
+include("../base de datos/con_db.php");
 $formulario_id = $_GET['id'] ?? 0;
 
 // Obtener datos del formulario

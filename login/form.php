@@ -39,7 +39,7 @@ if (isset($_SESSION['mensaje'])) {
             <h4>Registro de Usuario</h4>
           </div>
           <div class="card-body">
-            <form action="crear_usuario.php" method="post" novalidate>
+            <form action="./crear_usuario.php" method="post" novalidate>
               <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
                 <input
