@@ -31,7 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result_check = $stmt_check->get_result();
 
     if ($result_check->num_rows > 0) {
-        $_SESSION['mensaje'] = 'El número de identificación ya existe.';
+        session_start();
+        $_SESSION['mensaje'] = 'El codigo institucional ya existe.';
+        $_SESSION['mensaje_tipo'] = 'error'; // o 'error', 'warning', etc.
         header('Location: form.php');
         exit;
     }
@@ -53,11 +55,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         session_start();
         $_SESSION['mensaje'] = 'Usuario registrado correctamente.';
         $_SESSION['mensaje_tipo'] = 'success'; // o 'error', 'warning', etc.
-        header('Location: form.php');
+        header('Location: ../index.php');
         exit;
 
     } else {
+        session_start();
         $_SESSION['mensaje'] = 'Error al registrar el usuario: ' . $stmt_insert->error;
+        $_SESSION['mensaje_tipo'] = 'warning'; // o 'error', 'warning', etc.
         header('Location: form.php');
         exit;
     }

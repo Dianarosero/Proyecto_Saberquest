@@ -1,5 +1,3 @@
-
-
 <?php
 session_start();
 $mensaje = $_SESSION['mensaje'] ?? '';
@@ -594,7 +592,6 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                 </svg>
                             </button>
                         </div>
-                        <p class="form-description">La contraseña debe tener al menos 8 caracteres</p>
                         <span class="error-message" id="password-error"></span>
                     </div>
 
@@ -638,8 +635,25 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         <div id="toast-content"></div>
     </div>
 
+    <script>
+    const togglePasswordButton = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+
+    togglePasswordButton.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type');
+        if (type === 'password') {
+            passwordInput.setAttribute('type', 'text');
+            // Opcional: cambiar el ícono para indicar que la contraseña está visible
+            // Aquí podrías cambiar el SVG o agregar una clase para cambiar el estilo
+        } else {
+            passwordInput.setAttribute('type', 'password');
+            // Opcional: volver a cambiar el ícono para indicar que la contraseña está oculta
+        }
+    });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
     const mensaje = <?php echo json_encode($mensaje); ?>;
     const tipo = <?php echo json_encode($mensaje_tipo); ?>;
@@ -662,7 +676,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         const userTypeSelect = document.getElementById('userType');
         const semesterSelect = document.getElementById('semester');
         const semesterGroup = document.getElementById('semester-group');
-
+        
         // Función para controlar visibilidad y required del semestre
         function handleUserTypeChange() {
             const userType = userTypeSelect.value;
