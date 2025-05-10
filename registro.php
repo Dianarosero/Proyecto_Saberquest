@@ -15,11 +15,20 @@ if (isset($_SESSION['mensaje'])) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Formulario de Registro</title>
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* Convierte el texto a mayúsculas en inputs y selects */
+    input[type="text"],
+    input[type="password"],
+    select,
+    textarea {
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
   <div class="container mt-5">
@@ -33,25 +42,71 @@ if (isset($_SESSION['mensaje'])) {
             <form action="crear_usuario.php" method="post" novalidate>
               <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input name="nombres" type="text" class="form-control" id="nombre" placeholder="Ingresa tu nombre" required>
+                <input
+                  name="nombres"
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  placeholder="Ingresa tu nombre"
+                  required
+                  oninput="this.value = this.value.toUpperCase()"
+                />
               </div>
               <div class="mb-3">
                 <label for="codigo" class="form-label">Código Estudiantil</label>
-                <input name="num_identificacion" type="text" class="form-control" id="codigo" placeholder="Ej: 12345678" required>
+                <input
+                  name="num_identificacion"
+                  type="text"
+                  class="form-control"
+                  id="codigo"
+                  placeholder="Ej: 12345678"
+                  required
+                  oninput="this.value = this.value.toUpperCase()"
+                />
               </div>
               <div class="mb-3">
                 <label for="contrasena" class="form-label">Contraseña</label>
-                <input name="contraseña" type="password" class="form-control" id="contrasena" placeholder="Crea una contraseña" required>
+                <input
+                  name="contraseña"
+                  type="password"
+                  class="form-control"
+                  id="contrasena"
+                  placeholder="Crea una contraseña"
+                  required
+                  oninput="this.value = this.value.toUpperCase()"
+                />
               </div>
               <div class="mb-3">
                 <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
-                <select class="form-select" id="tipoUsuario" name="cboTipoUsuarios" required>
-                    <option value="">Seleccione...</option>
-                    <option value="3">Estudiante</option>
-                    <option value="2">Docente</option>
+                <select
+                  class="form-select"
+                  id="tipoUsuario"
+                  name="cboTipoUsuarios"
+                  required
+                  onchange="tipoUsuarioChange()"
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="3">ESTUDIANTE</option>
+                  <option value="2">DOCENTE</option>
                 </select>
-
               </div>
+
+              <!-- Select semestre oculto inicialmente -->
+              <div class="mb-3" id="divSemestre" style="display:none;">
+                <label for="semestre" class="form-label">Semestre</label>
+                <select
+                  class="form-select"
+                  id="semestre"
+                  name="semestre"
+                  onchange="this.value = this.value.toUpperCase()"
+                >
+                  <option value="">Seleccione...</option>
+                  <option value="OCTAVO">OCTAVO</option>
+                  <option value="NOVENO">NOVENO</option>
+                  <option value="DECIMO">DÉCIMO</option>
+                </select>
+              </div>
+
               <div class="d-grid">
                 <button type="submit" class="btn btn-success">Registrarse</button>
               </div>
@@ -62,7 +117,29 @@ if (isset($_SESSION['mensaje'])) {
     </div>
   </div>
 
-  <!-- Bootstrap JS (opcional, para funcionalidades dinámicas) -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function tipoUsuarioChange() {
+      const tipoSelect = document.getElementById('tipoUsuario');
+      const divSemestre = document.getElementById('divSemestre');
+      if (tipoSelect.value === '3') { // 3 = Estudiante
+        divSemestre.style.display = 'block';
+        // Hacer que semestre sea requerido solo si visible
+        document.getElementById('semestre').setAttribute('required', 'required');
+      } else {
+        divSemestre.style.display = 'none';
+        document.getElementById('semestre').removeAttribute('required');
+        // Opcional: limpiar selección
+        document.getElementById('semestre').value = '';
+      }
+    }
+
+    // Ejecutar al cargar la página para mantener estado si hay valor seleccionado
+    window.onload = function() {
+      tipoUsuarioChange();
+    };
+  </script>
 </body>
 </html>
