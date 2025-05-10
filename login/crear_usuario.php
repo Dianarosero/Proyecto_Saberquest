@@ -50,9 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($stmt_insert->execute()) {
+        session_start();
         $_SESSION['mensaje'] = 'Usuario registrado correctamente.';
+        $_SESSION['mensaje_tipo'] = 'success'; // o 'error', 'warning', etc.
         header('Location: form.php');
         exit;
+
     } else {
         $_SESSION['mensaje'] = 'Error al registrar el usuario: ' . $stmt_insert->error;
         header('Location: form.php');
