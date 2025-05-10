@@ -11,7 +11,7 @@ $result = $conex->query($sql);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Formularios creados</title>
+    <title>Formularios</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f7f7f7; }
         .contenedor { max-width: 700px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
@@ -25,7 +25,7 @@ $result = $conex->query($sql);
 </head>
 <body>
     <div class="contenedor">
-        <h2>Formularios creados</h2>
+        <h2>Formularios</h2>
         <table>
             <tr>
                 <th>Título</th>

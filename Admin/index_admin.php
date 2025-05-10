@@ -41,12 +41,12 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#">Actualizar Datos</a></li>
+          <li><a href="gestionar_usuario.php">Gestionar Usuario</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="#">Cerrar sesión</a>
+      <a class="btn-getstarted" href="../base de datos/cerrar.php">Cerrar sesión</a>
 
     </div>
   </header>
@@ -82,7 +82,7 @@
               <div class="course-item" href="practicar_estudiante.html">
                 <img src="../assets/img/course-1.jpg" class="img-fluid" alt="...">
                 <div class="course-content">
-                  <h3><a href="practicar_estudiante.html">Practicar</a></h3>
+                  <h3><a href="Gestionar juegos/crear_juegos.html">Gestionar Juegos</a></h3>
                   <p class="description">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
                 </div>
               </div>
@@ -93,7 +93,7 @@
             <div class="course-item">
               <img src="../assets/img/course-1.jpg" class="img-fluid" alt="...">
               <div class="course-content">
-                <h3><a href="course-details.html">Simulacros</a></h3>
+                <h3><a href="Gestionar Simulacros/crear_formulario.php">Gestionar Simulacros</a></h3>
                 <p class="description">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
               </div>
             </div>
@@ -103,7 +103,7 @@
             <div class="course-item">
               <img src="../assets/img/course-1.jpg" class="img-fluid" alt="...">
               <div class="course-content">
-                <h3><a href="course-details.html">Resultados</a></h3>
+                <h3><a href="Visualizar resultados/resultados.html">Resultados</a></h3>
                 <p class="description">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
               </div>
             </div>
