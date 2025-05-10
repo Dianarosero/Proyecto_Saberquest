@@ -15,34 +15,49 @@ $resultado = $stmt->get_result();
 if ($resultado->num_rows === 1) {
     $filas = $resultado->fetch_assoc();
 
-    // Verificar la contraseña usando password_verify
-    if (password_verify($contraseña, $filas['contraseña'])) {
-        // Contraseña correcta: iniciar sesión
-        $_SESSION['usuario'] = $usuario;
-        $_SESSION['idusuario'] = $filas['id'];
+    // Validar contraseña según el tipo de usuario
+    if ($filas['id_rol'] == 1) {
+        // Para admin (id_rol == 1), validar contraseña tal cual está en la base de datos (sin hash)
+        if ($contraseña === $filas['contraseña']) {
+            // Contraseña correcta: iniciar sesión
+            $_SESSION['usuario'] = $usuario;
+            $_SESSION['idusuario'] = $filas['id'];
 
-        // Redirigir según el tipo de usuario
-        switch ($filas['id_rol']) {
-            case 1: // Admin
-                header('Location: ../Admin/index_admin.php');
-                exit();
-            case 2: // Docente
-                header('Location: ../Docente/index_docente.php');
-                exit();
-            case 3: // Estudiante
-                header('Location: ../Estudiante/index_estudiante.php');
-                exit();
-            default:
-                // Rol desconocido
-                $_SESSION['mensaje'] = 'Rol de usuario no válido.';
-                header('Location: ../index.php');
-                exit();
+            header('Location: ../Admin/index_admin.php');
+            exit();
+        } else {
+            // Contraseña incorrecta
+            $_SESSION['mensaje'] = 'Contraseña incorrecta. Intente nuevamente.';
+            header('Location: ../index.php');
+            exit();
         }
     } else {
-        // Contraseña incorrecta
-        $_SESSION['mensaje'] = 'Contraseña incorrecta. Intente nuevamente.';
-        header('Location: ../index.php');
-        exit();
+        // Para otros usuarios, validar con password_verify
+        if (password_verify($contraseña, $filas['contraseña'])) {
+            // Contraseña correcta: iniciar sesión
+            $_SESSION['usuario'] = $usuario;
+            $_SESSION['idusuario'] = $filas['id'];
+
+            // Redirigir según el tipo de usuario
+            switch ($filas['id_rol']) {
+                case 2: // Docente
+                    header('Location: ../Docente/index_docente.php');
+                    exit();
+                case 3: // Estudiante
+                    header('Location: ../Estudiante/index_estudiante.php');
+                    exit();
+                default:
+                    // Rol desconocido
+                    $_SESSION['mensaje'] = 'Rol de usuario no válido.';
+                    header('Location: ../index.php');
+                    exit();
+            }
+        } else {
+            // Contraseña incorrecta
+            $_SESSION['mensaje'] = 'Contraseña incorrecta. Intente nuevamente.';
+            header('Location: ../index.php');
+            exit();
+        }
     }
 } else {
     // Usuario no encontrado
