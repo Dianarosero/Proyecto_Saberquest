@@ -1,15 +1,8 @@
 <?php
 session_start();
-
-// Verifica si hay un mensaje en la sesión
-if (isset($_SESSION['mensaje'])) {
-    echo "<script>
-          alert('{$_SESSION['mensaje']}');
-          </script>";
-
-    // Una vez mostrado, elimina el mensaje de la sesión para que no se muestre de nuevo
-    unset($_SESSION['mensaje']);
-}
+$mensaje = $_SESSION['mensaje'] ?? '';
+$mensaje_tipo = $_SESSION['mensaje_tipo'] ?? '';
+unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 ?>
 
 <!DOCTYPE html>
@@ -551,7 +544,7 @@ if (isset($_SESSION['mensaje'])) {
         <!-- Columna de ilustración (visible en pantallas grandes) -->
         <div class="illustration-column">
             <div class="illustration-content">
-                <img src="../assets/img/Logo_fondoazul.png" class="illustration" alt="Ilustración educativa">
+                <img src="assets/img/Logo_fondoazul.png" class="illustration" alt="Ilustración educativa">
                 <div class="illustration-text">
                     <h2>Prepárate sin miedo para el Saber Pro</h2>
                 </div>
@@ -582,8 +575,10 @@ if (isset($_SESSION['mensaje'])) {
                     </div>
                     <div class="form-actions">
                     <button type="submit" class="btn-primary">Acceder</button>
+                    <div class="form-footer">
+                        <p>¿Ya tienes una cuenta? <a href="login/form.php">Regístrate aquí</a></p>
                     </div>
-                    <p class="mt-2">¿No tienes cuenta? <a href="login/form.php">Regístrate aquí</a></p>
+                    </div>
                   </form>
             </div>
         </div>
@@ -608,7 +603,6 @@ if (isset($_SESSION['mensaje'])) {
     }
     </script>
 
-    
 </body>
 
 </html>
