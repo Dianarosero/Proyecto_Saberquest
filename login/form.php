@@ -14,6 +14,9 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Registro de Usuarios</title>
     <meta name="description" content="Regístrate como estudiante o docente con nuestro formulario fácil de usar." />
+    <!-- Favicons -->
+  <link href="../assets/img/favicon.png" rel="icon">
+  <link href="../assets/img/favicon.png" rel="apple-touch-icon">
     <style>
     /* Variables Globales según la paleta proporcionada */
     :root {
