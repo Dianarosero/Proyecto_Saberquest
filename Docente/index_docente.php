@@ -43,7 +43,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="#">Cerrar sesión</a>
+      <a class="btn-getstarted" href="../base de datos/cerrar.php">Cerrar sesión</a>
 
     </div>
   </header>
