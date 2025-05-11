@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Mapear tipo_usuario a id_rol (ejemplo)
     $roles = [
-        "student" => 1,
+        "student" => 3,
         "teacher" => 2
     ];
     $id_rol = isset($roles[$tipo_usuario]) ? $roles[$tipo_usuario] : null;
