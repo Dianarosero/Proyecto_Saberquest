@@ -23,7 +23,7 @@ if ($resultado->num_rows === 1) {
             $_SESSION['usuario'] = $usuario;
             $_SESSION['idusuario'] = $filas['id'];
 
-            header('Location: ../Admin/index_admin.php');
+            header('Location: ../Admin/index_admin.html');
             exit();
         } else {
             // Contraseña incorrecta

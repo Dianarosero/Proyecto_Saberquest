@@ -11,7 +11,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Iniciar Sesion</title>
+    <title>Iniciar Sesión </title>
     <meta name="description" content="Regístrate como estudiante o docente con nuestro formulario fácil de usar." />
     <style>
     /* Variables Globales según la paleta proporcionada */
@@ -538,7 +538,8 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
     }
     </style>
 </head>
-
+<link href="assets/img/favicon.png" rel="icon">
+<link href="assets/img/favicon.png" rel="apple-touch-icon">
 <body>
     <div class="container">
         <!-- Columna de ilustración (visible en pantallas grandes) -->
@@ -556,22 +557,31 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
             <div class="form-container">
                 <div class="form-decoration"></div>
                 <div class="form-header">
-                    <h1>Iniciar Sesion</h1>
+                    <h1>Iniciar sesión</h1>
                 </div>
                 <form action="login/loguear.php" method="post" novalidate>
                     <div class="form-group">
                         <label for="fullName">Usuario</label>
-                        <input id="fullName" type="text"  name="usuario" placeholder="Ingresa su usuario"
+                        <input id="fullName" type="text"  name="usuario" placeholder="INGRESA TU USUARIO"
                             required oninput="this.value = this.value.toUpperCase()"
                             style="text-transform: uppercase;" />
                         <span class="error-message" id="fullName-error"></span>
                     </div>
                     <div class="form-group">
-                        <label for="pssword">Contraseña</label>
-                        <input for="pssword" type="text"  name="contraseña" placeholder="Ingresa su contraseña"
-                            required oninput="this.value = this.value.toUpperCase()"
-                            style="text-transform: uppercase;" />
-                        <span class="error-message" id="pssword-error"></span>
+                        <label for="password">Contraseña</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="contraseña" placeholder="CREA UNA CONTRASEÑA"
+                                required style="text-transform: none;" />
+                            <button type="button" id="toggle-password" aria-label="Mostrar/ocultar contraseña">
+                                <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20"
+                                    height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="error-message" id="password-error"></span>
                     </div>
                     <div class="form-actions">
                     <button type="submit" class="btn-primary">Acceder</button>
@@ -602,7 +612,22 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         });
     }
     </script>
+       <script>
+    const togglePasswordButton = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
 
+    togglePasswordButton.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type');
+        if (type === 'password') {
+            passwordInput.setAttribute('type', 'text');
+            // Opcional: cambiar el ícono para indicar que la contraseña está visible
+            // Aquí podrías cambiar el SVG o agregar una clase para cambiar el estilo
+        } else {
+            passwordInput.setAttribute('type', 'password');
+            // Opcional: volver a cambiar el ícono para indicar que la contraseña está oculta
+        }
+    });
+    </script>
 </body>
 
 </html>

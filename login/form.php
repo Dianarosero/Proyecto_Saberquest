@@ -584,7 +584,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                     <div class="form-group">
                         <label for="password">Contraseña</label>
                         <div class="password-container">
-                            <input type="password" id="password" name="contraseña" placeholder="Crea una contraseña"
+                            <input type="password" id="password" name="contraseña" placeholder="CREA UNA CONTRASEÑA"
                                 required style="text-transform: none;" />
                             <button type="button" id="toggle-password" aria-label="Mostrar/ocultar contraseña">
                                 <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20"
