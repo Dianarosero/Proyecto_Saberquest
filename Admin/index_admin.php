@@ -121,7 +121,7 @@
             </div>
             <div class="projects-grid">
                 <!-- Card 1 -->
-                <a href="Gestionar Simulacros/create_formulario.php" target="_blank" class="project-card" data-category="Simulacro">
+                <a href="Simulacros/create_formulario.php" target="_blank" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/cs.png" alt="Simulacro">
                     </div>

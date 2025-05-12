@@ -94,8 +94,10 @@ if (
     }
 }
 
-
 // 5. Redirigir con mensaje de éxito
-header("Location: ../index_admin.php?exito=1");
+session_start();
+$_SESSION['mensaje'] = 'Formulario guardado exitosamente';
+$_SESSION['mensaje_tipo'] = 'success'; // o 'error', 'warning', etc.
+header('Location: create_formulario.php');
 exit();
 ?>

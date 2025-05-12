@@ -1,3 +1,10 @@
+<?php
+session_start();
+$mensaje = $_SESSION['mensaje'] ?? '';
+$mensaje_tipo = $_SESSION['mensaje_tipo'] ?? '';
+unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -199,6 +206,20 @@
     </div>
 
     <script src="../../assets/src_simulacros/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+    const mensaje = <?php echo json_encode($mensaje); ?>;
+    const tipo = <?php echo json_encode($mensaje_tipo); ?>;
+
+    if (mensaje) {
+        Swal.fire({
+            icon: tipo || 'info', // 'success', 'error', 'warning', 'info', 'question'
+            title: mensaje,
+            confirmButtonText: 'Aceptar'
+        });
+    }
+    </script>
 </body>
 
 </html>
