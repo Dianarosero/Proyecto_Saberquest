@@ -38,8 +38,8 @@
                 <form id="form-builder" action="guardar_formulario.php" method="POST" enctype="multipart/form-data">
                     <div class="form-header">
                         <div class="form-group">
-                            <label for="form-title">Título del simulacro</label>
-                            <input type="text" id="form-title" name="titulo"
+                            <label for="form-title" >Título del simulacro</label>
+                            <input type="text" id="form-title" name="titulo" oninput="this.value = this.value.toUpperCase()"
                                 placeholder="Ingrese el título del simulacro" required>
                         </div>
 
