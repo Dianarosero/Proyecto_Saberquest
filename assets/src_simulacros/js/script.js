@@ -51,16 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
  * Adds a new question to the form
  */
 function addNewQuestion() {
-    // Increment question counter
     questionCounter++;
     
-    // Create new question card
     const questionsContainer = document.getElementById('questions-container');
     const newQuestionCard = document.createElement('div');
     newQuestionCard.className = 'question-card';
     newQuestionCard.dataset.questionId = questionCounter;
     
-    // HTML template for the new question
     newQuestionCard.innerHTML = `
         <div class="question-header">
             <h3>Pregunta ${questionCounter}</h3>
@@ -71,42 +68,42 @@ function addNewQuestion() {
         
         <div class="form-group">
             <label for="question-text-${questionCounter}">Texto de la pregunta</label>
-            <input type="text" id="question-text-${questionCounter}" name="question-text-${questionCounter}" placeholder="Escriba su pregunta aquí" required>
+            <input type="text" id="question-text-${questionCounter}" name="enunciado[]" placeholder="Escriba su pregunta aquí" required>
         </div>
         
         <div class="options-container">
             <div class="option-row">
                 <div class="option-label">a)</div>
                 <div class="form-group option-input">
-                    <input type="text" id="option-a-${questionCounter}" name="option-a-${questionCounter}" placeholder="Opción a" required>
+                    <input type="text" id="option-a-${questionCounter}" name="option_a[]" placeholder="Opción a" required>
                 </div>
             </div>
             
             <div class="option-row">
                 <div class="option-label">b)</div>
                 <div class="form-group option-input">
-                    <input type="text" id="option-b-${questionCounter}" name="option-b-${questionCounter}" placeholder="Opción b" required>
+                    <input type="text" id="option-b-${questionCounter}" name="option_b[]" placeholder="Opción b" required>
                 </div>
             </div>
             
             <div class="option-row">
                 <div class="option-label">c)</div>
                 <div class="form-group option-input">
-                    <input type="text" id="option-c-${questionCounter}" name="option-c-${questionCounter}" placeholder="Opción c" required>
+                    <input type="text" id="option-c-${questionCounter}" name="option_c[]" placeholder="Opción c" required>
                 </div>
             </div>
             
             <div class="option-row">
                 <div class="option-label">d)</div>
                 <div class="form-group option-input">
-                    <input type="text" id="option-d-${questionCounter}" name="option-d-${questionCounter}" placeholder="Opción d" required>
+                    <input type="text" id="option-d-${questionCounter}" name="option_d[]" placeholder="Opción d" required>
                 </div>
             </div>
         </div>
         
         <div class="correct-answer">
             <label for="correct-answer-${questionCounter}">Respuesta correcta:</label>
-            <select id="correct-answer-${questionCounter}" name="correct-answer-${questionCounter}" required>
+            <select id="correct-answer-${questionCounter}" name="correcta[]" required>
                 <option value="">Seleccione una opción</option>
                 <option value="a">a</option>
                 <option value="b">b</option>
@@ -116,16 +113,12 @@ function addNewQuestion() {
         </div>
     `;
     
-    // Add the new question to the container
     questionsContainer.appendChild(newQuestionCard);
     
-    // Update the preview
     updatePreview();
     
-    // Scroll to the new question
     newQuestionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     
-    // Focus on the question text input
     setTimeout(() => {
         document.getElementById(`question-text-${questionCounter}`).focus();
     }, 300);
@@ -219,21 +212,13 @@ function updateElementAttributes(card, prefix, newNumber) {
  */
 function handleFormSubmit(event) {
     event.preventDefault();
-    
-    // Validate form
     if (!validateForm()) {
         return;
     }
-    
-    // Collect form data
-    const formData = collectFormData();
-    
-    // In a real application, you would send this data to the server
-    console.log('Form data:', formData);
-    
-    // Show success message
-    showSuccessMessage();
+    // Envía el formulario real al servidor (PHP)
+    event.target.submit();
 }
+
 
 /**
  * Validates the form

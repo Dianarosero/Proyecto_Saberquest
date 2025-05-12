@@ -35,7 +35,7 @@
             <div class="form-creator">
                 <h2>Crear nuevo simulacro</h2>
 
-                <form id="form-builder" method="POST" action="guardar_formulario.php">
+                <form id="form-builder" action="guardar_formulario.php" method="POST" enctype="multipart/form-data">
                     <div class="form-header">
                         <div class="form-group">
                             <label for="form-title">Título del simulacro</label>
@@ -52,8 +52,8 @@
                         <div class="form-group">
                             <label for="form-image">Imagen del simulacro</label>
                             <div class="image-upload-container">
-                                <input type="file" id="form-image" name="form-image" accept="image/*"
-                                    class="file-input">
+                                <input type="file" id="form-image" name="imagen" accept="image/*" class="file-input"
+                                    style="display:none;">
                                 <button type="button" class="btn btn-upload" id="upload-image-btn">
                                     <i class="fas fa-image"></i> Insertar imagen
                                 </button>
@@ -65,6 +65,7 @@
                                 </div>
                             </div>
                         </div>
+
 
 
                     </div>
@@ -81,7 +82,7 @@
 
                             <div class="form-group">
                                 <label for="question-text-1">Texto de la pregunta</label>
-                                <input type="text" id="question-text-1" name="question-text-1"
+                                <input type="text" id="question-text-1" name="enunciado[]"
                                     placeholder="Escriba su pregunta aquí" required>
                             </div>
 
@@ -89,7 +90,7 @@
                                 <div class="option-row">
                                     <div class="option-label">a)</div>
                                     <div class="form-group option-input">
-                                        <input type="text" id="option-a-1" name="option-a[]" placeholder="Opción a"
+                                        <input type="text" id="option-a-1" name="option_a[]" placeholder="Opción a"
                                             required>
                                     </div>
                                 </div>
@@ -97,7 +98,7 @@
                                 <div class="option-row">
                                     <div class="option-label">b)</div>
                                     <div class="form-group option-input">
-                                        <input type="text" id="option-b-1" name="option-b[]" placeholder="Opción b"
+                                        <input type="text" id="option-b-1" name="option_b[]" placeholder="Opción b"
                                             required>
                                     </div>
                                 </div>
@@ -105,7 +106,7 @@
                                 <div class="option-row">
                                     <div class="option-label">c)</div>
                                     <div class="form-group option-input">
-                                        <input type="text" id="option-c-1" name="option-c[]" placeholder="Opción c"
+                                        <input type="text" id="option-c-1" name="option_c[]" placeholder="Opción c"
                                             required>
                                     </div>
                                 </div>
@@ -113,7 +114,7 @@
                                 <div class="option-row">
                                     <div class="option-label">d)</div>
                                     <div class="form-group option-input">
-                                        <input type="text" id="option-d-1" name="option-d[]" placeholder="Opción d"
+                                        <input type="text" id="option-d-1" name="option_d[]" placeholder="Opción d"
                                             required>
                                     </div>
                                 </div>
@@ -121,7 +122,7 @@
 
                             <div class="correct-answer">
                                 <label for="correct-answer-1">Respuesta correcta:</label>
-                                <select id="correct-answer-1" name="correct-answer-1" required>
+                                <select id="correct-answer-1" name="correcta[]" required>
                                     <option value="">Seleccione una opción</option>
                                     <option value="a">a</option>
                                     <option value="b">b</option>
@@ -159,9 +160,9 @@
                         <li><i class="fas fa-check"></i> Identifica respuestas correctas</li>
                     </ul>
                 </div>
-                
+
             </div>
-            
+
         </div>
     </main>
 
