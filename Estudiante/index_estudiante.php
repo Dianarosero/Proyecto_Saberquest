@@ -45,7 +45,7 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1>Bienvenido <span id="nombre-usuario"></span></h1>
+                    <h1>Bienvenido Estudiante</span></h1>
                     <p>La plataforma educativa para aprender, practicar y crecer, impulsando el progreso profesional de cada estudiante.</p>
                     <div class="hero-btns">
                         <a href="#projects" class="btn btn-primary">Comenzar</a>

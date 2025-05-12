@@ -575,6 +575,13 @@ section {
   padding: 1px 70px 1px;
 }
 
+.projects-grid-docente {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 320px);
+  gap: 30px;
+  padding: 1px 220px 1px;
+}
+
 .project-card {
   width: 320px;          /* Ancho fijo para todas las cards */
   min-height: 420px;     /* Altura mínima para evitar saltos */

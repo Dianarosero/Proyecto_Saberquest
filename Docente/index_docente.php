@@ -1,142 +1,164 @@
+
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Courses - Mentor Bootstrap Template</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-
-  <!-- Favicons -->
-  <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-  <!-- Main CSS File -->
-  <link href="../assets/css/main.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <meta name="description" content="Personal portfolio of John Doe, a web developer specializing in frontend development.">
+    <link rel="stylesheet" href="../assets/src_index/css/style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="../assets/img/favicon.png" rel="icon">
+    <link href="../assets/img/favicon.png" rel="apple-touch-icon">
 </head>
-
-<body class="courses-page">
-
-  <header id="header" class="header d-flex align-items-center sticky-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center">
-
-      <a href="index.html" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="../assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">SaberQuest</h1>
-      </a>
-
-      <nav id="navmenu" class="navmenu">
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
-
-      <a class="btn-getstarted" href="../base de datos/cerrar.php">Cerrar sesión</a>
-
-    </div>
-  </header>
-
-  <main class="main">
-
-    <!-- Page Title -->
-    <div class="page-title" data-aos="fade">
-      <div class="heading">
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
         <div class="container">
-          <div class="row d-flex justify-content-center text-center">
-            <div class="col-lg-8">
-              <h1>Bienvenido Docente</h1>
-              <p class="mb-0">Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <nav class="breadcrumbs">
-
-      </nav>
-    </div><!-- End Page Title -->
-
-    <!-- Courses Section -->
-    <section id="courses" class="courses section">
-
-      <div class="container">
-
-        <div class="row">
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-            <a href="practicar_estudiante.html">
-              <div class="course-item" href="practicar_estudiante.html">
-                <img src="../assets/img/course-1.jpg" class="img-fluid" alt="...">
-                <div class="course-content">
-                  <h3><a href="Practicar/practicar.html">Practicar</a></h3>
-                  <p class="description">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
+            <div class="header-content">
+                <div class="logo">
+                    <a href="#home">
+                        <img src="../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" style="height:50px;">
+                    </a>
+                </div>                
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="http://localhost/proyecto_saberquest/base%20de%20datos/cerrar.php" class="nav-link">Cerrar Sesion</a></li>
+                    </ul>
+                </nav>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
                 </div>
-              </div>
-            </a>
-          </div> <!-- End Course Item-->
-
-
-          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
-            <div class="course-item">
-              <img src="../assets/img/course-1.jpg" class="img-fluid" alt="...">
-              <div class="course-content">
-                <h3><a href="Visualizar Resultados/visualizar_resultados.html">Resultados</a></h3>
-                <p class="description">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-              </div>
             </div>
-          </div> <!-- End Course Item-->
-
         </div>
+    </header>
 
-      </div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Bienvenido Docente</span></h1>
+                    <p>La plataforma educativa para aprender, practicar y crecer, impulsando el progreso profesional de cada estudiante.</p>
+                    <div class="hero-btns">
+                        <a href="#projects" class="btn btn-primary">Comenzar</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-shape"></div>
+                </div>
+                <div class="scroll-down">
+                    <a href="#about">
+                        <span>Desliza</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    </section><!-- /Courses Section -->
+    <!-- About Section -->
+    <section class="about section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Sobre Nosotros</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>SaberQuest nació como una iniciativa académica orientada a transformar la forma en que estudiantes, docentes y administradores interactúan con el conocimiento. Desde sus inicios, la plataforma fue diseñada con el propósito de ofrecer herramientas digitales innovadoras para la enseñanza, la evaluación y el aprendizaje autónomo.</p>
+                    <p>Con el paso del tiempo, SaberQuest ha evolucionado de un proyecto universitario a una solución educativa integral que apoya la gestión de simulacros, prácticas, juegos interactivos y visualización de resultados. Gracias al compromiso de un equipo multidisciplinario apasionado por la educación y la tecnología, la plataforma continúa creciendo y adaptándose a las necesidades del entorno académico moderno.</p>
+                    <p>Hoy, SaberQuest se consolida como un espacio virtual donde el aprendizaje es dinámico, inclusivo y accesible para todos, fortaleciendo las habilidades de los estudiantes y facilitando el trabajo pedagógico de los docentes.</p>
+                    <div class="about-details">
+                        <div class="about-detail">
+                            <i class="fas fa-book-reader"></i>
+                            <div>
+                                <h3>Aprende</h3>
+                                <p> Mediante juegos Interactivos</p>
+                            </div>
+                        </div>
+                        <div class="about-detail">
+                            <i class="fas fa-gamepad"></i>
+                            <div>
+                                <h3>Desarrolla</h3>
+                                <p>Simulacros</p>
+                            </div>
+                        </div>
+                        <div class="about-detail">
+                            <i class="fas fa-chart-bar"></i>
+                            <div>
+                                <h3>Evalua</h3>
+                                <p> Consulta Resultados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="../assets/src_index/img/image.png" alt="Ilustración SaberQuest">
+                </div>
+            </div>
+        </div>
+    </section>
 
-  </main>
+    <!-- Projects Section -->
+    <section class="projects section" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">SABERQUEST</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="projects-grid-docente">
+                <!-- Card 1 -->
+                <a href="Practicar/practicar.html" target="_blank" class="project-card" data-category="Practicar">
+                    <div class="project-image">
+                        <img src="../assets/src_index/img/pr.png" alt="Practicar">
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Practicar</h3>
+                        <p class="project-description">Explora actividades y ejercicios diseñados para reforzar conocimientos mediante la práctica continua y personalizada.</p>
+                    </div>
+                </a>
+                <!-- Card 2 -->
+                <a href="Resultados/ver_resultados.php" target="_blank" class="project-card" data-category="Resultados">
+                    <div class="project-image">
+                        <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Consultar Resultados</h3>
+                        <p class="project-description">Consulta los resultados obtenidos en las diferentes actividades para evaluar el progreso y desempeño de tus estudiante.</p>
+                    </div>
+                </a>
+            </div>            
+        </div>
+    </section>
 
-  <footer id="footer" class="footer position-relative light-background">
+    <!-- Footer -->
+    <footer class="footer">
+            <div class="footer-container">
+                <p>&copy; 2025 SABERQUEST. Todos los derechos reservados.</p>
+            </div>
 
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
-    </div>
-
-  </footer>
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
-
-  <!-- Vendor JS Files -->
-  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/vendor/php-email-form/validate.js"></script>
-  <script src="../assets/vendor/aos/aos.js"></script>
-  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
-
-  <!-- Main JS File -->
-  <script src="../assets/js/main.js"></script>
-
+    </footer>
+  
+    <!-- JavaScript -->
+    <script src="../assets/src_index/js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var nombreCompleto = localStorage.getItem('nombreCompleto') || '';
+        var primerNombre = nombreCompleto.trim().split(' ')[0];
+      if(primerNombre) {
+          document.getElementById('nombre-usuario').textContent = primerNombre;
+      } else {
+          document.getElementById('nombre-usuario').textContent = 'Estudiante';
+      }  
+    });
+</script>
 </body>
-
 </html>
