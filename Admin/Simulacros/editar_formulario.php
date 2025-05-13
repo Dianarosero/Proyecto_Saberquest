@@ -27,21 +27,43 @@ if (!$formulario_encontrado) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titulo_nuevo = $_POST['titulo'] ?? '';
     $descripcion_nueva = $_POST['descripcion'] ?? '';
-    $imagen_nueva = $_POST['imagen'] ?? '';
+    $imagen_ruta = $imagen; // Mantener la imagen actual por defecto
+    
+    // Procesar la imagen si se ha subido una nueva
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $carpeta_destino = "../../assets/src_simulacros/img_simulacros/";
+        if (!is_dir($carpeta_destino)) {
+            mkdir($carpeta_destino, 0777, true);
+        }
+        $nombre_archivo = uniqid() . "_" . basename($_FILES['imagen']['name']);
+        $ruta_archivo = $carpeta_destino . $nombre_archivo;
+        $tipo_archivo = strtolower(pathinfo($ruta_archivo, PATHINFO_EXTENSION));
+
+        $tipos_permitidos = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($tipo_archivo, $tipos_permitidos)) {
+            $error = "Solo se permiten imágenes JPG, JPEG, PNG, GIF o WEBP.";
+        } else {
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $ruta_archivo)) {
+                $imagen_ruta = $ruta_archivo;
+            } else {
+                $error = "Error al subir la imagen.";
+            }
+        }
+    }
     
     // Validar datos
     if (empty($titulo_nuevo)) {
         $error = "El título del formulario no puede estar vacío.";
-    } else {
+    } else if (empty($error)) { // Solo proceder si no hay errores
         // Actualizar formulario
         $stmt_update = $conex->prepare("UPDATE formularios SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?");
-        $stmt_update->bind_param("sssi", $titulo_nuevo, $descripcion_nueva, $imagen_nueva, $formulario_id);
+        $stmt_update->bind_param("sssi", $titulo_nuevo, $descripcion_nueva, $imagen_ruta, $formulario_id);
         
         if ($stmt_update->execute()) {
             $mensaje = "Formulario actualizado correctamente.";
             $titulo = $titulo_nuevo;
             $descripcion = $descripcion_nueva;
-            $imagen = $imagen_nueva;
+            $imagen = $imagen_ruta;
         } else {
             $error = "Error al actualizar el formulario: " . $conex->error;
         }
@@ -391,9 +413,45 @@ if (isset($_POST['agregar_pregunta'])) {
             box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
         }
 
+        .form-control-file {
+            padding: 10px 0;
+        }
+
         textarea.form-control {
             min-height: 100px;
             resize: vertical;
+        }
+        
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .current-image {
+            padding: 15px;
+            border: 1px solid var(--neutral);
+            border-radius: var(--border-radius);
+            background-color: var(--neutral-light);
+        }
+        
+        .current-image p {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        
+        .img-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .file-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .accordion {
@@ -766,7 +824,7 @@ if (isset($_POST['agregar_pregunta'])) {
         </div>
 
         <!-- Formulario para editar los datos generales -->
-        <form method="post" action="" id="form-datos-generales">
+        <form method="post" action="" id="form-datos-generales" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="titulo">Título del formulario</label>
                 <input type="text" class="form-control" id="titulo" name="titulo" value="<?php echo htmlspecialchars($titulo); ?>" required>
@@ -778,9 +836,19 @@ if (isset($_POST['agregar_pregunta'])) {
             </div>
             
             <div class="form-group">
-                <label for="imagen">URL de la imagen de fondo</label>
-                <input type="text" class="form-control" id="imagen" name="imagen" value="<?php echo htmlspecialchars($imagen); ?>" placeholder="Introduce la URL de la imagen de fondo">
-                <small class="form-text text-muted">Añade la URL de una imagen para usarla como fondo del formulario. Deja vacío para usar la imagen predeterminada.</small>
+                <label for="imagen">Imagen de fondo</label>
+                <div class="image-upload-container">
+                    <?php if (!empty($imagen)): ?>
+                        <div class="current-image">
+                            <p>Imagen actual:</p>
+                            <img src="<?php echo htmlspecialchars($imagen); ?>" alt="Imagen actual" class="img-preview">
+                        </div>
+                    <?php endif; ?>
+                    <div class="file-input-wrapper">
+                        <input type="file" class="form-control-file" id="imagen" name="imagen" accept="image/*">
+                        <small class="form-text text-muted">Selecciona una imagen para usarla como fondo del formulario. Formatos permitidos: JPG, JPEG, PNG, GIF, WEBP.</small>
+                    </div>
+                </div>
             </div>
 
         <h3 class="section-title">Preguntas del formulario</h3>
