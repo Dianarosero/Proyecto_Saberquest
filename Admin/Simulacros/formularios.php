@@ -503,8 +503,8 @@ function obtenerImagenPredeterminada($id)
                     <div class="create-icon">
                         <i class="fas fa-plus-circle"></i>
                     </div>
-                    <h2>Crear un formulario</h2>
-                    <p>Diseña un nuevo formulario personalizado</p>
+                    <h2>Crear un Simulacro</h2>
+                    <p>Diseña un nuevo simulacro personalizado</p>
                 </div>
             </div>
 
@@ -533,7 +533,7 @@ function obtenerImagenPredeterminada($id)
                     <h3><?php echo htmlspecialchars($row['titulo']); ?></h3>
                     <p class="form-description"><?php echo nl2br($descripcion_corta); ?></p>
                     <div class="card-actions">
-                        <a href="prue.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
+                        <a href="ver_formulario.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
                             <i class="fas fa-eye"></i> Ver
                         </a>
                         <a href="eliminar_formulario.php?id=<?php echo $row['id']; ?>" class="btn delete-btn"
@@ -550,7 +550,7 @@ function obtenerImagenPredeterminada($id)
                 style="grid-column: span 3; text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
                 <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #003366; margin-bottom: 1rem;"></i>
                 <h3>No hay Simulacros disponibles</h3>
-                <p>Crea tu primer formulario haciendo clic en "Crear un formulario"</p>
+                <p>Crea tu primer formulario haciendo clic en "Crear un Simulacro"</p>
             </div>
             <?php endif; ?>
         </section>
