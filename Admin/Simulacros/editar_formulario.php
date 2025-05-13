@@ -180,8 +180,9 @@ if (isset($_POST['agregar_pregunta'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Formulario - Universidad CESMAG</title>
-
+    <title>Editar Simulacro</title>
+    <link href="../../assets/img/favicon.png" rel="icon">
+    <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -243,7 +244,7 @@ if (isset($_POST['agregar_pregunta'])) {
         .header {
             background-color: var(--primary);
             color: white;
-            padding: 1.2rem 2rem;
+            padding: 1.2rem 12rem;
             width: 100%;
             box-shadow: var(--shadow-md);
             display: flex;
@@ -779,12 +780,11 @@ if (isset($_POST['agregar_pregunta'])) {
     <div class="bg-container"></div>
 
     <header class="header">
-        <div class="university-logo">
-            <i class="fas fa-university"></i>
-            Universidad CESMAG
-        </div>
+    <div class="logo-space">
+                <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
+            </div>
         <div class="mode-toggle">
-            <a href="index.php" class="btn btn-primary">
+            <a href="../index_admin.php" class="btn btn-primary">
                 Inicio
             </a>
         </div>
@@ -813,20 +813,20 @@ if (isset($_POST['agregar_pregunta'])) {
 
         <div class="form-header">
             <div class="title-actions">
-                <h2>Editar Formulario</h2>
+                <h2>Editar Simulacro</h2>
                 <div class="form-actions">
                     <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="btn btn-primary">
-                        <i class="fas fa-eye"></i> Ver Formulario
+                        <i class="fas fa-eye"></i> Ver Simulacro
                     </a>
                 </div>
             </div>
-            <p class="form-description">Modifica el título, descripción y las preguntas del formulario.</p>
+            <p class="form-description">Modifica el título, descripción, imagen y las preguntas del simulacro.</p>
         </div>
 
         <!-- Formulario para editar los datos generales -->
         <form method="post" action="" id="form-datos-generales" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="titulo">Título del formulario</label>
+                <label for="titulo">Título del simulacro</label>
                 <input type="text" class="form-control" id="titulo" name="titulo" value="<?php echo htmlspecialchars($titulo); ?>" required>
             </div>
             
@@ -836,7 +836,7 @@ if (isset($_POST['agregar_pregunta'])) {
             </div>
             
             <div class="form-group">
-                <label for="imagen">Imagen de fondo</label>
+                <label for="imagen">Imagen</label>
                 <div class="image-upload-container">
                     <?php if (!empty($imagen)): ?>
                         <div class="current-image">
@@ -846,12 +846,12 @@ if (isset($_POST['agregar_pregunta'])) {
                     <?php endif; ?>
                     <div class="file-input-wrapper">
                         <input type="file" class="form-control-file" id="imagen" name="imagen" accept="image/*">
-                        <small class="form-text text-muted">Selecciona una imagen para usarla como fondo del formulario. Formatos permitidos: JPG, JPEG, PNG, GIF, WEBP.</small>
+                        <small class="form-text text-muted">Selecciona una imagen para usarla como fondo del simulacro. Formatos permitidos: JPG, JPEG, PNG, GIF, WEBP.</small>
                     </div>
                 </div>
             </div>
 
-        <h3 class="section-title">Preguntas del formulario</h3>
+        <h3 class="section-title">Preguntas del simulacro</h3>
         
         <!-- Lista de preguntas existentes -->
         <div class="accordion">
@@ -1009,13 +1009,12 @@ if (isset($_POST['agregar_pregunta'])) {
         </div>
 
         <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="back-link">
-            <i class="fas fa-arrow-left"></i> Volver al formulario
+            <i class="fas fa-arrow-left"></i> Volver al simulacro
         </a>
     </div>
 
     <footer class="footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG - Todos los derechos reservados</p>
-        <p><small>Plataforma de Formularios Educativos</small></p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST - Todos los derechos reservados</p>
     </footer>
 </body>
 
