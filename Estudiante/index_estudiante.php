@@ -1,3 +1,15 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
+    // Redirigir a la página de login si no está autenticado
+    header('Location: ../index.php');
+    exit;
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -126,7 +138,7 @@
                     </div>
                 </a>
                 <!-- Card 2 -->
-                 <a href="Simulacros/formulario.php" target="_blank" class="project-card" data-category="Simulacro">
+                 <a href="Simulacros/formularios_estudiante.php" target="_blank" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/vs.png" alt="Ver Simulacros">
                     </div>
