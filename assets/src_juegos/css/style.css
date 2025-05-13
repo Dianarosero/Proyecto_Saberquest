@@ -1,0 +1,495 @@
+/* 
+* SaberQuest - Crear Juegos
+* Author: SaberQuest Team
+* Date: 2024
+*/
+
+/* ===== CSS RESET AND BASE STYLES ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Color Variables */
+  --primary-color: #003366;
+  --primary-light: #003366;
+  --secondary-color: #003366;
+  --secondary-color-line: #B22222;
+  --accent-color: #ffffff;
+  --text-color: #333333;
+  --text-color-imag: #ffffff;
+  --text-light: #666666;
+  --background: #FFFFFF;
+  --background-alt: #F8F9FA;
+  --border-color: #E0E0E0;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  
+  /* Typography */
+  --heading-font: 'Poppins', sans-serif;
+  --body-font: 'Roboto', sans-serif;
+  
+  /* Spacing */
+  --section-padding: 80px 0;
+  --container-padding: 0 20px;
+  
+  /* Transitions */
+  --transition: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+}
+
+.section-title {
+  font-family: var(--heading-font);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-line {
+  width: 50px;
+  height: 4px;
+  background-color: var(--secondary-color-line);
+  margin: 0;
+}
+
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--body-font);
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background);
+  overflow-x: hidden;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  border: none;
+}
+
+section {
+  padding: var(--section-padding);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+/* ===== UTILITY CLASSES ===== */
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  font-weight: 500;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-submit {
+  background-color: var(--secondary-color);
+  color: white;
+  width: 100%;
+  font-weight: 600;
+}
+
+.btn-submit:hover {
+  background-color: #003366;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.required {
+  color: var(--error-color);
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.success {
+  background-color: rgba(40, 167, 69, 0.15);
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+}
+
+.error {
+  background-color: rgba(220, 53, 69, 0.15);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+}
+
+/* ===== HEADER STYLES ===== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 0;
+  background-color: var(--primary-color);
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo a {
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.logo-img {
+  height: 50px;
+}
+
+.nav-list {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--accent-color);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: var(--transition);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+.bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  background-color: white;
+  transition: var(--transition);
+}
+
+/* ===== MAIN CONTENT SECTION ===== */
+.main-content {
+  padding-top: 120px;
+  padding-bottom: 80px;
+  min-height: calc(100vh - 80px);
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+/* Left Column - Info */
+.info-column {
+  flex: 1;
+  padding-right: 30px;
+}
+
+.info-content h1 {
+  font-family: var(--heading-font);
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.info-content p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+.info-btns {
+  margin-top: 30px;
+}
+
+/* Right Column - Form */
+.form-column {
+  flex: 1;
+}
+
+.form-wrapper {
+  background-color: var(--background-alt);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-wrapper h2 {
+  font-family: var(--heading-font);
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.form-group label img {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-color-imag);
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: white;
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+}
+
+.error-msg {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 5px;
+  font-weight: 500;
+  height: 20px;
+}
+
+/* File upload styling */
+.file-upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-upload input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  z-index: -1;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.file-label:hover {
+  background-color: var(--primary-light);
+}
+
+.file-label i {
+  margin-right: 8px;
+}
+
+.file-name {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* Form actions */
+.form-actions {
+  margin-top: 30px;
+}
+
+/* ===== FOOTER STYLES ===== */
+.footer {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 30px 0;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* ===== RESPONSIVE DESIGNS ===== */
+@media (max-width: 992px) {
+  .content-wrapper {
+    flex-direction: column;
+    gap: 50px;
+  }
+  
+  .info-column, .form-column {
+    width: 100%;
+    padding-right: 0;
+  }
+  
+  .info-content h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 15px 0;
+  }
+  
+  .nav-list {
+    position: fixed;
+    left: -100%;
+    top: 70px;
+    flex-direction: column;
+    background-color: var(--primary-color);
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+    padding: 20px 0;
+    gap: 0;
+  }
+  
+  .nav-list.active {
+    left: 0;
+  }
+  
+  .nav-link {
+    display: block;
+    padding: 15px 0;
+  }
+  
+  .hamburger {
+    display: block;
+  }
+  
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+  
+  .main-content {
+    padding-top: 100px;
+  }
+  
+  .info-content h1 {
+    font-size: 2rem;
+  }
+  
+  .form-wrapper {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .info-content h1 {
+    font-size: 1.8rem;
+  }
+  
+  .form-wrapper h2 {
+    font-size: 1.5rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+  }
+}

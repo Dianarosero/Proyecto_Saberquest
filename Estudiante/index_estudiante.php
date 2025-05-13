@@ -80,8 +80,8 @@
                         <div class="about-detail">
                             <i class="fas fa-book-reader"></i>
                             <div>
-                                <h3>Aprende</h3>
-                                <p> Mediante juegos Interactivos</p>
+                                <h3>Practica</h3>
+                                <p>Mediante juegos</p>
                             </div>
                         </div>
                         <div class="about-detail">
@@ -94,7 +94,7 @@
                         <div class="about-detail">
                             <i class="fas fa-chart-bar"></i>
                             <div>
-                                <h3>Evalua</h3>
+                                <h3>Evaluate</h3>
                                 <p> Consulta tus Resultados</p>
                             </div>
                         </div>
@@ -156,6 +156,11 @@
             </div>
 
     </footer>
+
+    <a href="#home" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
   
     <!-- JavaScript -->
     <script src="../assets/src_index/js/script.js"></script>

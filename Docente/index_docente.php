@@ -81,7 +81,7 @@
                             <i class="fas fa-book-reader"></i>
                             <div>
                                 <h3>Aprende</h3>
-                                <p> Mediante juegos Interactivos</p>
+                                <p> Mediante juegos</p>
                             </div>
                         </div>
                         <div class="about-detail">
@@ -126,7 +126,7 @@
                     </div>
                 </a>
                 <!-- Card 2 -->
-                <a href="Resultados/ver_resultados.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="Resultados/ver_resultados.html" target="_blank" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
@@ -146,6 +146,10 @@
             </div>
 
     </footer>
+    <a href="#home" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
   
     <!-- JavaScript -->
     <script src="../assets/src_index/js/script.js"></script>

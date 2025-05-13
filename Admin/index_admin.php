@@ -131,7 +131,7 @@
                     </div>
                 </a>
                 <!-- Card 2 -->
-                <a href="Simulacros/formulario.php" target="_blank" class="project-card" data-category="Simulacro">
+                <a href="Simulacros/formularios.php" target="_blank" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/vs.png" alt="Ver Simulacros">
                     </div>
@@ -141,7 +141,7 @@
                     </div>
                 </a>
                 <!-- Card 3 -->
-                <a href="practicar/crear_juegos.html" target="_blank" class="project-card" data-category="Practicar">
+                <a href="practicar/crear_juegos.php" target="_blank" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/cj.png" alt="Crear Juego">
                     </div>
@@ -151,7 +151,7 @@
                     </div>
                 </a>
                 <!-- Card 4 -->
-                <a href="practicar/ver_juegos.html" target="_blank" class="project-card" data-category="Practicar">
+                <a href="practicar/ver_juegos.php" target="_blank" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/pr.png" alt="Practicar">
                     </div>
@@ -161,7 +161,7 @@
                     </div>
                 </a>
                 <!-- Card 5 -->
-                <a href="resultados/resultados.html" target="_blank" class="project-card" data-category="Resultados">
+                <a href="resultados/resultados.php" target="_blank" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
@@ -171,7 +171,7 @@
                     </div>
                 </a>
                 <!-- Card 6 -->
-                <a href="Usuario/gestionar_usuario.php" target="_blank" class="project-card" data-category="Usuarios">
+                <a href="Usuarios/usuarios.php" target="_blank" class="project-card" data-category="Usuarios">
                     <div class="project-image">
                         <img src="../assets/src_index/img/us.png" alt="Gestionar Usuarios">
                     </div>
