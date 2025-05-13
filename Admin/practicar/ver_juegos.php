@@ -3,7 +3,7 @@ session_start();
 include("../../base de datos/con_db.php");
 
 // Consultar los juegos desde la base de datos
-$query = "SELECT nombre, descripcion, imagen, url FROM juegos ORDER BY fecha_registro DESC";
+$query = "SELECT id, nombre, descripcion, imagen, url FROM juegos ORDER BY fecha_registro DESC";
 $result = mysqli_query($conex, $query);
 ?>
 
@@ -15,11 +15,15 @@ $result = mysqli_query($conex, $query);
     <title>Juegos Educativos</title>
     <meta name="description" content="Explorar juegos educativos interactivos en la plataforma SaberQuest.">
     <link rel="stylesheet" href="../../assets/src_juegos/css/ver_juegos.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
+
 </head>
 <body>
     <!-- Header -->
@@ -32,7 +36,7 @@ $result = mysqli_query($conex, $query);
                     </a>
                 </div>
                 <nav class="nav">
-                    <a href="http://localhost/proyecto_saberquest/Admin/index_admin.php" class="nav-link">Inicio</a>
+                    <a href="../index_admin.php" class="nav-link">Inicio</a>
                 </nav>
             </div>
         </div>
@@ -41,30 +45,42 @@ $result = mysqli_query($conex, $query);
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
-            <h1 class="page-title">JUEGOS</h1>
+            <h1 class="page-title">Juegos</h1>
+            <div class="title-underline"></div>
             
             <div class="games-grid">
                 <!-- Card for creating a new game -->
-                <div class="create-card">
-                    <div class="create-card-content">
-                        <h2>Crear nuevo juego</h2>
-                        <p>Añade un nuevo juego educativo a la plataforma</p>
-                        <a href="crear_juegos.php" class="btn-create">Crear juego</a>
+                <a href="crear_juegos.php" class="create-card">
+                    <div class="create-icon">
+                        <i class="fas fa-plus-circle"></i>
                     </div>
-                </div>
+                    <h2>Crear nuevo juego</h2>
+                    <p>Añade un nuevo juego educativo a la plataforma</p>
+                </a>
 
                 <!-- Dynamic game cards from database -->
                 <?php
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
-                        echo '<div class="game-card">';
+                        // Usamos un div con onclick para redirigir
+                        echo '<div class="game-card" onclick="window.open(\'' . htmlspecialchars($row['url']) . '\', \'_blank\')" style="cursor:pointer;">';
                         echo '<div class="game-image">';
                         echo '<img src="' . htmlspecialchars($row['imagen']) . '" alt="' . htmlspecialchars($row['nombre']) . '">';
                         echo '</div>';
                         echo '<div class="game-info">';
                         echo '<h3>' . htmlspecialchars($row['nombre']) . '</h3>';
                         echo '<p>' . htmlspecialchars($row['descripcion']) . '</p>';
-                        echo '<a href="' . htmlspecialchars($row['url']) . '" class="btn-play">Jugar ahora</a>';
+                        echo '<div class="card-actions">';
+                        echo '<a href="editar_juego.php?id=' . htmlspecialchars($row['id']) . '" class="btn edit-btn">';
+                        echo '<i class="fas fa-edit"></i> Editar';
+                        echo '</a>';
+                        echo '<form action="eliminar_juego.php" method="POST" style="flex: 1; display: flex;">';
+                        echo '<input type="hidden" name="id" value="' . htmlspecialchars($row['id']) . '">';
+                        echo '<button type="submit" class="btn delete-btn" style="width: 100%;" onclick="return confirm(\'¿Estás seguro de que deseas eliminar este juego?\');">';
+                        echo '<i class="fas fa-trash"></i> Eliminar';
+                        echo '</button>';
+                        echo '</form>';
+                        echo '</div>';
                         echo '</div>';
                         echo '</div>';
                     }
@@ -75,6 +91,7 @@ $result = mysqli_query($conex, $query);
                     echo '</div>';
                 }
                 ?>
+
             </div>
         </div>
     </main>
@@ -87,5 +104,27 @@ $result = mysqli_query($conex, $query);
             </div>
         </div>
     </footer>
+
+    <!-- JavaScript para interactividad -->
+    <script>
+        // Funcionalidad para tarjetas al pasar el ratón (hover)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener todas las tarjetas de juegos
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            // Añadir efecto de elevación en hover
+            gameCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

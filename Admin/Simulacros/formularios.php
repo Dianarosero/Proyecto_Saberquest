@@ -87,7 +87,6 @@ function obtenerImagenPredeterminada($id)
         position: relative;
     }
 
-    h1,
     h2,
     h3,
     h4,
@@ -185,12 +184,11 @@ function obtenerImagenPredeterminada($id)
     .page-title {
         text-align: center;
         font-size: 2.5rem;
-        font-weight: bold;
+        font-weight: 700;
         color: #004488;
         /* Azul oscuro similar al de la imagen */
         font-family: 'Poppins', sans-serif;
-        margin-top: 40px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         letter-spacing: 1px;
     }
 
@@ -202,9 +200,6 @@ function obtenerImagenPredeterminada($id)
         margin: 16px auto 0 auto;
         border-radius: 2px;
     }
-
-
-
 
     /* Main Content Container */
     .main-content {

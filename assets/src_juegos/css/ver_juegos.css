@@ -2,7 +2,7 @@
 :root {
     --color-primary: #003366;   /* Azul oscuro */
     --color-secondary: #B22222; /* Rojo */
-    --color-accent: #ffffff;    /* Dorado */
+    --color-accent: #FFD700;    /* Dorado */
     --color-bg: #FFFFFF;        /* Blanco */
     --color-text: #333333;      /* Gris oscuro */
     --color-text-light: #FFFFFF; /* Blanco */
@@ -10,6 +10,7 @@
     --border-radius: 8px;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
+    --heading-font: 'Poppins', sans-serif;
     --accent-color: #ffffff;
 }
 
@@ -62,18 +63,25 @@ img {
 .logo-img {
     height: 50px;
 }
-.nav-link {
+
+.nav-list {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .nav-link {
     font-size: 1rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
     padding-bottom: 5px;
     position: relative;
   }
-.nav-link:hover {
+  
+  .nav-link:hover {
     color: var(--accent-color);
   }
   
-.nav-link::after {
+  .nav-link::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -82,33 +90,34 @@ img {
     height: 2px;
     background-color: var(--accent-color);
     transition: var(--transition);
-}
+  }
   
-.nav-link:hover::after {
+  .nav-link:hover::after {
     width: 100%;
-}
+  }
 
 /* Main Content */
 .main-content {
     padding: 40px 0;
 }
-
+  
 .page-title {
+    text-align: center;
     font-size: 2.5rem;
-    margin-bottom: 30px;
-    color: var(--color-primary);
     font-weight: 700;
-    position: relative;
+    color: #004488;
+    /* Azul oscuro similar al de la imagen */
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
 }
-
-.page-title::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -10px;
-    width: 80px;
-    height: 4px;
-    background-color: var(--color-accent);
+.title-underline {
+    width: 60px;
+    height: 5px;
+    background-color: #a51c1c;
+    /* Rojo similar al de la línea */
+    margin: 16px auto 0 auto;
+    border-radius: 2px;
 }
 
 /* Games Grid */
@@ -119,18 +128,6 @@ img {
     margin-top: 40px;
 }
 
-/* Create Card */
-.create-card {
-    background: linear-gradient(135deg, var(--color-primary), #004488);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    color: var(--color-text-light);
-}
 
 .create-card:hover {
     transform: translateY(-5px);
@@ -304,4 +301,110 @@ img {
     .game-image {
         height: 160px;
     }
+}
+
+.create-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    height: 100%;
+    border: 2px dashed #ffffff;
+    min-height: 250px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.create-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    border-color:rgb(0, 0, 0);
+}
+
+.create-icon {
+    font-size: 3.5rem;
+    color: #003366;
+    margin-bottom: 1rem;
+    transition: color 0.3s;
+}
+
+.create-card:hover .create-icon {
+    color: #004488;
+}
+
+.create-card h2 {
+    margin-bottom: 0.5rem;
+    color: #003366;
+    font-size: 1.5rem;
+}
+
+.create-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.card-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-play {
+    background-color: #003366;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-play:hover {
+    background-color: #004488;
+    transform: translateY(-2px);
+}
+
+.edit-btn {
+    background-color: #003366;
+    color: #FFFFFF;
+    flex: 1;
+}
+
+.edit-btn:hover {
+    background-color: #004488;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background-color: #B22222;
+    color: #FFFFFF;
+    flex: 1;
+}
+
+.delete-btn:hover {
+    background-color: #D22F2F;
+    transform: translateY(-2px);
 }
