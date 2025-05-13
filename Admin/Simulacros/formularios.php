@@ -537,7 +537,7 @@ function obtenerImagenPredeterminada($id)
                     <h3><?php echo htmlspecialchars($row['titulo']); ?></h3>
                     <p class="form-description"><?php echo nl2br($descripcion_corta); ?></p>
                     <div class="card-actions">
-                        <a href="ver_formulario.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
+                        <a href="prue.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
                             <i class="fas fa-edit"></i> Editar
                         </a>
                         <a href="eliminar_formulario.php?id=<?php echo $row['id']; ?>" class="btn delete-btn"
