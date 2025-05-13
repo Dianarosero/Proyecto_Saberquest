@@ -30,7 +30,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
             <div class="logo-container">
                 <div class="logo">
                     <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
-                    </svg>
+                    
                 </div>
             </div>
             <a href="../index_admin.php" class="btn-inicio">Inicio</a>
