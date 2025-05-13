@@ -2,7 +2,7 @@
 session_start();
 include("../../base de datos/con_db.php");
 
-// Consulta para obtener todos los formularios
+// Consulta para obtener todos los
 $sql = "SELECT id, titulo, descripcion, imagen FROM formularios ORDER BY id DESC";
 $result = $conex->query($sql);
 
@@ -216,10 +216,11 @@ function obtenerImagenPredeterminada($id)
 
     /* Forms Grid Container */
     .forms-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Siempre 3 columnas */
+    gap: 1.5rem;
+}
+
 
     /* Card Styles */
     .card {
@@ -483,7 +484,7 @@ function obtenerImagenPredeterminada($id)
             </div>
             <div class="nav-controls">
                 <div class="search-container">
-                    <input type="text" placeholder="Buscar formularios...">
+                    <input type="text" placeholder="Buscar simulacros...">
                     <button class="search-btn">
                         <i class="fas fa-search"></i>
                     </button>
@@ -497,7 +498,7 @@ function obtenerImagenPredeterminada($id)
 
     <main class="main-content">
         <div class="page-title">
-            Formularios
+            Simulacros
             <div class="title-underline"></div>
         </div>
         <section class="forms-container">
@@ -538,7 +539,7 @@ function obtenerImagenPredeterminada($id)
                     <p class="form-description"><?php echo nl2br($descripcion_corta); ?></p>
                     <div class="card-actions">
                         <a href="prue.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
-                            <i class="fas fa-edit"></i> Editar
+                            <i class="fas fa-eye"></i> Ver
                         </a>
                         <a href="eliminar_formulario.php?id=<?php echo $row['id']; ?>" class="btn delete-btn"
                             onclick="return confirm('¿Estás seguro de que deseas eliminar este formulario?');">
@@ -553,7 +554,7 @@ function obtenerImagenPredeterminada($id)
             <div class="no-forms-message"
                 style="grid-column: span 3; text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
                 <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #003366; margin-bottom: 1rem;"></i>
-                <h3>No hay formularios disponibles</h3>
+                <h3>No hay Simulacros disponibles</h3>
                 <p>Crea tu primer formulario haciendo clic en "Crear un formulario"</p>
             </div>
             <?php endif; ?>
@@ -561,7 +562,7 @@ function obtenerImagenPredeterminada($id)
     </main>
 
     <footer class="main-footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
 </body>
 
