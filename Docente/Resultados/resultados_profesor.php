@@ -3,7 +3,7 @@ session_start();
 include("../../base de datos/con_db.php");
 
 // Validar que el usuario esté logueado y sea profesor
-if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'profesor') {
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
     header('Location: ../../index.php');
     exit;
 }
@@ -12,17 +12,19 @@ $usuario_id = $_SESSION['usuario_id'];
 $formulario_id = $_GET['id'] ?? 0;
 
 // Verificar que el formulario existe y pertenece al profesor
+// Ejemplo de consulta sin filtro creador_id
 $stmt = $conex->prepare("
     SELECT id, titulo, descripcion, imagen, mostrar_respuestas
     FROM formularios 
-    WHERE id = ? AND creador_id = ?
+    
 ");
-$stmt->bind_param("ii", $formulario_id, $usuario_id);
+
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    die("Formulario no encontrado o no tienes permiso para ver estos resultados.");
+    echo "Formulario no encontrado.";
+    exit;
 }
 
 $formulario = $result->fetch_assoc();
@@ -79,18 +81,18 @@ $stmt = $conex->prepare("
     SELECT 
         u.id as usuario_id,
         u.nombre,
-        u.email,
         COUNT(DISTINCT p.id) as total_preguntas,
         SUM(CASE WHEN r.respuesta = p.correcta THEN 1 ELSE 0 END) as respuestas_correctas,
-        MAX(r.fecha_creacion) as fecha_respuesta
+        MAX(r.fecha) as fecha_respuesta
     FROM usuarios u
     JOIN respuestas r ON u.id = r.usuario_id
     JOIN preguntas p ON r.pregunta_id = p.id
-    WHERE r.formulario_id = ? AND p.formulario_id = ?
+    WHERE r.formulario_id = ?
     GROUP BY u.id
     ORDER BY respuestas_correctas DESC, fecha_respuesta ASC
 ");
-$stmt->bind_param("ii", $formulario_id, $formulario_id);
+$stmt->bind_param("i", $formulario_id);
+
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -147,11 +149,13 @@ $stmt = $conex->prepare("
     LEFT JOIN respuestas r ON p.id = r.pregunta_id
     WHERE p.formulario_id = ? AND (r.formulario_id = ? OR r.formulario_id IS NULL)
     GROUP BY p.id
-    ORDER BY respuestas_correctas / NULLIF(COUNT(r.id), 0) ASC
+    ORDER BY 
+        SUM(CASE WHEN r.respuesta = p.correcta THEN 1 ELSE 0 END) / NULLIF(COUNT(r.id), 0) ASC
 ");
 $stmt->bind_param("ii", $formulario_id, $formulario_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
 
 $preguntas_analisis = [];
 while ($row = $result->fetch_assoc()) {
@@ -214,7 +218,6 @@ function generatePdfContent($formulario, $estudiantes, $preguntas_analisis, $sta
         <tr>
             <th>#</th>
             <th>Nombre</th>
-            <th>Email</th>
             <th>Calificación</th>
             <th>Fecha</th>
         </tr>";
@@ -225,7 +228,6 @@ function generatePdfContent($formulario, $estudiantes, $preguntas_analisis, $sta
         <tr class='$row_class'>
             <td>" . ($index + 1) . "</td>
             <td>" . htmlspecialchars($est['nombre']) . "</td>
-            <td>" . htmlspecialchars($est['email']) . "</td>
             <td>" . $est['respuestas_correctas'] . "/" . $est['total_preguntas'] . " (" . $est['porcentaje'] . "%)</td>
             <td>" . $est['fecha_formateada'] . "</td>
         </tr>";
@@ -1018,7 +1020,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             <span>Universidad CESMAG</span>
         </div>
         <div class="header-actions">
-            <a href="formularios_profesor.php" class="btn btn-outline-light">
+            <a href="../index_docente.php" class="btn btn-outline-light">
                 <i class="fas fa-home"></i> Inicio
             </a>
         </div>
@@ -1026,7 +1028,7 @@ if ($stats['promedio_aciertos'] >= 80) {
     
     <div class="main-container">
         <div class="breadcrumb">
-            <a href="formularios_profesor.php">Inicio</a>
+            <a href="ver_todos_formularios.php">Simulacros</a>
             <span class="breadcrumb-separator">/</span>
             <span>Resultados</span>
         </div>
@@ -1133,7 +1135,6 @@ if ($stats['promedio_aciertos'] >= 80) {
                             <tr>
                                 <th>#</th>
                                 <th>Nombre</th>
-                                <th>Email</th>
                                 <th>Calificación</th>
                                 <th>Porcentaje</th>
                                 <th>Fecha</th>
@@ -1145,7 +1146,6 @@ if ($stats['promedio_aciertos'] >= 80) {
                             <tr>
                                 <td><?php echo $index + 1; ?></td>
                                 <td><?php echo htmlspecialchars($estudiante['nombre']); ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['email']); ?></td>
                                 <td><?php echo $estudiante['respuestas_correctas']; ?>/<?php echo $estudiante['total_preguntas']; ?></td>
                                 <td>
                                     <?php

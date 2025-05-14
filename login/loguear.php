@@ -15,12 +15,23 @@ $resultado = $stmt->get_result();
 if ($resultado->num_rows === 1) {
     $filas = $resultado->fetch_assoc();
 
-    // Validar contraseña
+    // Validar contraseña según rol
     if ($filas['id_rol'] == 1) {
         // Admin: contraseña sin hash
         if ($contraseña === $filas['contraseña']) {
+            // Guardar datos en sesión
             $_SESSION['usuario_id'] = $filas['id'];
             $_SESSION['codigo_estudiantil'] = $codigo_estudiantil;
+            $_SESSION['id_rol'] = $filas['id_rol'];
+
+            // Obtener nombre del rol
+            $stmtRol = $conex->prepare("SELECT tipo_rol FROM roles WHERE id_rol = ?");
+            $stmtRol->bind_param("i", $filas['id_rol']);
+            $stmtRol->execute();
+            $resultRol = $stmtRol->get_result();
+            $rolData = $resultRol->fetch_assoc();
+            $_SESSION['rol'] = $rolData['tipo_rol'];
+
             header('Location: ../Admin/index_admin.php');
             exit();
         } else {
@@ -31,8 +42,18 @@ if ($resultado->num_rows === 1) {
     } else {
         // Docente y estudiante: contraseña con hash
         if (password_verify($contraseña, $filas['contraseña'])) {
+            // Guardar datos en sesión
             $_SESSION['usuario_id'] = $filas['id'];
             $_SESSION['codigo_estudiantil'] = $codigo_estudiantil;
+            $_SESSION['id_rol'] = $filas['id_rol'];
+
+            // Obtener nombre del rol
+            $stmtRol = $conex->prepare("SELECT tipo_rol FROM roles WHERE id_rol = ?");
+            $stmtRol->bind_param("i", $filas['id_rol']);
+            $stmtRol->execute();
+            $resultRol = $stmtRol->get_result();
+            $rolData = $resultRol->fetch_assoc();
+            $_SESSION['rol'] = $rolData['tipo_rol'];
 
             if ($filas['id_rol'] == 2) {
                 header('Location: ../Docente/index_docente.php');
@@ -56,6 +77,7 @@ if ($resultado->num_rows === 1) {
     header('Location: ../index.php');
     exit();
 }
+
 $stmt->close();
 $conex->close();
 ?>

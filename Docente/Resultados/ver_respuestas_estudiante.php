@@ -3,7 +3,7 @@ session_start();
 include("../../base de datos/con_db.php");
 
 // Validar que el usuario esté logueado y sea profesor
-if (!isset($_SESSION['usuario_id']) || $_SESSION['id_rol'] != 2) {
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
     header('Location: ../../index.php');
     exit;
 }
@@ -16,9 +16,9 @@ $estudiante_id = $_GET['user_id'] ?? 0;
 $stmt = $conex->prepare("
     SELECT id, titulo, descripcion, imagen
     FROM formularios 
-    WHERE id = ? AND creador_id = ?
+    WHERE id = ?
 ");
-$stmt->bind_param("ii", $formulario_id, $usuario_id);
+$stmt->bind_param("i", $formulario_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -30,7 +30,7 @@ $formulario = $result->fetch_assoc();
 $stmt->close();
 
 // Obtener información del estudiante
-$stmt = $conex->prepare("SELECT id, nombre, email FROM usuarios WHERE id = ?");
+$stmt = $conex->prepare("SELECT id, nombre FROM usuarios WHERE id = ?");
 $stmt->bind_param("i", $estudiante_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -135,7 +135,6 @@ function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcen
     <h1>Resultados de " . htmlspecialchars($estudiante['nombre']) . "</h1>
     <div class='student-info'>
         <p><strong>Formulario:</strong> " . htmlspecialchars($formulario['titulo']) . "</p>
-        <p><strong>Email:</strong> " . htmlspecialchars($estudiante['email']) . "</p>
         <p><strong>Fecha de respuesta:</strong> " . $fecha_formateada . "</p>
         <p><strong>Calificación:</strong> " . $estadisticas['respuestas_correctas'] . "/" . $estadisticas['total_preguntas'] . " (" . $porcentaje . "%)</p>
     </div>
@@ -897,7 +896,7 @@ function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcen
                         <i class="fas fa-user-graduate"></i>
                         <span><?php echo htmlspecialchars($estudiante['nombre']); ?></span>
                     </div>
-                    <div class="student-email"><?php echo htmlspecialchars($estudiante['email']); ?></div>
+
                     <div class="date-info">
                         <i class="far fa-calendar-alt"></i> Respondido el: <?php echo $fecha_formateada; ?>
                     </div>
