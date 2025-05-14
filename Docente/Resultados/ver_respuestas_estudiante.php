@@ -3,8 +3,8 @@ session_start();
 include("../../base de datos/con_db.php");
 
 // Validar que el usuario esté logueado y sea profesor
-if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'profesor') {
-    header('Location: ../index.php');
+if (!isset($_SESSION['usuario_id']) || $_SESSION['id_rol'] != 2) {
+    header('Location: ../../index.php');
     exit;
 }
 
@@ -47,7 +47,7 @@ $stmt = $conex->prepare("
     SELECT 
         COUNT(DISTINCT p.id) as total_preguntas,
         SUM(CASE WHEN r.respuesta = p.correcta THEN 1 ELSE 0 END) as respuestas_correctas,
-        MAX(r.fecha_creacion) as fecha_respuesta
+        MAX(r.fecha) as fecha_respuesta
     FROM preguntas p
     LEFT JOIN respuestas r ON p.id = r.pregunta_id AND r.usuario_id = ?
     WHERE p.formulario_id = ? AND (r.formulario_id = ? OR r.formulario_id IS NULL)
