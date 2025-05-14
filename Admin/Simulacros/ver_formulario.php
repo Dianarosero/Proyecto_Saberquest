@@ -71,7 +71,6 @@ $result = $stmt->get_result();
             --border-radius: 12px;
             --transition: all 0.3s ease;
             --gap: 1.5rem;
-            --accent-color: #ffffff;
         }
 
         * {
@@ -153,29 +152,16 @@ $result = $stmt->get_result();
         }
 
         .btn-primary {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--accent-color);
-            padding-bottom: 5px;
-            position: relative;
+            background-color: var(--primary);
+            color: white;
+            border: 2px solid transparent;
         }
 
         .btn-primary:hover {
-            color: var(--accent-color);
+            background-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
+            transform: translateY(-2px);
         }
-        .btn-primary::after{
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: var(--transition);
-        }
-        .btn-primary:hover::after{
-        width: 100%;
-    }
 
         .btn-outline {
             background-color: transparent;
@@ -734,7 +720,7 @@ $result = $stmt->get_result();
             </div>
             
             <div class="mode-toggle">
-                <a href="../index_admin.php" class="btn-primary">
+                <a href="../index_admin.php" class="btn btn-primary">
                     Inicio
                 </a>
             </div>

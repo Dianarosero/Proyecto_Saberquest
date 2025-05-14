@@ -376,7 +376,7 @@ if (isset($_POST['agregar_pregunta'])) {
             left: 0;
             width: 40%;
             height: 3px;
-            background-color: #B22222;
+            background-color: var(--accent);
             border-radius: 3px;
         }
 

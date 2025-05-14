@@ -75,20 +75,19 @@ function obtenerImagenPredeterminada($id)
     body {
         font-family: 'Lato', sans-serif;
         background-color: #f5f5f5;
-        --accent-color: #ffffff;
         color: #333333;
         line-height: 1.6;
         min-height: 100vh;
         margin: 0;
         display: flex;
         flex-direction: column;
-        --transition: all 0.3s ease;
     }
 
     body {
         position: relative;
     }
 
+    h1,
     h2,
     h3,
     h4,
@@ -171,39 +170,27 @@ function obtenerImagenPredeterminada($id)
     }
 
     .home-btn {
-        font-size: 1rem;
-        font-weight: 500;
-        color: var(--accent-color);
-        padding-bottom: 5px;
-        position: relative;
+        padding: 0.6rem 1.2rem;
+        color: #FFFFFF;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
     }
 
     .home-btn:hover {
-        color: var(--accent-color);
-
-    }
-    .home-btn::after{
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background-color: var(--accent-color);
-        transition: var(--transition);
-    }
-    .home-btn:hover::after{
-        width: 100%;
+        background-color: #E0E0E0;
     }
 
     .page-title {
         text-align: center;
         font-size: 2.5rem;
-        font-weight: 700;
+        font-weight: bold;
         color: #004488;
         /* Azul oscuro similar al de la imagen */
         font-family: 'Poppins', sans-serif;
-        margin-bottom: 15px;
+        margin-top: 40px;
+        margin-bottom: 20px;
         letter-spacing: 1px;
     }
 
@@ -215,6 +202,9 @@ function obtenerImagenPredeterminada($id)
         margin: 16px auto 0 auto;
         border-radius: 2px;
     }
+
+
+
 
     /* Main Content Container */
     .main-content {
@@ -499,7 +489,9 @@ function obtenerImagenPredeterminada($id)
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                <a class="home-btn" href="../index_admin.php">Inicio</a>
+
+                <a class="btn home-btn" href="../index_admin.php">Inicio</a>
+
             </div>
         </div>
     </header>
