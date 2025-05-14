@@ -148,7 +148,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                     </div>
                 </a>
                 <!-- Card 3 -->
-                <a href="Resultados/resultados.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="Simulacros/mis_resultados.php" target="_blank" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>

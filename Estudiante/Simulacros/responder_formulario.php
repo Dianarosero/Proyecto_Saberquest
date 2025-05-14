@@ -11,6 +11,41 @@ if (!isset($_SESSION['usuario_id'])) {
 $usuario_id = $_SESSION['usuario_id'];
 $formulario_id = $_GET['id'] ?? 0;
 
+// Verificar si el usuario ya respondió este formulario
+$stmt = $conex->prepare("SELECT COUNT(*) FROM respuestas WHERE formulario_id = ? AND usuario_id = ?");
+$stmt->bind_param("ii", $formulario_id, $usuario_id);
+$stmt->execute();
+$stmt->bind_result($ya_respondio);
+$stmt->fetch();
+$stmt->close();
+
+if ($ya_respondio > 0) {
+    // Mostrar mensaje y salir
+    echo "<!DOCTYPE html>
+    <html lang='es'>
+    <head>
+        <meta charset='UTF-8'>
+        <title>Formulario ya respondido</title>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
+        <style>
+            body { font-family: Arial, sans-serif; background: #f5f5f5; }
+            .container { max-width: 500px; margin: 100px auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);}
+            h2 { color: #003366; }
+            .btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #003366; color: #fff; border-radius: 8px; text-decoration: none;}
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <h2><i class='fas fa-exclamation-circle'></i> Ya has respondido este formulario</h2>
+            <p>No puedes volver a realizar este formulario.</p>
+            <a href='formularios_estudiante.php' class='btn'><i class='fas fa-home'></i> Volver al inicio</a>
+        </div>
+    </body>
+    </html>";
+    exit;
+}
+
+
 // Obtener datos del formulario, incluyendo la configuración de mostrar_respuestas y la imagen de fondo
 $stmt = $conex->prepare("SELECT titulo, descripcion, mostrar_respuestas, imagen FROM formularios WHERE id = ?");
 $stmt->bind_param("i", $formulario_id);
@@ -436,6 +471,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
                 <i class='fas fa-graduation-cap'></i>
                 <span>Universidad CESMAG</span>
             </div>
+            <div class='header-actions'>
+                <a href='formularios_estudiante.php' class='btn btn-outline'>
+                    <i class='fas fa-home'></i> Inicio
+                </a>
+            </div>
         </header>
         
         <div class='results-container'>
@@ -482,12 +522,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
         }
     }
     
-    echo "<div class='action-container'>
-            <a href='formularios_estudiante.php' class='btn btn-primary'>
-                <i class='fas fa-arrow-left'></i> Volver a formularios
-            </a>
-        </div>
-    </div>
+    echo "</div>
     
     <footer class='footer'>
         <p>&copy; " . date('Y') . " Universidad CESMAG. Todos los derechos reservados.</p>
@@ -595,6 +630,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
         .university-logo i {
             margin-right: 10px;
             color: var(--accent);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
         
         .contenedor {
@@ -1052,6 +1109,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
         <div class="university-logo">
             <i class="fas fa-graduation-cap"></i>
             <span>Universidad CESMAG</span>
+        </div>
+        <div class="header-actions">
+            <a href="formularios_estudiante.php" class="btn btn-outline btn-disabled">
+                <i class="fas fa-home"></i> Inicio
+            </a>
         </div>
     </header>
     
