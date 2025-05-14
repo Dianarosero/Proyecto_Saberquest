@@ -10,12 +10,7 @@ $result = $conex->query($sql);
 function obtenerImagenPredeterminada($id)
 {
     $imagenes = [
-        "https://pixabay.com/get/g2cdd6215e9923eb45eff99da4cb73dec61633a27d58bcacbce124d37d542e5d7d4126cd75a0202c26a4ea57296846d6352dca9d5a2e58479f9e097b7e1c5a9ca_1280.png",
-        "https://pixabay.com/get/ge66fb416f468cd5a304f6a49a6ab37d4757803662e6a400a4b5b5644bff9e18cb2c8711001d174ba0c83f8745b137af4481a813c816869785bbdffec1e55ab54_1280.jpg",
-        "https://pixabay.com/get/ga0815f0c6b966482a27e89590757a3402e56b04bb4dd33d0c7ef37115d8cabf4582f4a0a76054dcaf70bfb4d35766175369baa29f4f6b000eeae3c175f3895d6_1280.png",
-        "https://pixabay.com/get/gcce9a682e2a210902b914dcb1b60d4d22f72fd750a809b31ce76f2f1a70439fa7d5d98b7b2c9419c9398116bbd2f8b3071130f4ac49114cd3e1d45e7a0c74d16_1280.jpg",
-        "https://pixabay.com/get/gad054b70b69a9bd13cfd80785acd73e716352b67c499723e63f0933020c2a9f8590a515ba06513727dd3eb0475a119b582aaeb6b2ebb106ae3fd923162405799_1280.jpg"
-    ];
+        "Captura de pantalla 2023-06-26 211347.png"    ];
     $index = $id % count($imagenes);
     return $imagenes[$index];
 }
