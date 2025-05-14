@@ -17,6 +17,8 @@
   --warning: #ffc107;
   --upload: #6c757d; /* Gris para botón de upload */
   --hover-upload: #5a6268; /* Gris oscuro para hover botón de upload */
+  --accent-color: #ffffff;
+  --transition: all 0.3s ease;
 }
 
 /* Reset and basics */
@@ -603,17 +605,31 @@ footer {
 }
 
 .btn-inicio {
-  padding: 8px 16px;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-color);
+  padding-bottom: 5px;
+  position: relative;
 }
 
 .btn-inicio:hover {
-  background-color: #0056b3;
+  color: var(--accent-color);
 }
+
+.btn-inicio::after{
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: var(--transition);
+}
+.btn-inicio:hover::after{
+  width: 100%;
+}
+
 
 /* En pantallas pequeñas */
 @media (max-width: 600px) {

@@ -75,12 +75,14 @@ function obtenerImagenPredeterminada($id)
     body {
         font-family: 'Lato', sans-serif;
         background-color: #f5f5f5;
+        --accent-color: #ffffff;
         color: #333333;
         line-height: 1.6;
         min-height: 100vh;
         margin: 0;
         display: flex;
         flex-direction: column;
+        --transition: all 0.3s ease;
     }
 
     body {
@@ -169,16 +171,29 @@ function obtenerImagenPredeterminada($id)
     }
 
     .home-btn {
-        padding: 0.6rem 1.2rem;
-        color: #FFFFFF;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--accent-color);
+        padding-bottom: 5px;
+        position: relative;
     }
 
     .home-btn:hover {
-        background-color: #E0E0E0;
+        color: var(--accent-color);
+
+    }
+    .home-btn::after{
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--accent-color);
+        transition: var(--transition);
+    }
+    .home-btn:hover::after{
+        width: 100%;
     }
 
     .page-title {
@@ -484,9 +499,7 @@ function obtenerImagenPredeterminada($id)
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-
-                <a class="btn home-btn" href="../index_admin.php">Inicio</a>
-
+                <a class="home-btn" href="../index_admin.php">Inicio</a>
             </div>
         </div>
     </header>

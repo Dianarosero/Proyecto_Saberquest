@@ -2,7 +2,7 @@
 :root {
     --color-primary: #003366;   /* Azul oscuro */
     --color-secondary: #B22222; /* Rojo */
-    --color-accent: #FFD700;    /* Dorado */
+    --color-accent: #003366;    /* Dorado */
     --color-bg: #FFFFFF;        /* Blanco */
     --color-text: #333333;      /* Gris oscuro */
     --color-text-light: #FFFFFF; /* Blanco */
@@ -101,24 +101,25 @@ img {
     padding: 40px 0;
 }
   
-.page-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #004488;
-    /* Azul oscuro similar al de la imagen */
-    font-family: 'Poppins', sans-serif;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-}
-.title-underline {
-    width: 60px;
-    height: 5px;
-    background-color: #a51c1c;
-    /* Rojo similar al de la línea */
-    margin: 16px auto 0 auto;
-    border-radius: 2px;
-}
+    .page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #004488;
+        /* Azul oscuro similar al de la imagen */
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+    }
+
+    .title-underline {
+        width: 60px;
+        height: 5px;
+        background-color: #a51c1c;
+        /* Rojo similar al de la línea */
+        margin: 16px auto 0 auto;
+        border-radius: 2px;
+    }
 
 /* Games Grid */
 .games-grid {

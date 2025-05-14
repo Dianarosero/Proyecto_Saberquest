@@ -2,329 +2,388 @@
 session_start();
 include("../../base de datos/con_db.php");
 
-// Verificar si se proporcionó un ID
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    $_SESSION['error_message'] = "ID de juego no proporcionado.";
+// Obtener el ID del juego a editar
+if (!isset($_GET['id'])) {
     header("Location: ver_juegos.php");
-    exit();
+    exit;
 }
-
-$id = $_GET['id'];
-
-// Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['gameName'] ?? '');
-    $descripcion = trim($_POST['gameDescription'] ?? '');
-    $url = trim($_POST['gameUrl'] ?? '');
-    $imagen = trim($_POST['gameImage'] ?? '');
-
-    // Validar datos
-    if (empty($nombre) || empty($descripcion) || empty($url) || empty($imagen)) {
-        $_SESSION['error_message'] = "Por favor, completa todos los campos obligatorios.";
-    } else {
-        // Actualizar juego en la base de datos
-        $query = "UPDATE juegos SET nombre = ?, descripcion = ?, imagen = ?, url = ? WHERE id = ?";
-        $stmt = $conex->prepare($query);
-        if (!$stmt) {
-            $_SESSION['error_message'] = "Error en la preparación de la consulta: " . $conex->error;
-        } else {
-            $stmt->bind_param("ssssi", $nombre, $descripcion, $imagen, $url, $id);
-            if ($stmt->execute()) {
-                $_SESSION['success_message'] = "Juego actualizado correctamente.";
-                header("Location: ver_juegos.php");
-                exit();
-            } else {
-                $_SESSION['error_message'] = "Error al actualizar el juego: " . $stmt->error;
-            }
-            $stmt->close();
-        }
-    }
-}
+$id = intval($_GET['id']);
 
 // Obtener datos actuales del juego
-$query = "SELECT nombre, descripcion, imagen, url FROM juegos WHERE id = ?";
-$stmt = $conex->prepare($query);
-if (!$stmt) {
-    $_SESSION['error_message'] = "Error en la preparación de la consulta: " . $conex->error;
-    header("Location: ver_juegos.php");
-    exit();
+$query = "SELECT * FROM juegos WHERE id = $id";
+$result = mysqli_query($conex, $query);
+if (!$result || mysqli_num_rows($result) == 0) {
+    echo "Juego no encontrado.";
+    exit;
 }
+$juego = mysqli_fetch_assoc($result);
 
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
+$error = "";
+$mensaje = "";
 
-if ($result->num_rows === 0) {
-    $_SESSION['error_message'] = "Juego no encontrado.";
-    header("Location: ver_juegos.php");
-    exit();
+// Procesar el formulario al enviar
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = $_POST['nombre'] ?? '';
+    $descripcion = $_POST['descripcion'] ?? '';
+    $url = $_POST['url'] ?? '';
+    $imagen_ruta = $_POST['imagen_actual'] ?? $juego['imagen']; // Mantener la actual por defecto
+
+    // Procesar la imagen si se ha subido una nueva
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $carpeta_destino = "../../assets/src_juegos/img_juegos/";
+        if (!is_dir($carpeta_destino)) {
+            mkdir($carpeta_destino, 0777, true);
+        }
+        $nombre_archivo = uniqid() . "_" . basename($_FILES['imagen']['name']);
+        $ruta_archivo = $carpeta_destino . $nombre_archivo;
+        $tipo_archivo = strtolower(pathinfo($ruta_archivo, PATHINFO_EXTENSION));
+        $tipos_permitidos = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($tipo_archivo, $tipos_permitidos)) {
+            $error = "Solo se permiten imágenes JPG, JPEG, PNG, GIF o WEBP.";
+        } else {
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $ruta_archivo)) {
+                $imagen_ruta = $ruta_archivo;
+            } else {
+                $error = "Error al subir la imagen.";
+            }
+        }
+    }
+
+    // Validar datos
+    if (empty($nombre)) {
+        $error = "El nombre del juego no puede estar vacío.";
+    } elseif (empty($descripcion)) {
+        $error = "La descripción del juego no puede estar vacía.";
+    } elseif (empty($url)) {
+        $error = "La URL del juego no puede estar vacía.";
+    } elseif (empty($error)) {
+        // Actualizar juego
+        $stmt_update = $conex->prepare("UPDATE juegos SET nombre = ?, descripcion = ?, imagen = ?, url = ? WHERE id = ?");
+        $stmt_update->bind_param("ssssi", $nombre, $descripcion, $imagen_ruta, $url, $id);
+        if ($stmt_update->execute()) {
+            $mensaje = "Juego actualizado correctamente.";
+            $juego['nombre'] = $nombre;
+            $juego['descripcion'] = $descripcion;
+            $juego['imagen'] = $imagen_ruta;
+            $juego['url'] = $url;
+        } else {
+            $error = "Error al actualizar el juego: " . $conex->error;
+        }
+        $stmt_update->close();
+    }
 }
-
-$juego = $result->fetch_assoc();
-$stmt->close();
-
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
     <title>Editar Juego</title>
-    <meta name="description" content="Editar juego educativo para la plataforma SaberQuest.">
-    <link rel="stylesheet" href="../../assets/src_juegos/css/ver_juegos.css">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="../../assets/img/favicon.png" rel="icon">
-    <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Estilos de editar_formulario.php -->
     <style>
-        /* Estilos para el formulario */
-        .form-wrapper {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
+        :root {
+            --primary: #003366;
+            --primary-light: #003366;
+            --secondary: #B22222;
+            --secondary-light: #d93636;
+            --accent: #FFD700;
+            --accent-light: #FFE44D;
+            --background: #003366;
+            --text: #333333;
+            --text-light: #666666;
+            --neutral: #E0E0E0;
+            --neutral-light: #F7F7F7;
+            --success: #27ae60;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --accent-color: #ffffff;
+            --transition: all 0.3s ease;
+            --gap: 1.5rem;
         }
         
+        body {
+            background: #f4f6fb;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 35px 40px 30px 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #263159;
+            margin-bottom: 30px;
+        }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
-        
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: #333333;
+            color: #263159;
+            font-weight: 600;
         }
-        
-        .required {
-            color: #B22222;
-            margin-left: 4px;
-        }
-        
         input[type="text"],
         input[type="url"],
         textarea {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #E0E0E0;
-            border-radius: 8px;
-            font-family: 'Poppins', sans-serif;
+            padding: 11px 13px;
+            border: 1.5px solid #bfc6d1;
+            border-radius: 6px;
             font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            background: #f7f9fc;
         }
-        
         input[type="text"]:focus,
         input[type="url"]:focus,
         textarea:focus {
             border-color: #003366;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
         }
-        
-        .error-msg {
-            color: #B22222;
-            font-size: 0.85rem;
-            margin-top: 5px;
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        input[type="file"] {
+            margin-top: 8px;
+        }
+        .btn {
+            background: #003366;
+            color:rgb(255, 255, 255);
+            border: none;
+            padding: 13px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #003366;
+        }
+        .message {
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .error {
+            background: #ffe6e6;
+            color: #b30000;
+            border: 1px solid #ffb3b3;
+        }
+        .success {
+            background: #e6ffe6;
+            color: #267326;
+            border: 1px solid #b3ffb3;
+        }
+        .img-preview {
+            max-width: 220px;
+            max-height: 160px;
             display: block;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #bfc6d1;
+            object-fit: contain;
+
+        }
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            opacity: 0.12;
+            z-index: -1;
+            background-image: url('https://pixabay.com/get/g8386919d873394672d9c4f2b4a58bfdf6ddbc88918bd7be5af792f69144340e15c8134ca7a5df3c89411ba0b9f15bc66048659caff8143cbeee94118364b59da_1280.jpg');
         }
         
-        .helper-text {
-            color: #6c757d;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: block;
-        }
-        
-        .form-actions {
-            margin-top: 30px;
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0; /* Espaciado lateral moderado */
+            width: 100%;
+            box-shadow: var(--shadow-md);
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1000;/* Altura mínima para un header elegante */
         }
-        
-        .btn-cancel {
-            background-color: #E0E0E0;
-            color: #333;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
+
+        .logo {
+            display: flex;
+            align-items: center;
         }
-        
-        .btn-submit {
-            background-color: #003366;
-            color: #FFFFFF;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            flex: 1;
+
+        .logo-img {
+            height: 50px;
         }
-        
-        .btn-submit:hover {
-            background-color: #004488;
+        .nav-list {
+        display: flex;
+        gap: 30px;
         }
-        
-        .btn-cancel:hover {
-            background-color: #D0D0D0;
-        }
-        
-        /* Alerta de mensajes */
-        .alert {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 8px;
+
+        .nav-link {
+            font-size: 1rem;
             font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
         }
         
-        .alert.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .nav-link:hover {
+            color: var(--accent-color);
         }
         
-        .alert.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: var(--transition);
         }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .footer {
+            margin-top: auto;
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--accent-light);
+            text-decoration: underline;
+        }
+
+        .back-link:hover {
+            color: var(--primary-light);
+            transform: translateX(-5px);
+        }
+        @media (max-width: 600px) {
+            .header {
+                padding: 0 12px;
+                min-height: 56px;
+            }
+            .logo-img {
+                height: 36px;
+            }
+            .nav-link {
+                font-size: 1rem;
+                margin-left: 10px;
+            }
+        }
+
+
+        
+
     </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="../../assets/img/favicon.png" rel="icon">
+    <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
 </head>
 <body>
-    <!-- Header -->
-    <header class="navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <div class="logo">
-                    <a href="../index_admin.php">
-                        <img src="../../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" class="logo-img">
-                    </a>
-                </div>
-                <nav class="nav">
-                    <a href="../index_admin.php" class="nav-link">Inicio</a>
-                    <a href="ver_juegos.php" class="nav-link">Juegos</a>
-                </nav>
+    <div class="bg-container"></div>
+        <header class="header">
+            <div class="logo">
+                <a href="../index_admin.php">
+                    <img src="../../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" class="logo-img">
+                </a>
             </div>
-        </div>
-    </header>
+            <nav class="nav">
+                <a href="../index_admin.php" class="nav-link">Inicio</a>
+            </nav>
+        </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <h1 class="page-title">EDITAR JUEGO</h1>
-            
-            <div class="form-wrapper">
-                <?php if(isset($_SESSION['error_message'])): ?>
-                    <div class="alert error">
-                        <?php 
-                        echo $_SESSION['error_message']; 
-                        unset($_SESSION['error_message']);
-                        ?>
-                    </div>
-                <?php endif; ?>
-
-                <form id="gameForm" action="editar_juego.php?id=<?php echo htmlspecialchars($id); ?>" method="POST">
-                    <div class="form-group">
-                        <label for="gameName">Nombre<span class="required">*</span></label>
-                        <input type="text" id="gameName" name="gameName" placeholder="Ingresa el nombre del juego" value="<?php echo htmlspecialchars($juego['nombre']); ?>" required>
-                        <small class="error-msg" id="gameNameError"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gameDescription">Descripción <span class="required">*</span></label>
-                        <textarea id="gameDescription" name="gameDescription" rows="4" placeholder="Describe el propósito y funcionamiento del juego" required><?php echo htmlspecialchars($juego['descripcion']); ?></textarea>
-                        <small class="error-msg" id="gameDescriptionError"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gameImage">URL de la imagen <span class="required">*</span></label>
-                        <input type="text" id="gameImage" name="gameImage" placeholder="https://ejemplo.com/imagen.jpg" value="<?php echo htmlspecialchars($juego['imagen']); ?>" required>
-                        <small class="error-msg" id="gameImageError"></small>
-                        <small class="helper-text">URL de la imagen para mostrar como portada del juego.</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gameUrl">Link del juego <span class="required">*</span></label>
-                        <input type="url" id="gameUrl" name="gameUrl" placeholder="https://view.genially.com/mi-juego" value="<?php echo htmlspecialchars($juego['url']); ?>" required>
-                        <small class="error-msg" id="gameUrlError"></small>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <a href="ver_juegos.php" class="btn-cancel">Cancelar</a>
-                        <button type="submit" class="btn-submit">Guardar cambios</button>
-                    </div>
-                </form>
+    <div class="container">
+        <h1>Editar Juego</h1>
+        <?php if ($error): ?>
+            <div class="message error"><?php echo $error; ?></div>
+        <?php elseif ($mensaje): ?>
+            <div class="message success"><?php echo $mensaje; ?></div>
+        <?php endif; ?>
+        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+            <div class="form-group">
+                <label for="nombre">Nombre del juego:</label>
+                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($juego['nombre']); ?>" required>
             </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024 SABERQUEST. Todos los derechos reservados.</p>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" required><?php echo htmlspecialchars($juego['descripcion']); ?></textarea>
             </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript para validación de formulario -->
+            <div class="form-group">
+                <label for="url">URL del juego:</label>
+                <input type="url" id="url" name="url" value="<?php echo htmlspecialchars($juego['url']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="imagen">Imagen actual:</label>
+                <img id="preview-img" class="img-preview" src="<?php echo htmlspecialchars($juego['imagen']); ?>" alt="Imagen actual">
+                <input type="file" id="imagen" name="imagen" accept="image/*" onchange="previewImage(event)">
+                <input type="hidden" name="imagen_actual" value="<?php echo htmlspecialchars($juego['imagen']); ?>">
+            </div>
+            <button type="submit" class="btn">Guardar Cambios</button> <br> <br>
+            <a href="ver_juegos.php" class="back-link">
+                <i class="fas fa-arrow-left"></i> ← Volver a la zona de Juegos
+            </a>
+        </form>
+    </div>
+        <footer class="footer">
+            <p>&copy; 2025 SABERQUEST - Todos los derechos reservados</p>
+        </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('gameForm');
-            const nameInput = document.getElementById('gameName');
-            const descInput = document.getElementById('gameDescription');
-            const imgInput = document.getElementById('gameImage');
-            const urlInput = document.getElementById('gameUrl');
-            
-            form.addEventListener('submit', function(e) {
-                let isValid = true;
-                
-                // Validar nombre
-                if (nameInput.value.trim() === '') {
-                    document.getElementById('gameNameError').textContent = 'El nombre del juego es obligatorio';
-                    isValid = false;
-                } else {
-                    document.getElementById('gameNameError').textContent = '';
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview-img');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
                 }
-                
-                // Validar descripción
-                if (descInput.value.trim() === '') {
-                    document.getElementById('gameDescriptionError').textContent = 'La descripción es obligatoria';
-                    isValid = false;
-                } else {
-                    document.getElementById('gameDescriptionError').textContent = '';
-                }
-                
-                // Validar URL de imagen
-                if (imgInput.value.trim() === '') {
-                    document.getElementById('gameImageError').textContent = 'La URL de imagen es obligatoria';
-                    isValid = false;
-                } else {
-                    document.getElementById('gameImageError').textContent = '';
-                }
-                
-                // Validar URL del juego
-                if (urlInput.value.trim() === '') {
-                    document.getElementById('gameUrlError').textContent = 'El link del juego es obligatorio';
-                    isValid = false;
-                } else {
-                    document.getElementById('gameUrlError').textContent = '';
-                }
-                
-                if (!isValid) {
-                    e.preventDefault();
-                }
-            });
-        });
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 </body>
 </html>

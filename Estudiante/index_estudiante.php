@@ -128,7 +128,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             </div>
             <div class="projects-grid">
                 <!-- Card 1 -->
-                <a href="Practicar/practicar.html" target="_blank" class="project-card" data-category="Practicar">
+                <a href="Practicar/practicar.php" target="_blank" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/pr.png" alt="Practicar">
                     </div>

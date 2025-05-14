@@ -26,6 +26,7 @@
   --border-color: #e0e0e0;
   --success-color: #28a745;
   --error-color: #dc3545;
+  --accent-color: #ffffff;
   
   /* Typography */
   --heading-font: 'Poppins', sans-serif;
@@ -189,23 +190,22 @@ section {
   margin-right: 10px;
 }
 
+
 .nav-list {
   display: flex;
   gap: 30px;
-
 }
 
 .nav-link {
   font-size: 1rem;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
   padding-bottom: 5px;
   position: relative;
-  color: #cfcfcfd8;
 }
 
-.nav-link:hover,
-.nav-link.active {
-  color: var(--background);
+.nav-link:hover {
+  color: var(--accent-color);
 }
 
 .nav-link::after {
@@ -215,12 +215,11 @@ section {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--primary-color);
+  background-color: var(--accent-color);
   transition: var(--transition);
 }
 
-.nav-link:hover::after,
-.nav-link.active::after {
+.nav-link:hover::after {
   width: 100%;
 }
 

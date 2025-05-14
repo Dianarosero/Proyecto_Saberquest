@@ -36,7 +36,7 @@ $result = mysqli_query($conex, $query);
                     </a>
                 </div>
                 <nav class="nav">
-                    <a href="../index_admin.php" class="nav-link">Inicio</a>
+                    <a href="../index_docente.php" class="nav-link">Inicio</a>
                 </nav>
             </div>
         </div>
@@ -49,14 +49,6 @@ $result = mysqli_query($conex, $query);
             <div class="title-underline"></div>
             
             <div class="games-grid">
-                <!-- Card for creating a new game -->
-                <a href="crear_juegos.php" class="create-card">
-                    <div class="create-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <h2>Crear nuevo juego</h2>
-                    <p>Añade un nuevo juego educativo a la plataforma</p>
-                </a>
 
                 <!-- Dynamic game cards from database -->
                 <?php
@@ -70,14 +62,9 @@ $result = mysqli_query($conex, $query);
                         echo '<h3>' . htmlspecialchars($row['nombre']) . '</h3>';
                         echo '<p>' . htmlspecialchars($row['descripcion']) . '</p>';
                         echo '<div class="card-actions">';
-                        echo '<a href="editar_juego.php?id=' . htmlspecialchars($row['id']) . '" class="btn edit-btn">';
-                        echo '<i class="fas fa-edit"></i> Editar';
+                        echo '<a href="' . htmlspecialchars($row['url']) . '" class="btn btn-play" target="_blank">';
+                        echo '<i class="fas fa-play"></i> Jugar ahora';
                         echo '</a>';
-                        echo '<form action="eliminar_juego.php" method="POST" style="flex: 1; display: flex;">';
-                        echo '<input type="hidden" name="id" value="' . htmlspecialchars($row['id']) . '">';
-                        echo '<button type="submit" class="btn delete-btn" style="width: 100%;" onclick="return confirm(\'¿Estás seguro de que deseas eliminar este juego?\');">';
-                        echo '<i class="fas fa-trash"></i> Eliminar';
-                        echo '</button>';
                         echo '</form>';
                         echo '</div>';
                         echo '</div>';
