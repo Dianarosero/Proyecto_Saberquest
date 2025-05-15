@@ -31,19 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verificar la contraseña actual
     $current_password = $_POST['current_password'] ?? '';
     $new_password = $_POST['new_password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
     $semestre = $_POST['semestre'] ?? '';
-    
-    // Si hay contraseña nueva, verificar la actual
+
+    // Si hay contraseña nueva, verificar la actual y el hash
     if (!empty($new_password)) {
         if (empty($current_password)) {
             $error = "Debe proporcionar la contraseña actual para cambiar la contraseña.";
-        } elseif ($current_password !== $usuario['contraseña']) {
+        } elseif (!password_verify($current_password, $usuario['contraseña'])) {
             $error = "La contraseña actual no es correcta.";
+        } elseif ($new_password !== $confirm_password) {
+            $error = "La nueva contraseña y la confirmación no coinciden.";
         } else {
-            // Actualizar contraseña
+            // Hashear la nueva contraseña antes de guardar
+            $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
             $sql_update = "UPDATE usuarios SET contraseña = ? WHERE id = ?";
             $stmt_update = $conex->prepare($sql_update);
-            $stmt_update->bind_param("si", $new_password, $id);
+            $stmt_update->bind_param("si", $hashed_new_password, $id);
             if ($stmt_update->execute()) {
                 $msg = "Contraseña actualizada correctamente.";
             } else {
@@ -51,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    
+
     // Si es estudiante y se proporciona un semestre, actualizarlo
     if ($usuario['id_rol'] == '3' && !empty($semestre)) {
         $sql_update = "UPDATE usuarios SET semestre = ? WHERE id = ?";
@@ -71,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    
+
     // Obtener la información actualizada del usuario
     if (!empty($msg)) {
         $stmt->execute();
