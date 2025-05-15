@@ -172,7 +172,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 5 -->
-                <a href="Simulacros/ver_todos_formularios.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="resultados/ver_todos_formularios.php" target="_blank" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
