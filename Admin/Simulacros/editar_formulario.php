@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titulo_nuevo = $_POST['titulo'] ?? '';
     $descripcion_nueva = $_POST['descripcion'] ?? '';
     $imagen_ruta = $imagen; // Mantener la imagen actual por defecto
-    
+
     // Procesar la imagen si se ha subido una nueva
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
         $carpeta_destino = "../../assets/src_simulacros/img_simulacros/";
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    
+
     // Validar datos
     if (empty($titulo_nuevo)) {
         $error = "El título del formulario no puede estar vacío.";
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Actualizar formulario
         $stmt_update = $conex->prepare("UPDATE formularios SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?");
         $stmt_update->bind_param("sssi", $titulo_nuevo, $descripcion_nueva, $imagen_ruta, $formulario_id);
-        
+
         if ($stmt_update->execute()) {
             $mensaje = "Formulario actualizado correctamente.";
             $titulo = $titulo_nuevo;
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = "Error al actualizar el formulario: " . $conex->error;
         }
-        
+
         $stmt_update->close();
     }
 }
@@ -93,7 +93,7 @@ if (isset($_POST['editar_pregunta'])) {
     $opcion_c = $_POST['opcion_c'] ?? '';
     $opcion_d = $_POST['opcion_d'] ?? '';
     $correcta = $_POST['correcta'] ?? '';
-    
+
     if (empty($enunciado) || empty($opcion_a) || empty($opcion_b) || empty($opcion_c) || empty($opcion_d) || empty($correcta)) {
         $error = "Todos los campos de la pregunta son obligatorios.";
     } else {
@@ -103,19 +103,19 @@ if (isset($_POST['editar_pregunta'])) {
             'c' => $opcion_c,
             'd' => $opcion_d
         ]);
-        
+
         $stmt_update_pregunta = $conex->prepare("UPDATE preguntas SET enunciado = ?, opciones = ?, correcta = ? WHERE id = ? AND formulario_id = ?");
         $stmt_update_pregunta->bind_param("sssii", $enunciado, $opciones, $correcta, $pregunta_id, $formulario_id);
-        
+
         if ($stmt_update_pregunta->execute()) {
             $mensaje = "Pregunta actualizada correctamente.";
-            
+
             // Actualizar la lista de preguntas
             $stmt_preguntas = $conex->prepare("SELECT id, enunciado, opciones, correcta FROM preguntas WHERE formulario_id = ?");
             $stmt_preguntas->bind_param("i", $formulario_id);
             $stmt_preguntas->execute();
             $result_preguntas = $stmt_preguntas->get_result();
-            
+
             $preguntas = [];
             while ($pregunta = $result_preguntas->fetch_assoc()) {
                 $preguntas[] = $pregunta;
@@ -124,7 +124,7 @@ if (isset($_POST['editar_pregunta'])) {
         } else {
             $error = "Error al actualizar la pregunta: " . $conex->error;
         }
-        
+
         $stmt_update_pregunta->close();
     }
 }
@@ -137,7 +137,7 @@ if (isset($_POST['agregar_pregunta'])) {
     $opcion_c = $_POST['nueva_opcion_c'] ?? '';
     $opcion_d = $_POST['nueva_opcion_d'] ?? '';
     $correcta = $_POST['nueva_correcta'] ?? '';
-    
+
     if (empty($enunciado) || empty($opcion_a) || empty($opcion_b) || empty($opcion_c) || empty($opcion_d) || empty($correcta)) {
         $error = "Todos los campos de la nueva pregunta son obligatorios.";
     } else {
@@ -147,19 +147,19 @@ if (isset($_POST['agregar_pregunta'])) {
             'c' => $opcion_c,
             'd' => $opcion_d
         ]);
-        
+
         $stmt_insert_pregunta = $conex->prepare("INSERT INTO preguntas (formulario_id, enunciado, opciones, correcta) VALUES (?, ?, ?, ?)");
         $stmt_insert_pregunta->bind_param("isss", $formulario_id, $enunciado, $opciones, $correcta);
-        
+
         if ($stmt_insert_pregunta->execute()) {
             $mensaje = "Pregunta agregada correctamente.";
-            
+
             // Actualizar la lista de preguntas
             $stmt_preguntas = $conex->prepare("SELECT id, enunciado, opciones, correcta FROM preguntas WHERE formulario_id = ?");
             $stmt_preguntas->bind_param("i", $formulario_id);
             $stmt_preguntas->execute();
             $result_preguntas = $stmt_preguntas->get_result();
-            
+
             $preguntas = [];
             while ($pregunta = $result_preguntas->fetch_assoc()) {
                 $preguntas[] = $pregunta;
@@ -168,7 +168,7 @@ if (isset($_POST['agregar_pregunta'])) {
         } else {
             $error = "Error al agregar la pregunta: " . $conex->error;
         }
-        
+
         $stmt_insert_pregunta->close();
     }
 }
@@ -345,7 +345,7 @@ if (isset($_POST['agregar_pregunta'])) {
             border-bottom: 1px solid var(--neutral);
             padding-bottom: 1.5rem;
         }
-        
+
         .title-actions {
             display: flex;
             justify-content: space-between;
@@ -354,7 +354,7 @@ if (isset($_POST['agregar_pregunta'])) {
             margin-bottom: 1rem;
             gap: 15px;
         }
-        
+
         .form-actions {
             display: flex;
             gap: 10px;
@@ -422,33 +422,33 @@ if (isset($_POST['agregar_pregunta'])) {
             min-height: 100px;
             resize: vertical;
         }
-        
+
         .image-upload-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        
+
         .current-image {
             padding: 15px;
             border: 1px solid var(--neutral);
             border-radius: var(--border-radius);
             background-color: var(--neutral-light);
         }
-        
+
         .current-image p {
             margin-bottom: 10px;
             font-weight: 600;
             color: var(--text-light);
         }
-        
+
         .img-preview {
             max-width: 100%;
             max-height: 200px;
             border-radius: 8px;
             box-shadow: var(--shadow-sm);
         }
-        
+
         .file-input-wrapper {
             display: flex;
             flex-direction: column;
@@ -536,7 +536,7 @@ if (isset($_POST['agregar_pregunta'])) {
             justify-content: space-between;
             margin-top: 2rem;
         }
-        
+
         .form-actions-bottom {
             display: flex;
             justify-content: flex-end;
@@ -546,7 +546,7 @@ if (isset($_POST['agregar_pregunta'])) {
             padding-top: 1.5rem;
             border-top: 1px solid var(--neutral);
         }
-        
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -592,29 +592,36 @@ if (isset($_POST['agregar_pregunta'])) {
             position: relative;
             animation: slideDown 0.3s ease-out forwards;
         }
-        
+
         @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        
+
         .alerta i:first-child {
             margin-right: 10px;
             font-size: 1.2rem;
         }
-        
+
         .alerta-exito {
             background-color: rgba(39, 174, 96, 0.1);
             border: 1px solid var(--success);
             color: var(--success);
         }
-        
+
         .alerta-error {
             background-color: rgba(178, 34, 34, 0.1);
             border: 1px solid var(--secondary);
             color: var(--secondary);
         }
-        
+
         .cerrar-alerta {
             position: absolute;
             right: 10px;
@@ -627,7 +634,7 @@ if (isset($_POST['agregar_pregunta'])) {
             opacity: 0.7;
             transition: var(--transition);
         }
-        
+
         .cerrar-alerta:hover {
             opacity: 1;
         }
@@ -707,38 +714,85 @@ if (isset($_POST['agregar_pregunta'])) {
             .header {
                 padding: 1rem;
             }
-            
+
             .university-logo {
                 font-size: 1.2rem;
             }
-            
+
             .contenedor {
                 margin: 15px;
                 padding: 25px;
                 border-radius: 10px;
             }
-            
+
             h2 {
                 font-size: 1.6rem;
             }
-            
+
             .option-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .radio-group {
                 flex-direction: column;
                 gap: 10px;
             }
-            
+
             .actions {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .actions .btn {
                 width: 100%;
             }
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
 
@@ -748,7 +802,7 @@ if (isset($_POST['agregar_pregunta'])) {
             // Función para manejar la apertura/cierre de los acordeones
             function handleAccordion() {
                 const headers = document.querySelectorAll('.accordion-header');
-                
+
                 headers.forEach(header => {
                     header.addEventListener('click', function() {
                         this.classList.toggle('active');
@@ -757,18 +811,18 @@ if (isset($_POST['agregar_pregunta'])) {
                     });
                 });
             }
-            
+
             // Función para cerrar las alertas
             function setupAlertClosing() {
                 const closeButtons = document.querySelectorAll('.cerrar-alerta');
-                
+
                 closeButtons.forEach(button => {
                     button.addEventListener('click', function() {
                         this.parentElement.style.display = 'none';
                     });
                 });
             }
-            
+
             // Inicializar las funciones
             handleAccordion();
             setupAlertClosing();
@@ -780,13 +834,15 @@ if (isset($_POST['agregar_pregunta'])) {
     <div class="bg-container"></div>
 
     <header class="header">
-    <div class="logo-space">
-                <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
-            </div>
-        <div class="mode-toggle">
-            <a href="../index_admin.php" class="btn btn-primary">
-                Inicio
-            </a>
+        <div class="logo-space">
+            <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
+        </div>
+        <div class="nav-controls">
+            <nav class="nav">
+                <div class="nav-list">
+                    <a class="nav-link" href="../index_admin.php">Inicio</a>
+                </div>
+            </nav>
         </div>
     </header>
 
@@ -800,7 +856,7 @@ if (isset($_POST['agregar_pregunta'])) {
                 </button>
             </div>
         <?php endif; ?>
-        
+
         <?php if (!empty($error)): ?>
             <div class="alerta alerta-error">
                 <i class="fas fa-exclamation-circle"></i>
@@ -829,12 +885,12 @@ if (isset($_POST['agregar_pregunta'])) {
                 <label for="titulo">Título del simulacro</label>
                 <input type="text" class="form-control" id="titulo" name="titulo" value="<?php echo htmlspecialchars($titulo); ?>" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4"><?php echo htmlspecialchars($descripcion); ?></textarea>
             </div>
-            
+
             <div class="form-group">
                 <label for="imagen">Imagen</label>
                 <div class="image-upload-container">
@@ -851,166 +907,166 @@ if (isset($_POST['agregar_pregunta'])) {
                 </div>
             </div>
 
-        <h3 class="section-title">Preguntas del simulacro</h3>
-        
-        <!-- Lista de preguntas existentes -->
-        <div class="accordion">
-            <?php foreach ($preguntas as $index => $pregunta): 
-                $opciones = json_decode($pregunta['opciones'], true);
-            ?>
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <span><?php echo ($index + 1) . '. ' . htmlspecialchars(substr($pregunta['enunciado'], 0, 60)) . (strlen($pregunta['enunciado']) > 60 ? '...' : ''); ?></span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="accordion-body">
-                        <form method="post" action="">
-                            <input type="hidden" name="pregunta_id" value="<?php echo $pregunta['id']; ?>">
-                            
-                            <div class="form-group">
-                                <label for="enunciado_<?php echo $pregunta['id']; ?>">Enunciado de la pregunta</label>
-                                <textarea class="form-control" id="enunciado_<?php echo $pregunta['id']; ?>" name="enunciado" rows="2" required><?php echo htmlspecialchars($pregunta['enunciado']); ?></textarea>
-                            </div>
-                            
-                            <div class="option-grid">
-                                <div class="form-group">
-                                    <label for="opcion_a_<?php echo $pregunta['id']; ?>">Opción A</label>
-                                    <input type="text" class="form-control" id="opcion_a_<?php echo $pregunta['id']; ?>" name="opcion_a" value="<?php echo htmlspecialchars($opciones['a']); ?>" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="opcion_b_<?php echo $pregunta['id']; ?>">Opción B</label>
-                                    <input type="text" class="form-control" id="opcion_b_<?php echo $pregunta['id']; ?>" name="opcion_b" value="<?php echo htmlspecialchars($opciones['b']); ?>" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="opcion_c_<?php echo $pregunta['id']; ?>">Opción C</label>
-                                    <input type="text" class="form-control" id="opcion_c_<?php echo $pregunta['id']; ?>" name="opcion_c" value="<?php echo htmlspecialchars($opciones['c']); ?>" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="opcion_d_<?php echo $pregunta['id']; ?>">Opción D</label>
-                                    <input type="text" class="form-control" id="opcion_d_<?php echo $pregunta['id']; ?>" name="opcion_d" value="<?php echo htmlspecialchars($opciones['d']); ?>" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Respuesta correcta</label>
-                                <div class="radio-group">
-                                    <div class="radio-option">
-                                        <input type="radio" id="correcta_a_<?php echo $pregunta['id']; ?>" name="correcta" value="a" <?php if ($pregunta['correcta'] == 'a') echo 'checked'; ?> required>
-                                        <label for="correcta_a_<?php echo $pregunta['id']; ?>">A</label>
-                                    </div>
-                                    
-                                    <div class="radio-option">
-                                        <input type="radio" id="correcta_b_<?php echo $pregunta['id']; ?>" name="correcta" value="b" <?php if ($pregunta['correcta'] == 'b') echo 'checked'; ?>>
-                                        <label for="correcta_b_<?php echo $pregunta['id']; ?>">B</label>
-                                    </div>
-                                    
-                                    <div class="radio-option">
-                                        <input type="radio" id="correcta_c_<?php echo $pregunta['id']; ?>" name="correcta" value="c" <?php if ($pregunta['correcta'] == 'c') echo 'checked'; ?>>
-                                        <label for="correcta_c_<?php echo $pregunta['id']; ?>">C</label>
-                                    </div>
-                                    
-                                    <div class="radio-option">
-                                        <input type="radio" id="correcta_d_<?php echo $pregunta['id']; ?>" name="correcta" value="d" <?php if ($pregunta['correcta'] == 'd') echo 'checked'; ?>>
-                                        <label for="correcta_d_<?php echo $pregunta['id']; ?>">D</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="actions">
-                                <button type="submit" name="editar_pregunta" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Guardar Pregunta
-                                </button>
-                                
-                                <a href="eliminar_pregunta.php?id=<?php echo $pregunta['id']; ?>&formulario_id=<?php echo $formulario_id; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta pregunta?');">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        
-        <!-- Formulario para agregar nueva pregunta -->
-        <h3 class="section-title">Añadir nueva pregunta</h3>
-        <div class="card">
-            <form method="post" action="">
-                <div class="form-group">
-                    <label for="nuevo_enunciado">Enunciado de la pregunta</label>
-                    <textarea class="form-control" id="nuevo_enunciado" name="nuevo_enunciado" rows="2" required></textarea>
-                </div>
-                
-                <div class="option-grid">
-                    <div class="form-group">
-                        <label for="nueva_opcion_a">Opción A</label>
-                        <input type="text" class="form-control" id="nueva_opcion_a" name="nueva_opcion_a" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="nueva_opcion_b">Opción B</label>
-                        <input type="text" class="form-control" id="nueva_opcion_b" name="nueva_opcion_b" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="nueva_opcion_c">Opción C</label>
-                        <input type="text" class="form-control" id="nueva_opcion_c" name="nueva_opcion_c" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="nueva_opcion_d">Opción D</label>
-                        <input type="text" class="form-control" id="nueva_opcion_d" name="nueva_opcion_d" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Respuesta correcta</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="nueva_correcta_a" name="nueva_correcta" value="a" required>
-                            <label for="nueva_correcta_a">A</label>
-                        </div>
-                        
-                        <div class="radio-option">
-                            <input type="radio" id="nueva_correcta_b" name="nueva_correcta" value="b">
-                            <label for="nueva_correcta_b">B</label>
-                        </div>
-                        
-                        <div class="radio-option">
-                            <input type="radio" id="nueva_correcta_c" name="nueva_correcta" value="c">
-                            <label for="nueva_correcta_c">C</label>
-                        </div>
-                        
-                        <div class="radio-option">
-                            <input type="radio" id="nueva_correcta_d" name="nueva_correcta" value="d">
-                            <label for="nueva_correcta_d">D</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="actions">
-                    <button type="submit" name="agregar_pregunta" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Añadir Pregunta
-                    </button>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Botones de guardar cambios y cancelar -->
-        <div class="form-actions-bottom">
-            <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="btn btn-outline">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
-            <button type="submit" form="form-datos-generales" class="btn btn-primary">
-                <i class="fas fa-save"></i> Guardar Cambios
-            </button>
-        </div>
+            <h3 class="section-title">Preguntas del simulacro</h3>
 
-        <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="back-link">
-            <i class="fas fa-arrow-left"></i> Volver al simulacro
-        </a>
+            <!-- Lista de preguntas existentes -->
+            <div class="accordion">
+                <?php foreach ($preguntas as $index => $pregunta):
+                    $opciones = json_decode($pregunta['opciones'], true);
+                ?>
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span><?php echo ($index + 1) . '. ' . htmlspecialchars(substr($pregunta['enunciado'], 0, 60)) . (strlen($pregunta['enunciado']) > 60 ? '...' : ''); ?></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-body">
+                            <form method="post" action="">
+                                <input type="hidden" name="pregunta_id" value="<?php echo $pregunta['id']; ?>">
+
+                                <div class="form-group">
+                                    <label for="enunciado_<?php echo $pregunta['id']; ?>">Enunciado de la pregunta</label>
+                                    <textarea class="form-control" id="enunciado_<?php echo $pregunta['id']; ?>" name="enunciado" rows="2" required><?php echo htmlspecialchars($pregunta['enunciado']); ?></textarea>
+                                </div>
+
+                                <div class="option-grid">
+                                    <div class="form-group">
+                                        <label for="opcion_a_<?php echo $pregunta['id']; ?>">Opción A</label>
+                                        <input type="text" class="form-control" id="opcion_a_<?php echo $pregunta['id']; ?>" name="opcion_a" value="<?php echo htmlspecialchars($opciones['a']); ?>" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="opcion_b_<?php echo $pregunta['id']; ?>">Opción B</label>
+                                        <input type="text" class="form-control" id="opcion_b_<?php echo $pregunta['id']; ?>" name="opcion_b" value="<?php echo htmlspecialchars($opciones['b']); ?>" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="opcion_c_<?php echo $pregunta['id']; ?>">Opción C</label>
+                                        <input type="text" class="form-control" id="opcion_c_<?php echo $pregunta['id']; ?>" name="opcion_c" value="<?php echo htmlspecialchars($opciones['c']); ?>" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="opcion_d_<?php echo $pregunta['id']; ?>">Opción D</label>
+                                        <input type="text" class="form-control" id="opcion_d_<?php echo $pregunta['id']; ?>" name="opcion_d" value="<?php echo htmlspecialchars($opciones['d']); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Respuesta correcta</label>
+                                    <div class="radio-group">
+                                        <div class="radio-option">
+                                            <input type="radio" id="correcta_a_<?php echo $pregunta['id']; ?>" name="correcta" value="a" <?php if ($pregunta['correcta'] == 'a') echo 'checked'; ?> required>
+                                            <label for="correcta_a_<?php echo $pregunta['id']; ?>">A</label>
+                                        </div>
+
+                                        <div class="radio-option">
+                                            <input type="radio" id="correcta_b_<?php echo $pregunta['id']; ?>" name="correcta" value="b" <?php if ($pregunta['correcta'] == 'b') echo 'checked'; ?>>
+                                            <label for="correcta_b_<?php echo $pregunta['id']; ?>">B</label>
+                                        </div>
+
+                                        <div class="radio-option">
+                                            <input type="radio" id="correcta_c_<?php echo $pregunta['id']; ?>" name="correcta" value="c" <?php if ($pregunta['correcta'] == 'c') echo 'checked'; ?>>
+                                            <label for="correcta_c_<?php echo $pregunta['id']; ?>">C</label>
+                                        </div>
+
+                                        <div class="radio-option">
+                                            <input type="radio" id="correcta_d_<?php echo $pregunta['id']; ?>" name="correcta" value="d" <?php if ($pregunta['correcta'] == 'd') echo 'checked'; ?>>
+                                            <label for="correcta_d_<?php echo $pregunta['id']; ?>">D</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="actions">
+                                    <button type="submit" name="editar_pregunta" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Guardar Pregunta
+                                    </button>
+
+                                    <a href="eliminar_pregunta.php?id=<?php echo $pregunta['id']; ?>&formulario_id=<?php echo $formulario_id; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta pregunta?');">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Formulario para agregar nueva pregunta -->
+            <h3 class="section-title">Añadir nueva pregunta</h3>
+            <div class="card">
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label for="nuevo_enunciado">Enunciado de la pregunta</label>
+                        <textarea class="form-control" id="nuevo_enunciado" name="nuevo_enunciado" rows="2" required></textarea>
+                    </div>
+
+                    <div class="option-grid">
+                        <div class="form-group">
+                            <label for="nueva_opcion_a">Opción A</label>
+                            <input type="text" class="form-control" id="nueva_opcion_a" name="nueva_opcion_a" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nueva_opcion_b">Opción B</label>
+                            <input type="text" class="form-control" id="nueva_opcion_b" name="nueva_opcion_b" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nueva_opcion_c">Opción C</label>
+                            <input type="text" class="form-control" id="nueva_opcion_c" name="nueva_opcion_c" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nueva_opcion_d">Opción D</label>
+                            <input type="text" class="form-control" id="nueva_opcion_d" name="nueva_opcion_d" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Respuesta correcta</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="nueva_correcta_a" name="nueva_correcta" value="a" required>
+                                <label for="nueva_correcta_a">A</label>
+                            </div>
+
+                            <div class="radio-option">
+                                <input type="radio" id="nueva_correcta_b" name="nueva_correcta" value="b">
+                                <label for="nueva_correcta_b">B</label>
+                            </div>
+
+                            <div class="radio-option">
+                                <input type="radio" id="nueva_correcta_c" name="nueva_correcta" value="c">
+                                <label for="nueva_correcta_c">C</label>
+                            </div>
+
+                            <div class="radio-option">
+                                <input type="radio" id="nueva_correcta_d" name="nueva_correcta" value="d">
+                                <label for="nueva_correcta_d">D</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" name="agregar_pregunta" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Añadir Pregunta
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Botones de guardar cambios y cancelar -->
+            <div class="form-actions-bottom">
+                <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" form="form-datos-generales" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+
+            <a href="ver_formulario.php?id=<?php echo $formulario_id; ?>" class="back-link">
+                <i class="fas fa-arrow-left"></i> Volver al simulacro
+            </a>
     </div>
 
     <footer class="footer">
