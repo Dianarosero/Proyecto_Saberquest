@@ -1,3 +1,14 @@
+<?php
+session_start();
+include("../base de datos/con_db.php");
+
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../index.php');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

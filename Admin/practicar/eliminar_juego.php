@@ -2,6 +2,12 @@
 session_start();
 include("../../base de datos/con_db.php");
 
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
 // Verificar si se recibió el ID
 if (!isset($_POST['id']) || empty($_POST['id'])) {
     $_SESSION['error_message'] = "ID de juego no proporcionado.";

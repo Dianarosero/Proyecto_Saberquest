@@ -1,5 +1,13 @@
 <?php
+session_start();
 include("../../base de datos/con_db.php");
+
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
 $formulario_id = $_GET['id'] ?? 0;
 $mensaje = '';
 $error = '';
@@ -840,7 +848,7 @@ if (isset($_POST['agregar_pregunta'])) {
         <div class="nav-controls">
             <nav class="nav">
                 <div class="nav-list">
-                    <a class="nav-link" href="../index_admin.php">Inicio</a>
+                    <a class="nav-link" href="../index_admin.php#projects">Inicio</a>
                 </div>
             </nav>
         </div>

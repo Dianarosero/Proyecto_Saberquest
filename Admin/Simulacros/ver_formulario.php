@@ -1,5 +1,12 @@
 <?php
+session_start();
 include("../../base de datos/con_db.php");
+
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
 $formulario_id = $_GET['id'] ?? 0;
 
 // Obtener datos del formulario
@@ -856,7 +863,7 @@ $result = $stmt->get_result();
             <div class="nav-controls">
                 <nav class="nav">
                     <div class="nav-list">
-                        <a class="nav-link" href="../index_admin.php">Inicio</a>
+                        <a class="nav-link" href="../index_admin.php#projects">Inicio</a>
                     </div>
                 </nav>
             </div>
@@ -1018,7 +1025,7 @@ $result = $stmt->get_result();
             <i class="fas fa-exclamation-triangle"></i>
             <h2>Simulacro no encontrado</h2>
             <p>Lo sentimos, el simulacro solicitado no existe o ha sido eliminado.</p>
-            <a href="index.php" class="btn btn-primary">
+            <a href="../index_admin.php#projects" class="btn btn-primary">
                 <i class="fas fa-home"></i> Volver al inicio
             </a>
         </div>

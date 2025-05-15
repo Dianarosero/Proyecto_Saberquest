@@ -2,6 +2,12 @@
 session_start();
 include("../../base de datos/con_db.php");
 
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
 // Consulta para obtener todos los
 $sql = "SELECT id, titulo, descripcion, imagen FROM formularios ORDER BY id DESC";
 $result = $conex->query($sql);
@@ -463,7 +469,7 @@ function obtenerImagenPredeterminada($id)
             <div class="nav-controls">
                 <nav class="nav">
                     <div class="nav-list">
-                        <a class="nav-link" href="../index_admin.php">Inicio</a>
+                        <a class="nav-link" href="../index_admin.php#projects">Inicio</a>
                     </div>
                 </nav>
             </div>

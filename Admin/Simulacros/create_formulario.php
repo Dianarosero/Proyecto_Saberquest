@@ -1,5 +1,14 @@
 <?php
 session_start();
+include("../../base de datos/con_db.php");
+
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
+session_start();
 $mensaje = $_SESSION['mensaje'] ?? '';
 $mensaje_tipo = $_SESSION['mensaje_tipo'] ?? '';
 unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
@@ -33,7 +42,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 
                 </div>
             </div>
-            <a href="../index_admin.php" class="btn-inicio">Inicio</a>
+            <a href="../index_admin.php#projects" class="btn-inicio">Inicio</a>
         </div>
     </header>
 

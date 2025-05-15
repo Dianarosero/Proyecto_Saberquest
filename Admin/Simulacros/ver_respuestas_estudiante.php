@@ -3,7 +3,7 @@ session_start();
 include("../../base de datos/con_db.php");
 
 // Validar que el usuario esté logueado y sea profesor
-if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
     header('Location: ../../index.php');
     exit;
 }
@@ -793,7 +793,7 @@ $stmt->close();
             <span>Universidad CESMAG</span>
         </div>
         <div class="header-actions">
-            <a href="formularios_profesor.php" class="btn btn-outline-light">
+            <a href="index_admin.php#projects" class="btn btn-outline-light">
                 <i class="fas fa-home"></i> Inicio
             </a>
         </div>

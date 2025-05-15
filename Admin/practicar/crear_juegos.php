@@ -1,6 +1,12 @@
 <?php
 session_start();
 include("../../base de datos/con_db.php");
+
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +36,7 @@ include("../../base de datos/con_db.php");
                 </div>                
                 <nav class="nav">
                     <ul class="nav-list">
-                        <li><a href="../index_admin.php" class="nav-link">Inicio</a></li>
+                        <li><a href="../index_admin.php#projects" class="nav-link">Inicio</a></li>
                     </ul>
                 </nav>
                 <!-- Mobile menu toggle -->
