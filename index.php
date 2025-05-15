@@ -563,8 +563,8 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                     <div class="form-group">
                         <label for="fullName">Usuario</label>
                         <input id="fullName" type="text"  name="usuario" placeholder="INGRESA TU USUARIO"
-                            required oninput="this.value = this.value.toUpperCase()"
-                            style="text-transform: uppercase;" />
+                            required"
+                             />
                         <span class="error-message" id="fullName-error"></span>
                     </div>
                     <div class="form-group">
