@@ -2,6 +2,12 @@
 session_start();
 include("../../base de datos/con_db.php");
 
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
 // Verificar si se ha proporcionado un ID de usuario
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: usuarios.php");
@@ -108,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>                
                 <nav class="nav">
                     <ul class="nav-list">
-                        <li><a href="../index_admin.php" class="nav-link">Inicio</a></li>
+                        <li><a href="../index_admin.php#projects" class="nav-link">Inicio</a></li>
                         <li><a href="usuarios.php" class="nav-link">Volver a Usuarios</a></li>
                     </ul>
                 </nav>
@@ -176,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <i class="fas fa-save btn-icon"></i>Guardar Cambios
                     </button>
                     
-                    <a href="eliminar_usuario.php?id=<?php echo $usuario['id']; ?>" class="btn btn-secondary">
+                    <a href="eliminar_usuarios.php?id=<?php echo $usuario['id']; ?>" class="btn btn-secondary">
                         <i class="fas fa-trash-alt btn-icon"></i>Eliminar
                     </a>
                     

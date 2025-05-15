@@ -8,7 +8,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
     exit;
 }
 
-session_start();
 $mensaje = $_SESSION['mensaje'] ?? '';
 $mensaje_tipo = $_SESSION['mensaje_tipo'] ?? '';
 unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);

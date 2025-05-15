@@ -2,6 +2,12 @@
 session_start();
 include("../../base de datos/con_db.php");
 
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
+    header('Location: ../../index.php');
+    exit;
+}
+
 // Obtener filtros del formulario
 $filtro_nombre = isset($_GET['filtro_nombre']) ? trim($_GET['filtro_nombre']) : '';
 $filtro_codigo = isset($_GET['filtro_codigo']) ? trim($_GET['filtro_codigo']) : '';
@@ -67,7 +73,7 @@ $result_docentes = $conex->query($sql_docentes);
                 </div>                
                 <nav class="nav">
                     <ul class="nav-list">
-                        <li><a href="../index_admin.php" class="nav-link">Inicio</a></li>
+                        <li><a href="../index_admin.php#projects" class="nav-link">Inicio</a></li>
                     </ul>
                 </nav>
             </div>
