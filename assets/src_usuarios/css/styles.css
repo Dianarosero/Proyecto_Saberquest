@@ -1,7 +1,8 @@
 :root {
     --primary: #003366;         /* Azul oscuro */
     --secondary: #B22222;       /* Rojo oscuro */
-    --accent: #FFD700;          /* Dorado */
+    --accent: #FFD700; 
+    --accent-btn: #ffffff;          /* Dorado */
     --background: #FFFFFF;      /* Blanco */
     --text: #333333;            /* Gris oscuro */
     --text-inverse: #FFFFFF;    /* Blanco */
@@ -89,7 +90,7 @@ a {
 }
 
 .nav-link:hover {
-    color: var(--accent);
+    color: var(--accent-btn);
 }
 
 .nav-link::after {
@@ -99,7 +100,7 @@ a {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--accent);
+    background-color: var(--accent-btn);
     transition: var(--transition);
 }
 
