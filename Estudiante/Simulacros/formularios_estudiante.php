@@ -512,15 +512,6 @@ function obtenerImagenPredeterminada($id)
         </div>
         <section class="forms-container">
             <!-- Create New Form Card -->
-            <div class="card create-form-card" onclick="window.location.href='create_formulario.php'">
-                <div class="card-content">
-                    <div class="create-icon">
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <h2>Crear un Simulacro</h2>
-                    <p>Diseña un nuevo simulacro personalizado</p>
-                </div>
-            </div>
 
             <!-- Existing Forms Grid -->
             <?php if ($result && $result->num_rows > 0): ?>
