@@ -548,35 +548,32 @@ $formularios_agrupados = [
             <div class="creador-section">
                 <div class="formularios-grid">
                     <?php foreach ($grupo['formularios'] as $form): ?>
-                    <div class="form-card <?php echo !$form['tiene_respuestas'] ? 'disabled-card' : ''; ?>">
-                        <div class="card-image" style="background-image: url('<?php echo htmlspecialchars(!empty($form['imagen']) ? $form['imagen'] : 'img/default-bg.svg'); ?>')">
-                            <div class="card-overlay"></div>
-                            <div class="card-badge <?php echo $form['tipo_badge']; ?>">
-                                <?php echo $form['etiqueta_badge']; ?>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h3 class="card-title"><?php echo htmlspecialchars($form['titulo']); ?></h3>
-                            <p class="card-description"><?php echo htmlspecialchars(mb_strimwidth($form['descripcion'], 0, 120, '...')); ?></p>
-                        </div>
-                        <div class="card-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Preguntas:</span>
-                                <span class="badge badge-info"><?php echo $form['total_preguntas']; ?></span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Respondido por:</span>
-                                <span class="badge badge-<?php echo $form['total_respondidos'] > 0 ? 'success' : 'warning'; ?>">
-                                    <?php echo $form['total_respondidos']; ?> estudiantes
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <a href="resultados_profesor.php?id=<?php echo $form['id']; ?>" class="btn btn-primary btn-sm <?php echo !$form['tiene_respuestas'] ? 'btn-disabled' : ''; ?>">
-                                <i class="fas fa-chart-bar"></i> Ver resultados
-                            </a>
-                        </div>
-                    </div>
+                        <div class="form-card <?php echo !$form['tiene_respuestas'] ? 'disabled-card' : ''; ?>">
+    <div class="card-image" style="background-image: url('<?php echo htmlspecialchars(!empty($form['imagen']) ? $form['imagen'] : 'Captura de pantalla 2023-06-26 211347.png'); ?>')">
+        <div class="card-overlay"></div>
+    </div>
+    <div class="card-content">
+        <h3 class="card-title"><?php echo htmlspecialchars($form['titulo']); ?></h3>
+        <p class="card-description"><?php echo htmlspecialchars(mb_strimwidth($form['descripcion'], 0, 120, '...')); ?></p>
+    </div>
+    <div class="card-stats">
+        <div class="stat-item">
+            <span class="stat-label">Preguntas:</span>
+            <span class="badge badge-info"><?php echo $form['total_preguntas']; ?></span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Respondido por:</span>
+            <span class="badge badge-<?php echo $form['total_respondidos'] > 0 ? 'success' : 'warning'; ?>">
+                <?php echo $form['total_respondidos']; ?> estudiantes
+            </span>
+        </div>
+    </div>
+    <div class="card-actions">
+        <a href="resultados_profesor.php?id=<?php echo $form['id']; ?>" class="btn btn-primary btn-sm <?php echo !$form['tiene_respuestas'] ? 'btn-disabled' : ''; ?>">
+            <i class="fas fa-chart-bar"></i> Ver resultados
+        </a>
+    </div>
+</div>
                     <?php endforeach; ?>
                 </div>
             </div>

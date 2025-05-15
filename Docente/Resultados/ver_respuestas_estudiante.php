@@ -105,82 +105,6 @@ while ($row = $result->fetch_assoc()) {
     $preguntas[] = $row;
 }
 $stmt->close();
-
-// Función para exportar resultados del estudiante a PDF
-function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcentaje, $estadisticas, $fecha_formateada) {
-    $pdf_content = "
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='UTF-8'>
-    <title>Resultados de {$estudiante['nombre']} - {$formulario['titulo']}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #003366; border-bottom: 2px solid #B22222; padding-bottom: 10px; }
-        h2 { color: #003366; margin-top: 30px; }
-        .student-info { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0; }
-        .question { margin: 25px 0; border-left: 4px solid #ddd; padding-left: 15px; }
-        .question.correct { border-left-color: #27ae60; }
-        .question.incorrect { border-left-color: #c62828; }
-        .options { margin: 10px 0; }
-        .option { padding: 5px 10px; margin: 5px 0; }
-        .correct-option { background-color: rgba(39, 174, 96, 0.1); color: #27ae60; }
-        .incorrect-option { background-color: rgba(198, 40, 40, 0.1); color: #c62828; text-decoration: line-through; }
-        .result-info { margin-top: 10px; font-weight: bold; }
-        .result-info.correct { color: #27ae60; }
-        .result-info.incorrect { color: #c62828; }
-    </style>
-</head>
-<body>
-    <h1>Resultados de " . htmlspecialchars($estudiante['nombre']) . "</h1>
-    <div class='student-info'>
-        <p><strong>Formulario:</strong> " . htmlspecialchars($formulario['titulo']) . "</p>
-        <p><strong>Fecha de respuesta:</strong> " . $fecha_formateada . "</p>
-        <p><strong>Calificación:</strong> " . $estadisticas['respuestas_correctas'] . "/" . $estadisticas['total_preguntas'] . " (" . $porcentaje . "%)</p>
-    </div>
-    
-    <h2>Detalle de respuestas</h2>";
-    
-    foreach ($preguntas as $index => $pregunta) {
-        $question_class = $pregunta['es_correcta'] ? 'correct' : 'incorrect';
-        $pdf_content .= "
-    <div class='question {$question_class}'>
-        <h3>" . ($index + 1) . ". " . htmlspecialchars($pregunta['enunciado']) . "</h3>
-        <div class='options'>";
-        
-        foreach (['a', 'b', 'c', 'd'] as $letra) {
-            $option_class = '';
-            if ($letra == $pregunta['correcta']) {
-                $option_class = 'correct-option';
-            }
-            if ($letra == $pregunta['respuesta_usuario'] && !$pregunta['es_correcta']) {
-                $option_class = 'incorrect-option';
-            }
-            
-            $pdf_content .= "
-            <div class='option {$option_class}'>
-                {$letra}) " . htmlspecialchars($pregunta['opciones'][$letra]) . "
-            </div>";
-        }
-        
-        $result_class = $pregunta['es_correcta'] ? 'correct' : 'incorrect';
-        $pdf_content .= "
-        </div>
-        <div class='result-info {$result_class}'>
-            Respuesta del estudiante: " . strtoupper($pregunta['respuesta_usuario']) . " - " . ($pregunta['es_correcta'] ? "Correcta" : "Incorrecta") . "
-        </div>
-    </div>";
-    }
-    
-    $pdf_content .= "
-    <div style='margin-top: 30px; font-size: 12px; text-align: center; color: #666;'>
-        <p>Generado el " . date('d/m/Y H:i') . " - Universidad CESMAG</p>
-    </div>
-</body>
-</html>";
-    
-    return $pdf_content;
-}
 ?>
 
 <!DOCTYPE html>
@@ -857,11 +781,6 @@ function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcen
                     deleteModal.style.display = 'none';
                 }
             });
-            
-            // Export PDF functionality
-            document.getElementById('export-pdf').addEventListener('click', function() {
-                document.getElementById('pdf-form').submit();
-            });
         });
     </script>
 </head>
@@ -964,10 +883,6 @@ function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcen
                     <a href="resultados_profesor.php?id=<?php echo $formulario_id; ?>" class="btn btn-outline">
                         <i class="fas fa-arrow-left"></i> Volver a resultados
                     </a>
-                    
-                    <button id="export-pdf" class="btn btn-accent">
-                        <i class="fas fa-file-pdf"></i> Exportar a PDF
-                    </button>
                 </div>
                 
                 <button class="btn btn-danger delete-student-btn">
@@ -998,13 +913,6 @@ function generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcen
             </div>
         </div>
     </div>
-    
-    <!-- Formulario para exportar a PDF -->
-    <form id="pdf-form" method="post" action="generar_pdf_estudiante.php" style="display: none;">
-        <input type="hidden" name="form_id" value="<?php echo $formulario_id; ?>">
-        <input type="hidden" name="user_id" value="<?php echo $estudiante_id; ?>">
-        <input type="hidden" name="pdf_content" value="<?php echo htmlspecialchars(generateStudentPdfContent($formulario, $estudiante, $preguntas, $porcentaje, $estadisticas, $fecha_formateada)); ?>">
-    </form>
     
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>

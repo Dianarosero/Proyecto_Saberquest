@@ -9,21 +9,28 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
 }
 
 $usuario_id = $_SESSION['usuario_id'];
-$formulario_id = $_GET['id'] ?? 0;
+$formulario_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Verificar que el formulario existe y pertenece al profesor
-// Ejemplo de consulta sin filtro creador_id
+// Validar que formulario_id sea un número válido
+if ($formulario_id <= 0) {
+    $_SESSION['error'] = "ID de formulario no válido.";
+    header('Location: ver_todos_formularios.php');
+    exit;
+}
+
+// Verificar que el formulario existe
 $stmt = $conex->prepare("
     SELECT id, titulo, descripcion, imagen, mostrar_respuestas
-    FROM formularios 
-    
+    FROM formularios
+    WHERE id = ?
 ");
-
+$stmt->bind_param("i", $formulario_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo "Formulario no encontrado.";
+    $_SESSION['error'] = "Formulario no encontrado.";
+    header('Location: ver_todos_formularios.php');
     exit;
 }
 
@@ -36,7 +43,7 @@ if (isset($_POST['reset_form']) && $_POST['reset_form'] == 1) {
     $stmt->bind_param("i", $formulario_id);
     $stmt->execute();
     $stmt->close();
-    
+
     // Redirigir para evitar reenvío del formulario
     header("Location: resultados_profesor.php?id=$formulario_id&reset=success");
     exit;
@@ -49,7 +56,7 @@ if (isset($_POST['delete_user_responses']) && isset($_POST['user_id'])) {
     $stmt->bind_param("ii", $formulario_id, $user_id);
     $stmt->execute();
     $stmt->close();
-    
+
     // Redirigir para evitar reenvío del formulario
     header("Location: resultados_profesor.php?id=$formulario_id&delete=success");
     exit;
@@ -106,10 +113,10 @@ $rangos_calificacion = [
 
 while ($row = $result->fetch_assoc()) {
     // Calcular porcentaje de aciertos
-    $porcentaje = ($row['total_preguntas'] > 0) 
-        ? round(($row['respuestas_correctas'] / $row['total_preguntas']) * 100) 
+    $porcentaje = ($row['total_preguntas'] > 0)
+        ? round(($row['respuestas_correctas'] / $row['total_preguntas']) * 100)
         : 0;
-        
+
     // Asignar clase de rendimiento según porcentaje
     $clase_rendimiento = '';
     if ($porcentaje >= 80) {
@@ -125,15 +132,15 @@ while ($row = $result->fetch_assoc()) {
         $clase_rendimiento = 'rendimiento-bajo';
         $rangos_calificacion['deficiente']++;
     }
-    
+
     // Formatear fecha
     $fecha = new DateTime($row['fecha_respuesta']);
     $fecha_formateada = $fecha->format('d/m/Y H:i');
-    
+
     $row['porcentaje'] = $porcentaje;
     $row['clase_rendimiento'] = $clase_rendimiento;
     $row['fecha_formateada'] = $fecha_formateada;
-    
+
     $estudiantes[] = $row;
 }
 $stmt->close();
@@ -159,10 +166,10 @@ $result = $stmt->get_result();
 
 $preguntas_analisis = [];
 while ($row = $result->fetch_assoc()) {
-    $row['porcentaje_aciertos'] = ($row['total_respuestas'] > 0) 
-        ? round(($row['respuestas_correctas'] / $row['total_respuestas']) * 100) 
+    $row['porcentaje_aciertos'] = ($row['total_respuestas'] > 0)
+        ? round(($row['respuestas_correctas'] / $row['total_respuestas']) * 100)
         : 0;
-        
+
     // Determinar la dificultad
     if ($row['porcentaje_aciertos'] <= 30) {
         $row['dificultad'] = 'Difícil';
@@ -174,99 +181,10 @@ while ($row = $result->fetch_assoc()) {
         $row['dificultad'] = 'Fácil';
         $row['clase_dificultad'] = 'facil';
     }
-    
+
     $preguntas_analisis[] = $row;
 }
 $stmt->close();
-
-// Función para exportar a PDF
-function generatePdfContent($formulario, $estudiantes, $preguntas_analisis, $stats) {
-    $pdf_content = "
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset='UTF-8'>
-    <title>Resultados - {$formulario['titulo']}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #003366; border-bottom: 2px solid #B22222; padding-bottom: 10px; }
-        h2 { color: #003366; margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; color: #003366; }
-        .highlight { background-color: #f9f9f9; }
-        .stats { margin-bottom: 30px; }
-        .stats p { margin: 5px 0; }
-        .dificil { color: #c62828; }
-        .media { color: #f39c12; }
-        .facil { color: #27ae60; }
-    </style>
-</head>
-<body>
-    <h1>Resultados: " . htmlspecialchars($formulario['titulo']) . "</h1>
-    <p>" . htmlspecialchars($formulario['descripcion']) . "</p>
-    
-    <div class='stats'>
-        <h2>Estadísticas generales</h2>
-        <p><strong>Total de estudiantes:</strong> " . $stats['total_estudiantes'] . "</p>
-        <p><strong>Promedio de aciertos:</strong> " . round($stats['promedio_aciertos'], 1) . "%</p>
-        <p><strong>Total de preguntas:</strong> " . $stats['total_preguntas'] . "</p>
-    </div>
-    
-    <h2>Resultados por estudiante</h2>
-    <table>
-        <tr>
-            <th>#</th>
-            <th>Nombre</th>
-            <th>Calificación</th>
-            <th>Fecha</th>
-        </tr>";
-    
-    foreach ($estudiantes as $index => $est) {
-        $row_class = ($index % 2 == 0) ? 'highlight' : '';
-        $pdf_content .= "
-        <tr class='$row_class'>
-            <td>" . ($index + 1) . "</td>
-            <td>" . htmlspecialchars($est['nombre']) . "</td>
-            <td>" . $est['respuestas_correctas'] . "/" . $est['total_preguntas'] . " (" . $est['porcentaje'] . "%)</td>
-            <td>" . $est['fecha_formateada'] . "</td>
-        </tr>";
-    }
-    
-    $pdf_content .= "
-    </table>
-    
-    <h2>Análisis de preguntas</h2>
-    <table>
-        <tr>
-            <th>#</th>
-            <th>Enunciado</th>
-            <th>Dificultad</th>
-            <th>Aciertos</th>
-        </tr>";
-    
-    foreach ($preguntas_analisis as $index => $preg) {
-        $row_class = ($index % 2 == 0) ? 'highlight' : '';
-        $pdf_content .= "
-        <tr class='$row_class'>
-            <td>" . ($index + 1) . "</td>
-            <td>" . htmlspecialchars($preg['enunciado']) . "</td>
-            <td class='" . $preg['clase_dificultad'] . "'>" . $preg['dificultad'] . "</td>
-            <td>" . $preg['respuestas_correctas'] . "/" . $preg['total_respuestas'] . " (" . $preg['porcentaje_aciertos'] . "%)</td>
-        </tr>";
-    }
-    
-    $pdf_content .= "
-    </table>
-    
-    <div style='margin-top: 30px; font-size: 12px; text-align: center; color: #666;'>
-        <p>Generado el " . date('d/m/Y H:i') . " - Universidad CESMAG</p>
-    </div>
-</body>
-</html>";
-    
-    return $pdf_content;
-}
 
 // Determinar clases para las estadísticas
 $promedio_class = '';
@@ -283,6 +201,7 @@ if ($stats['promedio_aciertos'] >= 80) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -291,7 +210,8 @@ if ($stats['promedio_aciertos'] >= 80) {
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -322,7 +242,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--neutral-light);
@@ -333,7 +253,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             min-height: 100vh;
             line-height: 1.6;
         }
-        
+
         .bg-container {
             position: fixed;
             top: 0;
@@ -348,7 +268,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             opacity: 0.12;
             z-index: -1;
         }
-        
+
         .header {
             background-color: var(--primary);
             color: white;
@@ -363,28 +283,28 @@ if ($stats['promedio_aciertos'] >= 80) {
             z-index: 100;
             transition: var(--transition);
         }
-        
+
         .header:hover {
             box-shadow: var(--shadow-lg);
         }
-        
+
         .university-logo {
             font-size: 1.5rem;
             font-weight: 700;
             display: flex;
             align-items: center;
         }
-        
+
         .university-logo i {
             margin-right: 10px;
             color: var(--accent);
         }
-        
+
         .header-actions {
             display: flex;
             gap: 10px;
         }
-        
+
         .main-container {
             max-width: 1200px;
             width: 100%;
@@ -392,7 +312,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             padding: 0 1rem;
             flex: 1;
         }
-        
+
         .contenedor {
             background: var(--background);
             border-radius: var(--border-radius);
@@ -401,11 +321,11 @@ if ($stats['promedio_aciertos'] >= 80) {
             margin-bottom: 2rem;
             transition: var(--transition);
         }
-        
+
         .contenedor:hover {
             box-shadow: var(--shadow-lg);
         }
-        
+
         .page-title {
             margin-bottom: 2rem;
             color: var(--primary);
@@ -413,7 +333,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             position: relative;
             display: inline-block;
         }
-        
+
         .page-title::after {
             content: '';
             position: absolute;
@@ -424,30 +344,30 @@ if ($stats['promedio_aciertos'] >= 80) {
             background-color: var(--secondary);
             border-radius: 3px;
         }
-        
+
         .breadcrumb {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
         }
-        
+
         .breadcrumb a {
             color: var(--primary);
             text-decoration: none;
             transition: var(--transition);
         }
-        
+
         .breadcrumb a:hover {
             color: var(--primary-light);
             text-decoration: underline;
         }
-        
+
         .breadcrumb-separator {
             margin: 0 0.5rem;
             color: var(--text-light);
         }
-        
+
         .alert {
             padding: 1rem;
             border-radius: 6px;
@@ -456,17 +376,17 @@ if ($stats['promedio_aciertos'] >= 80) {
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .alert i {
             font-size: 1.2rem;
         }
-        
+
         .alert-success {
             background-color: rgba(39, 174, 96, 0.1);
             color: var(--success);
             border-left: 4px solid var(--success);
         }
-        
+
         .top-actions {
             display: flex;
             flex-wrap: wrap;
@@ -475,14 +395,14 @@ if ($stats['promedio_aciertos'] >= 80) {
             margin-bottom: 2rem;
             gap: 1rem;
         }
-        
+
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
-        
+
         .stat-card {
             background: var(--neutral-light);
             padding: 1.5rem;
@@ -495,140 +415,67 @@ if ($stats['promedio_aciertos'] >= 80) {
             align-items: center;
             justify-content: center;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-md);
         }
-        
+
         .stat-icon {
             font-size: 2.5rem;
             margin-bottom: 0.8rem;
             color: var(--primary);
         }
-        
+
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
             line-height: 1;
             margin-bottom: 0.5rem;
         }
-        
+
         .rendimiento-alto .stat-value {
             color: var(--success);
         }
-        
+
         .rendimiento-medio-alto .stat-value {
-            color: #2E8B57; /* Sea Green */
+            color: #2E8B57;
+            /* Sea Green */
         }
-        
+
         .rendimiento-medio .stat-value {
             color: var(--warning);
         }
-        
+
         .rendimiento-bajo .stat-value {
             color: var(--error);
         }
-        
+
         .stat-label {
             color: var(--text-light);
             font-size: 0.9rem;
         }
-        
-        .chart-container {
-            background: var(--background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            margin-bottom: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .chart-title {
-            color: var(--primary);
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            height: 200px;
-            gap: 1.5rem;
-            padding: 1rem 0;
-        }
-        
-        .chart-bar {
-            flex: 1;
-            background: var(--primary-light);
-            border-radius: 6px 6px 0 0;
-            position: relative;
-            min-width: 40px;
-            max-width: 100px;
-            transition: var(--transition);
-        }
-        
-        .chart-bar:hover {
-            transform: scaleY(1.05);
-            filter: brightness(110%);
-        }
-        
-        .chart-bar-excelente {
-            background: var(--success);
-        }
-        
-        .chart-bar-bueno {
-            background: #2E8B57; /* Sea Green */
-        }
-        
-        .chart-bar-regular {
-            background: var(--warning);
-        }
-        
-        .chart-bar-deficiente {
-            background: var(--error);
-        }
-        
-        .chart-label {
-            position: absolute;
-            bottom: -30px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .chart-value {
-            position: absolute;
-            top: -25px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
+
+
+
         .table-responsive {
             overflow-x: auto;
             margin-bottom: 2rem;
         }
-        
+
         .table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
         }
-        
-        .table th, .table td {
+
+        .table th,
+        .table td {
             padding: 0.8rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--neutral);
         }
-        
+
         .table th {
             background-color: var(--primary);
             color: white;
@@ -637,23 +484,23 @@ if ($stats['promedio_aciertos'] >= 80) {
             font-size: 0.8rem;
             letter-spacing: 0.5px;
         }
-        
+
         .table th:first-child {
             border-top-left-radius: 6px;
         }
-        
+
         .table th:last-child {
             border-top-right-radius: 6px;
         }
-        
+
         .table tr:nth-child(even) {
             background-color: var(--neutral-light);
         }
-        
+
         .table tr:hover {
             background-color: rgba(0, 51, 102, 0.05);
         }
-        
+
         .badge {
             display: inline-block;
             padding: 0.3rem 0.8rem;
@@ -663,27 +510,27 @@ if ($stats['promedio_aciertos'] >= 80) {
             text-align: center;
             min-width: 80px;
         }
-        
+
         .badge-success {
             background-color: rgba(39, 174, 96, 0.1);
             color: var(--success);
         }
-        
+
         .badge-warning {
             background-color: rgba(243, 156, 18, 0.1);
             color: var(--warning);
         }
-        
+
         .badge-error {
             background-color: rgba(198, 40, 40, 0.1);
             color: var(--error);
         }
-        
+
         .table-actions {
             display: flex;
             gap: 0.5rem;
         }
-        
+
         .section-title {
             font-size: 1.5rem;
             color: var(--primary);
@@ -691,7 +538,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             padding-bottom: 0.8rem;
             border-bottom: 1px solid var(--neutral);
         }
-        
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -707,69 +554,69 @@ if ($stats['promedio_aciertos'] >= 80) {
             text-decoration: none;
             gap: 0.5rem;
         }
-        
+
         .btn-sm {
             padding: 0.4rem 0.8rem;
             font-size: 0.8rem;
         }
-        
+
         .btn-primary {
             background-color: var(--primary);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-        
+
         .btn-outline:hover {
             background-color: var(--primary);
             color: white;
             transform: translateY(-2px);
         }
-        
+
         .btn-danger {
             background-color: var(--secondary);
             color: white;
         }
-        
+
         .btn-danger:hover {
             background-color: var(--secondary-light);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-accent {
             background-color: var(--accent);
             color: var(--text);
         }
-        
+
         .btn-accent:hover {
             background-color: var(--accent-light);
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline-light {
             background-color: transparent;
             color: white;
             border: 2px solid white;
         }
-        
+
         .btn-outline-light:hover {
             background-color: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
-        
+
         .tab-navigation {
             display: flex;
             margin-bottom: 2rem;
@@ -777,20 +624,20 @@ if ($stats['promedio_aciertos'] >= 80) {
             overflow-x: auto;
             scrollbar-width: thin;
         }
-        
+
         .tab-navigation::-webkit-scrollbar {
             height: 6px;
         }
-        
+
         .tab-navigation::-webkit-scrollbar-thumb {
             background-color: var(--neutral);
             border-radius: 3px;
         }
-        
+
         .tab-navigation::-webkit-scrollbar-track {
             background-color: var(--neutral-light);
         }
-        
+
         .tab-item {
             padding: 1rem 1.5rem;
             font-weight: 600;
@@ -800,48 +647,48 @@ if ($stats['promedio_aciertos'] >= 80) {
             transition: var(--transition);
             white-space: nowrap;
         }
-        
+
         .tab-item:hover {
             color: var(--primary);
         }
-        
+
         .tab-item.active {
             color: var(--primary);
             border-bottom-color: var(--primary);
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
             background: var(--neutral-light);
             border-radius: var(--border-radius);
         }
-        
+
         .empty-state i {
             font-size: 4rem;
             color: var(--neutral);
             margin-bottom: 1.5rem;
         }
-        
+
         .empty-state h3 {
             font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 1rem;
         }
-        
+
         .empty-state p {
             color: var(--text-light);
             margin-bottom: 1.5rem;
         }
-        
+
         .modal {
             display: none;
             position: fixed;
@@ -854,7 +701,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-content {
             background: var(--background);
             padding: 2rem;
@@ -863,7 +710,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             max-width: 500px;
             width: 90%;
         }
-        
+
         .modal-title {
             margin-bottom: 1.5rem;
             color: var(--primary);
@@ -872,21 +719,21 @@ if ($stats['promedio_aciertos'] >= 80) {
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .modal-title i {
             color: var(--secondary);
         }
-        
+
         .modal-body {
             margin-bottom: 1.5rem;
         }
-        
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
         }
-        
+
         .footer {
             margin-top: auto;
             background-color: var(--primary);
@@ -895,73 +742,71 @@ if ($stats['promedio_aciertos'] >= 80) {
             text-align: center;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .footer a {
             color: var(--accent);
             text-decoration: none;
             transition: var(--transition);
         }
-        
+
         .footer a:hover {
             color: var(--accent-light);
             text-decoration: underline;
         }
-        
+
         /* Responsividad */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
             }
-            
+
             .main-container {
                 padding: 0 0.8rem;
             }
-            
+
             .contenedor {
                 padding: 1.5rem;
             }
-            
+
             .page-title {
                 font-size: 1.6rem;
             }
-            
+
             .top-actions {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .stats-cards {
                 grid-template-columns: 1fr;
             }
-            
-            .bar-chart {
-                height: 150px;
-            }
-            
+
             .tab-item {
                 padding: 0.8rem 1.2rem;
             }
         }
+
+        
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Tabs functionality
             const tabItems = document.querySelectorAll('.tab-item');
             const tabContents = document.querySelectorAll('.tab-content');
-            
+
             tabItems.forEach(item => {
                 item.addEventListener('click', function() {
                     // Remove active class from all tabs
                     tabItems.forEach(tab => tab.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
-                    
+
                     // Add active class to clicked tab
                     this.classList.add('active');
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
-            
+
             // Modal functionality
             const deleteButtons = document.querySelectorAll('.delete-student-btn');
             const resetButton = document.querySelector('.reset-form-btn');
@@ -969,31 +814,31 @@ if ($stats['promedio_aciertos'] >= 80) {
             const deleteModal = document.getElementById('deleteStudentModal');
             const resetModal = document.getElementById('resetFormModal');
             const deleteForm = document.getElementById('deleteUserForm');
-            
+
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const userId = this.getAttribute('data-user-id');
                     const userName = this.getAttribute('data-user-name');
-                    
+
                     document.getElementById('deleteUserName').textContent = userName;
                     document.getElementById('deleteUserId').value = userId;
                     deleteModal.style.display = 'flex';
                 });
             });
-            
+
             if (resetButton) {
                 resetButton.addEventListener('click', function() {
                     resetModal.style.display = 'flex';
                 });
             }
-            
+
             closeModalButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     deleteModal.style.display = 'none';
                     resetModal.style.display = 'none';
                 });
             });
-            
+
             // Close modals when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === deleteModal) {
@@ -1003,17 +848,13 @@ if ($stats['promedio_aciertos'] >= 80) {
                     resetModal.style.display = 'none';
                 }
             });
-            
-            // Export PDF functionality
-            document.getElementById('export-pdf').addEventListener('click', function() {
-                document.getElementById('pdf-form').submit();
-            });
         });
     </script>
 </head>
+
 <body>
     <div class="bg-container"></div>
-    
+
     <header class="header">
         <div class="university-logo">
             <i class="fas fa-graduation-cap"></i>
@@ -1025,207 +866,180 @@ if ($stats['promedio_aciertos'] >= 80) {
             </a>
         </div>
     </header>
-    
+
     <div class="main-container">
         <div class="breadcrumb">
             <a href="ver_todos_formularios.php">Simulacros</a>
             <span class="breadcrumb-separator">/</span>
             <span>Resultados</span>
         </div>
-        
+
         <?php if (isset($_GET['reset']) && $_GET['reset'] == 'success'): ?>
-        <div class="alert alert-success">
-            <i class="fas fa-check-circle"></i>
-            <p>Todas las respuestas del formulario han sido eliminadas correctamente.</p>
-        </div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <p>Todas las respuestas del formulario han sido eliminadas correctamente.</p>
+            </div>
         <?php endif; ?>
-        
+
         <?php if (isset($_GET['delete']) && $_GET['delete'] == 'success'): ?>
-        <div class="alert alert-success">
-            <i class="fas fa-check-circle"></i>
-            <p>Las respuestas del estudiante han sido eliminadas correctamente.</p>
-        </div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <p>Las respuestas del estudiante han sido eliminadas correctamente.</p>
+            </div>
         <?php endif; ?>
-        
+
         <div class="contenedor">
             <div class="top-actions">
                 <h1 class="page-title">Resultados: <?php echo htmlspecialchars($formulario['titulo']); ?></h1>
-                
+
                 <div>
-                    <button id="export-pdf" class="btn btn-accent">
-                        <i class="fas fa-file-pdf"></i> Exportar a PDF
-                    </button>
-                    
                     <button class="btn btn-danger reset-form-btn" <?php echo empty($estudiantes) ? 'disabled' : ''; ?>>
                         <i class="fas fa-trash-alt"></i> Reiniciar formulario
                     </button>
                 </div>
             </div>
-            
+
             <?php if (empty($estudiantes)): ?>
-            <div class="empty-state">
-                <i class="fas fa-clipboard-list"></i>
-                <h3>No hay respuestas todavía</h3>
-                <p>Ningún estudiante ha respondido este formulario aún.</p>
-            </div>
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No hay respuestas todavía</h3>
+                    <p>Ningún estudiante ha respondido este formulario aún.</p>
+                </div>
             <?php else: ?>
-            
-            <div class="stats-cards">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    <div class="stat-value"><?php echo $stats['total_estudiantes']; ?></div>
-                    <div class="stat-label">Estudiantes</div>
-                </div>
-                
-                <div class="stat-card <?php echo $promedio_class; ?>">
-                    <div class="stat-icon"><i class="fas fa-percentage"></i></div>
-                    <div class="stat-value"><?php echo round($stats['promedio_aciertos'], 1); ?>%</div>
-                    <div class="stat-label">Promedio de aciertos</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-question-circle"></i></div>
-                    <div class="stat-value"><?php echo $stats['total_preguntas']; ?></div>
-                    <div class="stat-label">Preguntas</div>
-                </div>
-            </div>
-            
-            <?php if (array_sum($rangos_calificacion) > 0): ?>
-            <div class="chart-container">
-                <h3 class="chart-title">Distribución de calificaciones</h3>
-                
-                <div class="bar-chart">
-                    <?php 
-                    $labels = [
-                        'excelente' => 'Excelente (≥80%)',
-                        'bueno' => 'Bueno (60-79%)',
-                        'regular' => 'Regular (40-59%)',
-                        'deficiente' => 'Deficiente (<40%)'
-                    ];
-                    
-                    foreach ($rangos_calificacion as $rango => $valor): 
-                        $porcentaje = ($stats['total_estudiantes'] > 0) 
-                            ? round(($valor / $stats['total_estudiantes']) * 100) 
-                            : 0;
-                        
-                        $altura = ($porcentaje > 0) ? $porcentaje * 2 : 1; // Altura mínima de 1px
-                    ?>
-                    <div class="chart-bar chart-bar-<?php echo $rango; ?>" style="height: <?php echo $altura; ?>px;">
-                        <div class="chart-value"><?php echo $valor; ?></div>
-                        <div class="chart-label"><?php echo $labels[$rango]; ?></div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-value"><?php echo $stats['total_estudiantes']; ?></div>
+                        <div class="stat-label">Estudiantes</div>
                     </div>
-                    <?php endforeach; ?>
+
+                    <div class="stat-card <?php echo $promedio_class; ?>">
+                        <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                        <div class="stat-value"><?php echo round($stats['promedio_aciertos'], 1); ?>%</div>
+                        <div class="stat-label">Promedio de aciertos</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-question-circle"></i></div>
+                        <div class="stat-value"><?php echo $stats['total_preguntas']; ?></div>
+                        <div class="stat-label">Preguntas</div>
+                    </div>
                 </div>
-            </div>
-            <?php endif; ?>
-            
-            <div class="tab-navigation">
-                <div class="tab-item active" data-tab="tab-estudiantes">
-                    <i class="fas fa-users"></i> Estudiantes
+
+                <div class="tab-navigation">
+                    <div class="tab-item active" data-tab="tab-estudiantes">
+                        <i class="fas fa-users"></i> Estudiantes
+                    </div>
+                    <div class="tab-item" data-tab="tab-preguntas">
+                        <i class="fas fa-question-circle"></i> Análisis de preguntas
+                    </div>
                 </div>
-                <div class="tab-item" data-tab="tab-preguntas">
-                    <i class="fas fa-question-circle"></i> Análisis de preguntas
+
+                <div id="tab-estudiantes" class="tab-content active">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Calificación</th>
+                                    <th>Porcentaje</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($estudiantes as $index => $estudiante): ?>
+                                    <tr>
+                                        <td><?php echo $index + 1; ?></td>
+                                        <td><?php echo htmlspecialchars($estudiante['nombre']); ?></td>
+                                        <td><?php echo $estudiante['respuestas_correctas']; ?>/<?php echo $estudiante['total_preguntas']; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $badge_class = '';
+                                            if ($estudiante['porcentaje'] >= 80) {
+                                                $badge_class = 'badge-success';
+                                            } elseif ($estudiante['porcentaje'] >= 60) {
+                                                $badge_class = 'badge-success';
+                                            } elseif ($estudiante['porcentaje'] >= 40) {
+                                                $badge_class = 'badge-warning';
+                                            } else {
+                                                $badge_class = 'badge-error';
+                                            }
+                                            ?>
+                                            <span
+                                                class="badge <?php echo $badge_class; ?>"><?php echo $estudiante['porcentaje']; ?>%</span>
+                                        </td>
+                                        <td><?php echo $estudiante['fecha_formateada']; ?></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="ver_respuestas_estudiante.php?form_id=<?php echo $formulario_id; ?>&user_id=<?php echo $estudiante['usuario_id']; ?>"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-eye"></i> Ver
+                                                </a>
+                                                <button class="btn btn-danger btn-sm delete-student-btn"
+                                                    data-user-id="<?php echo $estudiante['usuario_id']; ?>"
+                                                    data-user-name="<?php echo htmlspecialchars($estudiante['nombre']); ?>">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            
-            <div id="tab-estudiantes" class="tab-content active">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre</th>
-                                <th>Calificación</th>
-                                <th>Porcentaje</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($estudiantes as $index => $estudiante): ?>
-                            <tr>
-                                <td><?php echo $index + 1; ?></td>
-                                <td><?php echo htmlspecialchars($estudiante['nombre']); ?></td>
-                                <td><?php echo $estudiante['respuestas_correctas']; ?>/<?php echo $estudiante['total_preguntas']; ?></td>
-                                <td>
-                                    <?php
-                                    $badge_class = '';
-                                    if ($estudiante['porcentaje'] >= 80) {
-                                        $badge_class = 'badge-success';
-                                    } elseif ($estudiante['porcentaje'] >= 60) {
-                                        $badge_class = 'badge-success';
-                                    } elseif ($estudiante['porcentaje'] >= 40) {
-                                        $badge_class = 'badge-warning';
-                                    } else {
-                                        $badge_class = 'badge-error';
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $badge_class; ?>"><?php echo $estudiante['porcentaje']; ?>%</span>
-                                </td>
-                                <td><?php echo $estudiante['fecha_formateada']; ?></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="ver_respuestas_estudiante.php?form_id=<?php echo $formulario_id; ?>&user_id=<?php echo $estudiante['usuario_id']; ?>" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-eye"></i> Ver
-                                        </a>
-                                        <button class="btn btn-danger btn-sm delete-student-btn" 
-                                                data-user-id="<?php echo $estudiante['usuario_id']; ?>"
-                                                data-user-name="<?php echo htmlspecialchars($estudiante['nombre']); ?>">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+
+                <div id="tab-preguntas" class="tab-content">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Enunciado</th>
+                                    <th>Dificultad</th>
+                                    <th>Aciertos</th>
+                                    <th>Porcentaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($preguntas_analisis as $index => $pregunta): ?>
+                                    <tr>
+                                        <td><?php echo $index + 1; ?></td>
+                                        <td><?php echo htmlspecialchars($pregunta['enunciado']); ?></td>
+                                        <td>
+                                            <?php
+                                            $badge_class = '';
+                                            if ($pregunta['clase_dificultad'] == 'dificil') {
+                                                $badge_class = 'badge-error';
+                                            } elseif ($pregunta['clase_dificultad'] == 'media') {
+                                                $badge_class = 'badge-warning';
+                                            } else {
+                                                $badge_class = 'badge-success';
+                                            }
+                                            ?>
+                                            <span
+                                                class="badge <?php echo $badge_class; ?>"><?php echo $pregunta['dificultad']; ?></span>
+                                        </td>
+                                        <td><?php echo $pregunta['respuestas_correctas']; ?>/<?php echo $pregunta['total_respuestas']; ?>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge <?php echo $badge_class; ?>"><?php echo $pregunta['porcentaje_aciertos']; ?>%</span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            
-            <div id="tab-preguntas" class="tab-content">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Enunciado</th>
-                                <th>Dificultad</th>
-                                <th>Aciertos</th>
-                                <th>Porcentaje</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($preguntas_analisis as $index => $pregunta): ?>
-                            <tr>
-                                <td><?php echo $index + 1; ?></td>
-                                <td><?php echo htmlspecialchars($pregunta['enunciado']); ?></td>
-                                <td>
-                                    <?php
-                                    $badge_class = '';
-                                    if ($pregunta['clase_dificultad'] == 'dificil') {
-                                        $badge_class = 'badge-error';
-                                    } elseif ($pregunta['clase_dificultad'] == 'media') {
-                                        $badge_class = 'badge-warning';
-                                    } else {
-                                        $badge_class = 'badge-success';
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $badge_class; ?>"><?php echo $pregunta['dificultad']; ?></span>
-                                </td>
-                                <td><?php echo $pregunta['respuestas_correctas']; ?>/<?php echo $pregunta['total_respuestas']; ?></td>
-                                <td>
-                                    <span class="badge <?php echo $badge_class; ?>"><?php echo $pregunta['porcentaje_aciertos']; ?>%</span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
             <?php endif; ?>
         </div>
     </div>
-    
+
     <!-- Modal para eliminar respuestas de un estudiante -->
     <div id="deleteStudentModal" class="modal">
         <div class="modal-content">
@@ -1234,7 +1048,8 @@ if ($stats['promedio_aciertos'] >= 80) {
                 <h4>Eliminar respuestas</h4>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar todas las respuestas de <strong id="deleteUserName"></strong> para este formulario?</p>
+                <p>¿Estás seguro de que deseas eliminar todas las respuestas de <strong id="deleteUserName"></strong>
+                    para este formulario?</p>
                 <p><small>Esta acción no se puede deshacer.</small></p>
             </div>
             <div class="modal-actions">
@@ -1247,7 +1062,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             </div>
         </div>
     </div>
-    
+
     <!-- Modal para reiniciar formulario -->
     <div id="resetFormModal" class="modal">
         <div class="modal-content">
@@ -1256,8 +1071,10 @@ if ($stats['promedio_aciertos'] >= 80) {
                 <h4>Reiniciar formulario</h4>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar <strong>todas las respuestas</strong> de todos los estudiantes para este formulario?</p>
-                <p><small>Esta acción no se puede deshacer y afectará a <?php echo $stats['total_estudiantes']; ?> estudiantes.</small></p>
+                <p>¿Estás seguro de que deseas eliminar <strong>todas las respuestas</strong> de todos los estudiantes
+                    para este formulario?</p>
+                <p><small>Esta acción no se puede deshacer y afectará a <?php echo $stats['total_estudiantes']; ?>
+                        estudiantes.</small></p>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline close-modal">Cancelar</button>
@@ -1268,15 +1085,10 @@ if ($stats['promedio_aciertos'] >= 80) {
             </div>
         </div>
     </div>
-    
-    <!-- Formulario para exportar a PDF -->
-    <form id="pdf-form" method="post" action="generar_pdf_resultados.php" style="display: none;">
-        <input type="hidden" name="form_id" value="<?php echo $formulario_id; ?>">
-        <input type="hidden" name="pdf_content" value="<?php echo htmlspecialchars(generatePdfContent($formulario, $estudiantes, $preguntas_analisis, $stats)); ?>">
-    </form>
-    
+
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
     </footer>
 </body>
+
 </html>
