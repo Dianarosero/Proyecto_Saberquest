@@ -30,7 +30,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
             <div class="logo-container">
                 <div class="logo">
                     <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
-                    
+
                 </div>
             </div>
             <a href="../index_admin.php" class="btn-inicio">Inicio</a>
@@ -45,8 +45,9 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                 <form id="form-builder" action="guardar_formulario.php" method="POST" enctype="multipart/form-data">
                     <div class="form-header">
                         <div class="form-group">
-                            <label for="form-title" >Título del simulacro</label>
-                            <input type="text" id="form-title" name="titulo" oninput="this.value = this.value.toUpperCase()"
+                            <label for="form-title">Título del simulacro</label>
+                            <input type="text" id="form-title" name="titulo"
+                                oninput="this.value = this.value.toUpperCase()"
                                 placeholder="Ingrese el título del simulacro" required>
                         </div>
 
@@ -73,8 +74,12 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                             </div>
                         </div>
 
-
-
+                        <!-- Nuevo campo para mostrar resultados -->
+                        <div class="form-group">
+                            <label for="mostrar-resultados">Mostrar resultados a estudiantes</label>
+                            <input type="checkbox" id="mostrar-resultados" name="mostrar_resultados" value="1">
+                            <span>Permitir que los estudiantes vean los resultados</span>
+                        </div>
                     </div>
 
                     <div class="questions-container" id="questions-container">

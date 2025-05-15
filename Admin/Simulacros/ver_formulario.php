@@ -3,10 +3,10 @@ include("../../base de datos/con_db.php");
 $formulario_id = $_GET['id'] ?? 0;
 
 // Obtener datos del formulario
-$stmt = $conex->prepare("SELECT titulo, descripcion, imagen FROM formularios WHERE id = ?");
+$stmt = $conex->prepare("SELECT titulo, descripcion, imagen, mostrar_respuestas FROM formularios WHERE id = ?");
 $stmt->bind_param("i", $formulario_id);
 $stmt->execute();
-$stmt->bind_result($titulo, $descripcion, $imagen);
+$stmt->bind_result($titulo, $descripcion, $imagen, $mostrar_respuestas);
 $stmt->fetch();
 $stmt->close();
 
@@ -14,6 +14,7 @@ $form = [
     'titulo' => $titulo,
     'descripcion' => $descripcion,
     'background_image' => $imagen,
+    'mostrar_respuestas' => $mostrar_respuestas, // Agregamos el valor de mostrar_respuestas
 ];
 
 // Paginación
@@ -196,7 +197,7 @@ $result = $stmt->get_result();
             border-bottom: 1px solid var(--neutral);
             padding-bottom: 1.5rem;
         }
-        
+
         .title-actions {
             display: flex;
             justify-content: space-between;
@@ -205,7 +206,7 @@ $result = $stmt->get_result();
             margin-bottom: 1rem;
             gap: 15px;
         }
-        
+
         .form-actions {
             display: flex;
             gap: 10px;
@@ -332,7 +333,8 @@ $result = $stmt->get_result();
         }
 
         .correcta::after {
-            content: '\f00c'; /* fa-check */
+            content: '\f00c';
+            /* fa-check */
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
@@ -402,7 +404,7 @@ $result = $stmt->get_result();
         .not-found .btn {
             margin-top: 1.5rem;
         }
-        
+
         /* Estilos de paginación */
         .paginacion {
             display: flex;
@@ -411,8 +413,9 @@ $result = $stmt->get_result();
             margin-top: 2rem;
             flex-wrap: wrap;
         }
-        
-        .paginacion a, .paginacion span {
+
+        .paginacion a,
+        .paginacion span {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -426,20 +429,20 @@ $result = $stmt->get_result();
             font-weight: 600;
             transition: var(--transition);
         }
-        
+
         .paginacion a:hover {
             background: var(--primary-light);
             color: white;
             border-color: var(--primary-light);
             transform: translateY(-2px);
         }
-        
+
         .paginacion span.pagina-actual {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
         }
-        
+
         .paginacion .nav-anterior,
         .paginacion .nav-siguiente {
             width: auto;
@@ -447,7 +450,7 @@ $result = $stmt->get_result();
             border-radius: 18px;
             gap: 5px;
         }
-        
+
         /* Botones de acción */
         .acciones-pregunta {
             position: absolute;
@@ -458,11 +461,11 @@ $result = $stmt->get_result();
             opacity: 0;
             transition: var(--transition);
         }
-        
+
         .pregunta:hover .acciones-pregunta {
             opacity: 1;
         }
-        
+
         .btn-accion {
             display: flex;
             align-items: center;
@@ -476,23 +479,23 @@ $result = $stmt->get_result();
             transition: var(--transition);
             cursor: pointer;
         }
-        
+
         .btn-accion:hover {
             transform: translateY(-2px);
         }
-        
+
         .btn-eliminar {
             color: var(--secondary);
             border-color: rgba(178, 34, 34, 0.3);
         }
-        
+
         .btn-eliminar:hover {
             background: var(--secondary);
             color: white;
             border-color: var(--secondary);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.2);
         }
-        
+
         /* Modal de confirmación */
         .modal-overlay {
             position: fixed;
@@ -509,12 +512,12 @@ $result = $stmt->get_result();
             visibility: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .modal-overlay.active {
             opacity: 1;
             visibility: visible;
         }
-        
+
         .modal {
             background: white;
             padding: 25px;
@@ -525,62 +528,62 @@ $result = $stmt->get_result();
             transform: translateY(-20px);
             transition: all 0.3s ease;
         }
-        
+
         .modal-overlay.active .modal {
             transform: translateY(0);
         }
-        
+
         .modal-header {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
             gap: 10px;
         }
-        
+
         .modal-header i {
             color: var(--secondary);
             font-size: 1.5rem;
         }
-        
+
         .modal-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--text);
         }
-        
+
         .modal-content {
             margin-bottom: 20px;
             color: var(--text-light);
         }
-        
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
-        
+
         .btn-secondary {
             background-color: var(--neutral);
             color: var(--text);
             border: 2px solid transparent;
         }
-        
+
         .btn-secondary:hover {
             background-color: var(--neutral-light);
             border-color: var(--neutral);
         }
-        
+
         .btn-danger {
             background-color: var(--secondary);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-danger:hover {
             background-color: var(--secondary-light);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.2);
         }
-        
+
         /* Estilos de alertas */
         .alerta {
             padding: 15px;
@@ -591,29 +594,36 @@ $result = $stmt->get_result();
             position: relative;
             animation: slideDown 0.3s ease-out forwards;
         }
-        
+
         @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
-        
+
         .alerta i:first-child {
             margin-right: 10px;
             font-size: 1.2rem;
         }
-        
+
         .alerta-exito {
             background-color: rgba(39, 174, 96, 0.1);
             border: 1px solid var(--success);
             color: var(--success);
         }
-        
+
         .alerta-error {
             background-color: rgba(178, 34, 34, 0.1);
             border: 1px solid var(--secondary);
             color: var(--secondary);
         }
-        
+
         .cerrar-alerta {
             position: absolute;
             right: 10px;
@@ -626,7 +636,7 @@ $result = $stmt->get_result();
             opacity: 0.7;
             transition: var(--transition);
         }
-        
+
         .cerrar-alerta:hover {
             opacity: 1;
         }
@@ -635,29 +645,29 @@ $result = $stmt->get_result();
             .header {
                 padding: 1rem;
             }
-            
+
             .university-logo {
                 font-size: 1.2rem;
             }
-            
+
             .contenedor {
                 margin: 15px;
                 padding: 25px;
                 border-radius: 10px;
             }
-            
+
             h2 {
                 font-size: 1.6rem;
             }
-            
+
             .pregunta {
                 padding: 20px;
             }
-            
+
             .pregunta-enunciado {
                 font-size: 1.1rem;
             }
-            
+
             .btn {
                 padding: 8px 16px;
                 font-size: 0.9rem;
@@ -666,8 +676,15 @@ $result = $stmt->get_result();
 
         /* Animation for options */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .opcion {
@@ -675,25 +692,142 @@ $result = $stmt->get_result();
             opacity: 0;
         }
 
-        .opcion:nth-child(1) { animation-delay: 0.1s; }
-        .opcion:nth-child(2) { animation-delay: 0.2s; }
-        .opcion:nth-child(3) { animation-delay: 0.3s; }
-        .opcion:nth-child(4) { animation-delay: 0.4s; }
+        .opcion:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .opcion:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .opcion:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .opcion:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mostrar-respuestas {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mostrar-respuestas label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .mostrar-respuestas input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            /* Color del checkbox cuando está marcado */
+        }
+
+        .mostrar-respuestas input[type="checkbox"]:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
     </style>
-    
+
     <script>
+        // Función para actualizar el estado de mostrar_respuestas
+        function actualizarMostrarRespuestas(formulario_id) {
+            var checkbox = document.getElementById('mostrar_resultados');
+            var valor = checkbox.checked ? 1 : 0;
+
+            // Crear una solicitud AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "actualizar_mostrar_respuestas.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Manejar la respuesta del servidor
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        console.log("Estado actualizado correctamente");
+                    } else {
+                        console.error("Error al actualizar el estado: " + response.error);
+                        // Si hay un error, revertir el estado del checkbox
+                        checkbox.checked = !checkbox.checked;
+                        alert("Hubo un error al actualizar el estado. Por favor, intenta de nuevo.");
+                    }
+                }
+            };
+
+            // Enviar los datos
+            xhr.send("formulario_id=" + formulario_id + "&mostrar_respuestas=" + valor);
+        }
+
+
         // Función para mostrar el modal de confirmación de eliminación del formulario
         function confirmarEliminarFormulario(id, titulo) {
             document.getElementById('formulario_id_eliminar').value = id;
             document.getElementById('formulario-titulo-eliminar').textContent = titulo;
             document.getElementById('modal-eliminar-formulario').classList.add('active');
         }
-        
+
         // Función para cerrar el modal
         function cerrarModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
-        
+
         // Cerrar modales al hacer clic fuera de ellos
         window.addEventListener('click', function(event) {
             var modalFormulario = document.getElementById('modal-eliminar-formulario');
@@ -708,21 +842,23 @@ $result = $stmt->get_result();
     <?php if ($form): ?>
         <?php
         // Usar la imagen de la base de datos o la imagen predeterminada
-        $default_image = 'https://pixabay.com/get/g8386919d873394672d9c4f2b4a58bfdf6ddbc88918bd7be5af792f69144340e15c8134ca7a5df3c89411ba0b9f15bc66048659caff8143cbeee94118364b59da_1280.jpg';
+        $default_image = '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png';
         $bg_image = !empty($form['background_image']) ? $form['background_image'] : $default_image;
         ?>
         <div class="bg-container" style="background-image: url('<?php echo htmlspecialchars($bg_image); ?>')"></div>
 
         <header class="header">
-            
+
             <div class="logo-space">
                 <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
             </div>
-            
-            <div class="mode-toggle">
-                <a href="../index_admin.php" class="btn btn-primary">
-                    Inicio
-                </a>
+
+            <div class="nav-controls">
+                <nav class="nav">
+                    <div class="nav-list">
+                        <a class="nav-link" href="../index_admin.php">Inicio</a>
+                    </div>
+                </nav>
             </div>
         </header>
 
@@ -736,7 +872,7 @@ $result = $stmt->get_result();
                     </button>
                 </div>
             <?php endif; ?>
-            
+
             <?php if (isset($_GET['error']) && $_GET['error'] == 'eliminar'): ?>
                 <div class="alerta alerta-error">
                     <i class="fas fa-exclamation-circle"></i>
@@ -746,7 +882,7 @@ $result = $stmt->get_result();
                     </button>
                 </div>
             <?php endif; ?>
-            
+
             <div class="form-header">
                 <div class="title-actions">
                     <h2><?php echo htmlspecialchars($form['titulo']); ?></h2>
@@ -760,6 +896,12 @@ $result = $stmt->get_result();
                     </div>
                 </div>
                 <p class="form-description"><?php echo nl2br(htmlspecialchars($form['descripcion'])); ?></p>
+                <div class="mostrar-respuestas">
+                    <label for="mostrar_resultados">
+                        <input type="checkbox" id="mostrar_resultados" name="mostrar_resultados" value="1" <?php echo $form['mostrar_respuestas'] == 1 ? 'checked' : ''; ?> onchange="actualizarMostrarRespuestas(<?php echo $formulario_id; ?>)">
+                        Mostrar resultados estudiante
+                    </label>
+                </div>
             </div>
 
             <div class="preguntas-container">
@@ -800,41 +942,41 @@ $result = $stmt->get_result();
             <?php if ($totalPaginas > 1): ?>
                 <div class="paginacion">
                     <?php if ($paginaActual > 1): ?>
-                        <a href="?id=<?php echo $formulario_id; ?>&pagina=<?php echo $paginaActual-1; ?>" class="nav-anterior">
+                        <a href="?id=<?php echo $formulario_id; ?>&pagina=<?php echo $paginaActual - 1; ?>" class="nav-anterior">
                             <i class="fas fa-chevron-left"></i> Anterior
                         </a>
                     <?php endif; ?>
-                    
-                    <?php 
+
+                    <?php
                     // Mostrar números de página con limitación
                     $startPage = max(1, $paginaActual - 2);
                     $endPage = min($startPage + 4, $totalPaginas);
-                    
+
                     if ($startPage > 1) {
-                        echo '<a href="?id='.$formulario_id.'&pagina=1">1</a>';
+                        echo '<a href="?id=' . $formulario_id . '&pagina=1">1</a>';
                         if ($startPage > 2) {
                             echo '<span>...</span>';
                         }
                     }
-                    
+
                     for ($i = $startPage; $i <= $endPage; $i++) {
                         if ($i == $paginaActual) {
-                            echo '<span class="pagina-actual">'.$i.'</span>';
+                            echo '<span class="pagina-actual">' . $i . '</span>';
                         } else {
-                            echo '<a href="?id='.$formulario_id.'&pagina='.$i.'">'.$i.'</a>';
+                            echo '<a href="?id=' . $formulario_id . '&pagina=' . $i . '">' . $i . '</a>';
                         }
                     }
-                    
+
                     if ($endPage < $totalPaginas) {
                         if ($endPage < $totalPaginas - 1) {
                             echo '<span>...</span>';
                         }
-                        echo '<a href="?id='.$formulario_id.'&pagina='.$totalPaginas.'">'.$totalPaginas.'</a>';
+                        echo '<a href="?id=' . $formulario_id . '&pagina=' . $totalPaginas . '">' . $totalPaginas . '</a>';
                     }
                     ?>
-                    
+
                     <?php if ($paginaActual < $totalPaginas): ?>
-                        <a href="?id=<?php echo $formulario_id; ?>&pagina=<?php echo $paginaActual+1; ?>" class="nav-siguiente">
+                        <a href="?id=<?php echo $formulario_id; ?>&pagina=<?php echo $paginaActual + 1; ?>" class="nav-siguiente">
                             Siguiente <i class="fas fa-chevron-right"></i>
                         </a>
                     <?php endif; ?>
@@ -845,7 +987,7 @@ $result = $stmt->get_result();
                 <i class="fas fa-arrow-left"></i> Volver a la lista de simulacros
             </a>
         </div>
-        
+
         <!-- Modal de confirmación para eliminar formulario -->
         <div id="modal-eliminar-formulario" class="modal-overlay">
             <div class="modal">

@@ -135,7 +135,7 @@ function deleteQuestion(button) {
     // Check if this is the only question
     const allQuestions = document.querySelectorAll('.question-card');
     if (allQuestions.length === 1) {
-        showAlert('No puedes eliminar la única pregunta del formulario.');
+        showAlert('No puedes eliminar la única pregunta del simulacro.');
         return;
     }
     
@@ -228,7 +228,7 @@ function validateForm() {
     // Check if title is filled
     const title = document.getElementById('form-title').value.trim();
     if (!title) {
-        showAlert('Por favor, ingrese un título para el formulario.');
+        showAlert('Por favor, ingrese un título para el simulacro.');
         document.getElementById('form-title').focus();
         return false;
     }
@@ -384,8 +384,8 @@ function removeImage() {
  */
 function updatePreview() {
     // Update title and description
-    const title = document.getElementById('form-title').value.trim() || 'Título del formulario';
-    const description = document.getElementById('form-description').value.trim() || 'Descripción del formulario';
+    const title = document.getElementById('form-title').value.trim() || 'Título del simulacro';
+    const description = document.getElementById('form-description').value.trim() || 'Descripción del simulacro';
     
     document.getElementById('preview-title').textContent = title;
     document.getElementById('preview-description').textContent = description;
@@ -437,7 +437,7 @@ function updatePreview() {
  */
 function showSuccessMessage() {
     // In a real application, you might redirect to a success page or show a modal
-    alert('¡Formulario guardado exitosamente!');
+    alert('¡Simulacro guardado exitosamente!');
     
     // Reset the form for a new entry
     document.getElementById('form-builder').reset();
