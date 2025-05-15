@@ -54,7 +54,7 @@ $tipo_usuario = $usuario['id_rol'] == '2' ? 'docente' : 'estudiante';
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../../assets/src_usuarios/css/styles.css">
 </head>
 <body>
     <header class="header" id="header">
@@ -118,6 +118,6 @@ $tipo_usuario = $usuario['id_rol'] == '2' ? 'docente' : 'estudiante';
         </div>
     </footer>
 
-    <script src="scripts.js"></script>
+    <script src="../../assets/src_usuarios/js/scripts.js"></script>
 </body>
 </html>
