@@ -90,7 +90,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                         <form id="gameForm" action="guardar_juego.php" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="gameName">Nombre<span class="required">*</span></label>
-                                <input type="text" id="gameName" name="gameName" placeholder="Ingresa el nombre del juego" required>
+                                <input type="text" id="gameName" name="gameName" placeholder="Ingresa el nombre del juego" required oninput="this.value = this.value.toUpperCase()">
                                 <small class="error-msg" id="gameNameError"></small>
                             </div>
                             

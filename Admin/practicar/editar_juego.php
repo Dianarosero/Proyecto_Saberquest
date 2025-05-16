@@ -82,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <title>Editar Juego</title>
@@ -109,35 +110,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --transition: all 0.3s ease;
             --gap: 1.5rem;
         }
-        
+
         body {
             background: #f4f6fb;
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
         }
+
         .container {
             max-width: 600px;
             margin: 50px auto 0 auto;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
             padding: 35px 40px 30px 40px;
         }
+
         h1 {
             text-align: center;
             color: #263159;
             margin-bottom: 30px;
         }
+
         .form-group {
             margin-bottom: 22px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             color: #263159;
             font-weight: 600;
         }
+
         input[type="text"],
         input[type="url"],
         textarea {
@@ -150,22 +156,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-family: inherit;
             background: #f7f9fc;
         }
+
         input[type="text"]:focus,
         input[type="url"]:focus,
         textarea:focus {
             border-color: #003366;
             outline: none;
         }
+
         textarea {
             resize: vertical;
             min-height: 90px;
         }
+
         input[type="file"] {
             margin-top: 8px;
         }
+
         .btn {
             background: #003366;
-            color:rgb(255, 255, 255);
+            color: rgb(255, 255, 255);
             border: none;
             padding: 13px 24px;
             border-radius: 6px;
@@ -175,25 +185,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: background 0.2s;
             margin-top: 10px;
         }
+
         .btn:hover {
             background: #003366;
         }
+
         .message {
             margin-bottom: 18px;
             padding: 13px 15px;
             border-radius: 6px;
             font-size: 1rem;
         }
+
         .error {
             background: #ffe6e6;
             color: #b30000;
             border: 1px solid #ffb3b3;
         }
+
         .success {
             background: #e6ffe6;
             color: #267326;
             border: 1px solid #b3ffb3;
         }
+
         .img-preview {
             max-width: 220px;
             max-height: 160px;
@@ -204,6 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             object-fit: contain;
 
         }
+
         .bg-container {
             position: fixed;
             top: 0;
@@ -216,22 +232,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             filter: blur(8px);
             opacity: 0.12;
             z-index: -1;
-            background-image: url('https://pixabay.com/get/g8386919d873394672d9c4f2b4a58bfdf6ddbc88918bd7be5af792f69144340e15c8134ca7a5df3c89411ba0b9f15bc66048659caff8143cbeee94118364b59da_1280.jpg');
+            background-image: url('../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png');
         }
-        
+
         .header {
             background-color: var(--primary);
+            /* #003366 */
             color: white;
-            padding: 20px 0; /* Espaciado lateral moderado */
             width: 100%;
             box-shadow: var(--shadow-md);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            /* Center the inner container */
             align-items: center;
             position: sticky;
             top: 0;
-            left: 0;
-            z-index: 1000;/* Altura mínima para un header elegante */
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .header:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Add a container inside the header to control width */
+        .header-container {
+            width: 100%;
+            max-width: 1200px;
+            /* Limits the header content width on larger screens */
+            padding: 1rem 2rem;
+            /* Padding inside the container */
+            display: flex;
+            justify-content: space-between;
+            /* Logo and nav on opposite ends */
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
         }
 
         .logo {
@@ -240,39 +279,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .logo-img {
-            height: 50px;
+            height: 40px;
+            /* Adjusted logo height */
         }
+
+
         .nav-list {
-        display: flex;
-        gap: 30px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: flex-end;
+            /* Aligns the nav link to the right */
         }
 
         .nav-link {
-            font-size: 1rem;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
-            padding-bottom: 5px;
-            position: relative;
-        }
-        
-        .nav-link:hover {
-            color: var(--accent-color);
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: var(--transition);
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0;
+    text-decoration: none;
+    position: relative; /* Ensure positioning context for ::after */
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--accent-color);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; /* Adjusted to bring the underline closer to the text */
+    left: 0;
+    width: 0; /* Start with no width */
+    height: 2px; /* Thickness of the underline */
+    background-color: var(--accent-color);
+    transition: width 0.3s ease; /* Smooth transition for width only */
+}
+
+.nav-link:hover::after {
+    width: 100%; /* Expands to the full width of the text on hover */
+}
+
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -283,6 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 600;
             transition: var(--transition);
         }
+
         .footer {
             margin-top: auto;
             background-color: var(--primary);
@@ -307,41 +360,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--primary-light);
             transform: translateX(-5px);
         }
+
+        /* Responsiveness */
         @media (max-width: 600px) {
-            .header {
-                padding: 0 12px;
-                min-height: 56px;
+            .header-container {
+                padding: 0.8rem 1rem;
+                /* Reduced padding for smaller screens */
             }
+
             .logo-img {
-                height: 36px;
+                height: 30px;
+                /* Smaller logo on mobile */
             }
+
             .nav-link {
-                font-size: 1rem;
-                margin-left: 10px;
+                font-size: 0.9rem;
             }
         }
 
-
-        
-
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0.8rem 1.5rem;
+            }
+        }
     </style>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
 </head>
+
 <body>
     <div class="bg-container"></div>
-        <header class="header">
-            <div class="logo">
-                <a href="../index_admin.php">
-                    <img src="../../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" class="logo-img">
-                </a>
-            </div>
-            <nav class="nav">
-                <a href="../index_admin.php#projects" class="nav-link">Inicio</a>
-            </nav>
-        </header>
+    <header class="header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="../index_admin.php">
+                <img src="../../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" class="logo-img">
+            </a>
+        </div>
+        <nav class="nav">
+            <a href="../index_admin.php#projects" class="nav-link">Inicio</a>
+        </nav>
+    </div>
+</header>
 
     <div class="container">
         <h1>Editar Juego</h1>
@@ -353,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" enctype="multipart/form-data" autocomplete="off">
             <div class="form-group">
                 <label for="nombre">Nombre del juego:</label>
-                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($juego['nombre']); ?>" required>
+                <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($juego['nombre']); ?>" required oninput="this.value = this.value.toUpperCase()">
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción:</label>
@@ -375,9 +437,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </a>
         </form>
     </div>
-        <footer class="footer">
-            <p>&copy; 2025 SABERQUEST - Todos los derechos reservados</p>
-        </footer>
+    <footer class="footer">
+        <p>&copy; 2025 SABERQUEST - Todos los derechos reservados</p>
+    </footer>
     <script>
         function previewImage(event) {
             const input = event.target;
@@ -392,4 +454,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 </body>
+
 </html>

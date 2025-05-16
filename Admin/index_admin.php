@@ -132,7 +132,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
             </div>
             <div class="projects-grid">
                 <!-- Card 1 -->
-                <a href="Simulacros/create_formulario.php" target="_blank" class="project-card" data-category="Simulacro">
+                <a href="Simulacros/create_formulario.php" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/cs.png" alt="Simulacro">
                     </div>
@@ -142,7 +142,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 2 -->
-                <a href="Simulacros/formularios.php" target="_blank" class="project-card" data-category="Simulacro">
+                <a href="Simulacros/formularios.php" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/vs.png" alt="Ver Simulacros">
                     </div>
@@ -152,7 +152,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 3 -->
-                <a href="practicar/crear_juegos.php" target="_blank" class="project-card" data-category="Practicar">
+                <a href="practicar/crear_juegos.php" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/cj.png" alt="Crear Juego">
                     </div>
@@ -162,7 +162,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 4 -->
-                <a href="practicar/ver_juegos.php" target="_blank" class="project-card" data-category="Practicar">
+                <a href="practicar/ver_juegos.php" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/pr.png" alt="Practicar">
                     </div>
@@ -172,7 +172,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 5 -->
-                <a href="resultados/ver_todos_formularios.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="resultados/ver_todos_formularios.php" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
@@ -182,7 +182,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                 </a>
                 <!-- Card 6 -->
-                <a href="Usuarios/usuarios.php" target="_blank" class="project-card" data-category="Usuarios">
+                <a href="Usuarios/usuarios.php" class="project-card" data-category="Usuarios">
                     <div class="project-image">
                         <img src="../assets/src_index/img/us.png" alt="Gestionar Usuarios">
                     </div>
