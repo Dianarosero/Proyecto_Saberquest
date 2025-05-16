@@ -146,7 +146,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Estudiante') {
                     </div>
                 </a>
                 <!-- Card 3 -->
-                <a href="Simulacros/mis_resultados.php" class="project-card" data-category="Resultados">
+                <a href="resultados/mis_resultados.php" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
