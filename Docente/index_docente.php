@@ -125,7 +125,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
             </div>
             <div class="projects-grid-docente">
                 <!-- Card 1 -->
-                <a href="Practicar/practicar.php" target="_blank" class="project-card" data-category="Practicar">
+                <a href="Practicar/practicar.php" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/pr.png" alt="Practicar">
                     </div>
@@ -135,7 +135,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Docente') {
                     </div>
                 </a>
                 <!-- Card 2 -->
-                <a href="Resultados/ver_todos_formularios.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="resultados/ver_todos_formularios.php" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>

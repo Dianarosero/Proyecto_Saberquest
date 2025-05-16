@@ -23,7 +23,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    die("Formulario no encontrado o no tienes permiso para ver estos resultados.");
+    die("Simulacro no encontrado o no tienes permiso para ver estos resultados.");
 }
 
 $formulario = $result->fetch_assoc();
@@ -58,8 +58,8 @@ $estadisticas = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 // Calcular porcentaje de aciertos
-$porcentaje = ($estadisticas['total_preguntas'] > 0) 
-    ? round(($estadisticas['respuestas_correctas'] / $estadisticas['total_preguntas']) * 100) 
+$porcentaje = ($estadisticas['total_preguntas'] > 0)
+    ? round(($estadisticas['respuestas_correctas'] / $estadisticas['total_preguntas']) * 100)
     : 0;
 
 // Asignar clase y mensaje según porcentaje
@@ -109,10 +109,11 @@ $stmt->close();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Respuestas de <?php echo htmlspecialchars($estudiante['nombre']); ?> - Universidad CESMAG</title>
+    <title>Respuestas de <?php echo htmlspecialchars($estudiante['nombre']); ?> - SABERQUEST</title>
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,7 +149,7 @@ $stmt->close();
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--neutral-light);
@@ -159,14 +160,14 @@ $stmt->close();
             min-height: 100vh;
             line-height: 1.6;
         }
-        
+
         .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('<?php echo htmlspecialchars(!empty($formulario["imagen"]) ? $formulario["imagen"] : "img/default-bg.svg"); ?>');
+            background-image: url('<?php echo htmlspecialchars(!empty($formulario["imagen"]) ? $formulario["imagen"] : "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png"); ?>');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -174,11 +175,11 @@ $stmt->close();
             opacity: 0.12;
             z-index: -1;
         }
-        
+
         .header {
             background-color: var(--primary);
             color: white;
-            padding: 1.2rem 2rem;
+            padding: 1.2rem 11rem;
             width: 100%;
             box-shadow: var(--shadow-md);
             display: flex;
@@ -189,28 +190,16 @@ $stmt->close();
             z-index: 100;
             transition: var(--transition);
         }
-        
+
         .header:hover {
             box-shadow: var(--shadow-lg);
         }
-        
-        .university-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-        
-        .university-logo i {
-            margin-right: 10px;
-            color: var(--accent);
-        }
-        
+
         .header-actions {
             display: flex;
             gap: 10px;
         }
-        
+
         .main-container {
             max-width: 900px;
             width: 100%;
@@ -218,7 +207,7 @@ $stmt->close();
             padding: 0 1rem;
             flex: 1;
         }
-        
+
         .contenedor {
             background: var(--background);
             border-radius: var(--border-radius);
@@ -227,11 +216,11 @@ $stmt->close();
             margin-bottom: 2rem;
             transition: var(--transition);
         }
-        
+
         .contenedor:hover {
             box-shadow: var(--shadow-lg);
         }
-        
+
         .page-title {
             margin-bottom: 2rem;
             color: var(--primary);
@@ -239,7 +228,7 @@ $stmt->close();
             position: relative;
             display: inline-block;
         }
-        
+
         .page-title::after {
             content: '';
             position: absolute;
@@ -250,30 +239,30 @@ $stmt->close();
             background-color: var(--secondary);
             border-radius: 3px;
         }
-        
+
         .breadcrumb {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
         }
-        
+
         .breadcrumb a {
             color: var(--primary);
             text-decoration: none;
             transition: var(--transition);
         }
-        
+
         .breadcrumb a:hover {
             color: var(--primary-light);
             text-decoration: underline;
         }
-        
+
         .breadcrumb-separator {
             margin: 0 0.5rem;
             color: var(--text-light);
         }
-        
+
         .student-header {
             border-radius: var(--border-radius);
             margin-bottom: 2rem;
@@ -283,12 +272,12 @@ $stmt->close();
             justify-content: space-between;
             gap: 2rem;
         }
-        
+
         .student-info {
             flex: 1;
             min-width: 250px;
         }
-        
+
         .student-name {
             font-size: 1.5rem;
             font-weight: 700;
@@ -298,24 +287,24 @@ $stmt->close();
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .student-name i {
             color: var(--primary);
         }
-        
+
         .student-email {
             color: var(--text-light);
             font-size: 0.95rem;
             margin-bottom: 1rem;
         }
-        
+
         .stats-summary {
             display: flex;
             flex-wrap: wrap;
             gap: 1.5rem;
             margin-top: 1rem;
         }
-        
+
         .stat-item {
             background: var(--neutral-light);
             padding: 1rem;
@@ -326,12 +315,12 @@ $stmt->close();
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
-        
+
         .stat-item:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-md);
         }
-        
+
         .date-info {
             font-size: 0.9rem;
             color: var(--text-light);
@@ -340,7 +329,7 @@ $stmt->close();
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .score-card {
             flex: 1;
             min-width: 200px;
@@ -349,50 +338,50 @@ $stmt->close();
             text-align: center;
             box-shadow: var(--shadow-sm);
         }
-        
+
         .rendimiento-alto {
             background-color: rgba(39, 174, 96, 0.1);
             border-left: 4px solid var(--success);
         }
-        
+
         .rendimiento-medio-alto {
             background-color: rgba(46, 139, 87, 0.1);
             border-left: 4px solid #2E8B57;
         }
-        
+
         .rendimiento-medio {
             background-color: rgba(243, 156, 18, 0.1);
             border-left: 4px solid var(--warning);
         }
-        
+
         .rendimiento-bajo {
             background-color: rgba(198, 40, 40, 0.1);
             border-left: 4px solid var(--error);
         }
-        
+
         .score-badge {
             font-size: 2.5rem;
             font-weight: 700;
             line-height: 1;
             margin-bottom: 0.5rem;
         }
-        
+
         .rendimiento-alto .score-badge {
             color: var(--success);
         }
-        
+
         .rendimiento-medio-alto .score-badge {
             color: #2E8B57;
         }
-        
+
         .rendimiento-medio .score-badge {
             color: var(--warning);
         }
-        
+
         .rendimiento-bajo .score-badge {
             color: var(--error);
         }
-        
+
         .section-title {
             font-size: 1.5rem;
             color: var(--primary);
@@ -400,7 +389,7 @@ $stmt->close();
             padding-bottom: 0.8rem;
             border-bottom: 1px solid var(--neutral);
         }
-        
+
         .message-card {
             background: #f0f7ff;
             padding: 1.2rem;
@@ -412,12 +401,12 @@ $stmt->close();
             align-items: center;
             gap: 12px;
         }
-        
+
         .message-card i {
             font-size: 1.4rem;
             color: var(--primary);
         }
-        
+
         .question-card {
             background: var(--neutral-light);
             padding: 25px;
@@ -428,58 +417,58 @@ $stmt->close();
             position: relative;
             overflow: hidden;
         }
-        
+
         .question-card:hover {
             box-shadow: var(--shadow-md);
             transform: translateY(-3px);
         }
-        
+
         .question-card.correct {
             border-left: 4px solid var(--success);
         }
-        
+
         .question-card.incorrect {
             border-left: 4px solid var(--error);
         }
-        
+
         .question-header {
             display: flex;
             align-items: flex-start;
             gap: 1rem;
             margin-bottom: 1.2rem;
         }
-        
+
         .question-number {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
         }
-        
+
         .question-text {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary);
             flex: 1;
         }
-        
+
         .status-icon {
             font-size: 1.5rem;
         }
-        
+
         .status-icon.correct {
             color: var(--success);
         }
-        
+
         .status-icon.incorrect {
             color: var(--error);
         }
-        
+
         .options-list {
             display: grid;
             gap: 12px;
             margin: 1.2rem 0;
         }
-        
+
         .option {
             display: flex;
             align-items: center;
@@ -491,17 +480,17 @@ $stmt->close();
             position: relative;
             overflow: hidden;
         }
-        
+
         .option:hover {
             border-color: var(--primary-light);
             box-shadow: var(--shadow-sm);
         }
-        
+
         .option.correct-option {
             background-color: rgba(39, 174, 96, 0.1);
             border-color: var(--success);
         }
-        
+
         .option.correct-option::after {
             content: '\f00c';
             font-family: 'Font Awesome 6 Free';
@@ -510,13 +499,13 @@ $stmt->close();
             right: 15px;
             color: var(--success);
         }
-        
+
         .option.incorrect-option {
             background-color: rgba(198, 40, 40, 0.1);
             border-color: var(--error);
             text-decoration: line-through;
         }
-        
+
         .option.incorrect-option::after {
             content: '\f00d';
             font-family: 'Font Awesome 6 Free';
@@ -525,7 +514,7 @@ $stmt->close();
             right: 15px;
             color: var(--error);
         }
-        
+
         .option-letter {
             display: inline-flex;
             align-items: center;
@@ -538,11 +527,11 @@ $stmt->close();
             margin-right: 15px;
             font-weight: 600;
         }
-        
+
         .option.user-selected {
             border-width: 2px;
         }
-        
+
         .result-info {
             margin-top: 1.5rem;
             padding-top: 1rem;
@@ -551,15 +540,15 @@ $stmt->close();
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .result-info.correct {
             color: var(--success);
         }
-        
+
         .result-info.incorrect {
             color: var(--error);
         }
-        
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -575,66 +564,66 @@ $stmt->close();
             text-decoration: none;
             gap: 8px;
         }
-        
+
         .btn-primary {
             background-color: var(--primary);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-        
+
         .btn-outline:hover {
             background-color: var(--primary);
             color: white;
             transform: translateY(-2px);
         }
-        
+
         .btn-danger {
             background-color: var(--secondary);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-danger:hover {
             background-color: var(--secondary-light);
             box-shadow: 0 0 0 3px rgba(178, 34, 34, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-accent {
             background-color: var(--accent);
             color: var(--text);
             border: 2px solid transparent;
         }
-        
+
         .btn-accent:hover {
             background-color: var(--accent-light);
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline-light {
             background-color: transparent;
             color: white;
             border: 2px solid white;
         }
-        
+
         .btn-outline-light:hover {
             background-color: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
-        
+
         .actions {
             display: flex;
             justify-content: space-between;
@@ -642,7 +631,7 @@ $stmt->close();
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .modal {
             display: none;
             position: fixed;
@@ -655,7 +644,7 @@ $stmt->close();
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-content {
             background: var(--background);
             padding: 2rem;
@@ -664,7 +653,7 @@ $stmt->close();
             max-width: 500px;
             width: 90%;
         }
-        
+
         .modal-title {
             margin-bottom: 1.5rem;
             color: var(--primary);
@@ -673,21 +662,21 @@ $stmt->close();
             align-items: center;
             gap: 0.8rem;
         }
-        
+
         .modal-title i {
             color: var(--secondary);
         }
-        
+
         .modal-body {
             margin-bottom: 1.5rem;
         }
-        
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
         }
-        
+
         .footer {
             margin-top: auto;
             background-color: var(--primary);
@@ -696,64 +685,111 @@ $stmt->close();
             text-align: center;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .footer a {
             color: var(--accent);
             text-decoration: none;
             transition: var(--transition);
         }
-        
+
         .footer a:hover {
             color: var(--accent-light);
             text-decoration: underline;
         }
-        
+
         /* Responsividad */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
             }
-            
+
             .main-container {
                 padding: 0 0.8rem;
             }
-            
+
             .contenedor {
                 padding: 1.5rem;
             }
-            
+
             .page-title {
                 font-size: 1.6rem;
             }
-            
+
             .student-header {
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            
+
             .score-card {
                 width: 100%;
             }
-            
+
             .question-header {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .status-icon {
                 position: absolute;
                 top: 1rem;
                 right: 1rem;
             }
-            
+
             .actions {
                 flex-direction: column;
             }
-            
+
             .actions .btn {
                 width: 100%;
                 justify-content: center;
             }
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
     <script>
@@ -762,19 +798,19 @@ $stmt->close();
             const deleteButton = document.querySelector('.delete-student-btn');
             const closeModalButtons = document.querySelectorAll('.close-modal');
             const deleteModal = document.getElementById('deleteStudentModal');
-            
+
             if (deleteButton) {
                 deleteButton.addEventListener('click', function() {
                     deleteModal.style.display = 'flex';
                 });
             }
-            
+
             closeModalButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     deleteModal.style.display = 'none';
                 });
             });
-            
+
             // Close modal when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === deleteModal) {
@@ -784,30 +820,32 @@ $stmt->close();
         });
     </script>
 </head>
+
 <body>
     <div class="bg-container"></div>
-    
+
     <header class="header">
-        <div class="university-logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Universidad CESMAG</span>
+        <div class="logo-space">
+            <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
         </div>
-        <div class="header-actions">
-            <a href="formularios_profesor.php" class="btn btn-outline-light">
-                <i class="fas fa-home"></i> Inicio
-            </a>
+        <div class="nav-controls">
+            <nav class="nav">
+                <div class="nav-list">
+                    <a class="nav-link" href="../index_docente.php#projects">Inicio</a>
+                </div>
+            </nav>
         </div>
     </header>
-    
+
     <div class="main-container">
         <div class="breadcrumb">
-            <a href="formularios_profesor.php">Inicio</a>
+            <a href="ver_todos_formularios.php">Simulacros</a>
             <span class="breadcrumb-separator">/</span>
             <a href="resultados_profesor.php?id=<?php echo $formulario_id; ?>">Resultados</a>
             <span class="breadcrumb-separator">/</span>
             <span>Respuestas de estudiante</span>
         </div>
-        
+
         <div class="contenedor">
             <div class="student-header">
                 <div class="student-info">
@@ -820,36 +858,36 @@ $stmt->close();
                         <i class="far fa-calendar-alt"></i> Respondido el: <?php echo $fecha_formateada; ?>
                     </div>
                 </div>
-                
+
                 <div class="score-card <?php echo $clase_rendimiento; ?>">
                     <div class="score-badge"><?php echo $porcentaje; ?>%</div>
                     <p><?php echo $estadisticas['respuestas_correctas']; ?> de <?php echo $estadisticas['total_preguntas']; ?> correctas</p>
                 </div>
             </div>
-            
+
             <div class="message-card">
                 <i class="fas fa-info-circle"></i>
                 <p><?php echo $mensaje_rendimiento; ?></p>
             </div>
-            
+
             <h2 class="section-title">
-                <i class="fas fa-clipboard-check"></i> 
+                <i class="fas fa-clipboard-check"></i>
                 Detalle de respuestas
             </h2>
-            
+
             <?php foreach ($preguntas as $index => $pregunta): ?>
-            <div class="question-card <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
-                <div class="question-header">
-                    <span class="question-number"><?php echo $index + 1; ?>.</span>
-                    <div class="question-text"><?php echo htmlspecialchars($pregunta['enunciado']); ?></div>
-                    <div class="status-icon <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
-                        <i class="fas <?php echo $pregunta['es_correcta'] ? 'fa-check-circle' : 'fa-times-circle'; ?>"></i>
+                <div class="question-card <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
+                    <div class="question-header">
+                        <span class="question-number"><?php echo $index + 1; ?>.</span>
+                        <div class="question-text"><?php echo htmlspecialchars($pregunta['enunciado']); ?></div>
+                        <div class="status-icon <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
+                            <i class="fas <?php echo $pregunta['es_correcta'] ? 'fa-check-circle' : 'fa-times-circle'; ?>"></i>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="options-list">
-                    <?php foreach (['a', 'b', 'c', 'd'] as $letra): ?>
-                        <?php 
+
+                    <div class="options-list">
+                        <?php foreach (['a', 'b', 'c', 'd'] as $letra): ?>
+                            <?php
                             $option_class = '';
                             if ($letra == $pregunta['correcta']) {
                                 $option_class = 'correct-option';
@@ -858,40 +896,40 @@ $stmt->close();
                                 $option_class = 'incorrect-option';
                             }
                             $user_selected = ($letra == $pregunta['respuesta_usuario']) ? 'user-selected' : '';
-                        ?>
-                        <div class="option <?php echo $option_class; ?> <?php echo $user_selected; ?>">
-                            <span class="option-letter"><?php echo $letra; ?></span>
-                            <?php echo htmlspecialchars($pregunta['opciones'][$letra]); ?>
-                        </div>
-                    <?php endforeach; ?>
+                            ?>
+                            <div class="option <?php echo $option_class; ?> <?php echo $user_selected; ?>">
+                                <span class="option-letter"><?php echo $letra; ?></span>
+                                <?php echo htmlspecialchars($pregunta['opciones'][$letra]); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="result-info <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
+                        <i class="fas <?php echo $pregunta['es_correcta'] ? 'fa-check-circle' : 'fa-times-circle'; ?>"></i>
+                        <p>
+                            <strong>Respuesta del estudiante: <?php echo strtoupper($pregunta['respuesta_usuario']); ?></strong>
+                            <?php if (!$pregunta['es_correcta']): ?>
+                                - La respuesta correcta era: <strong><?php echo strtoupper($pregunta['correcta']); ?></strong>
+                            <?php endif; ?>
+                        </p>
+                    </div>
                 </div>
-                
-                <div class="result-info <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
-                    <i class="fas <?php echo $pregunta['es_correcta'] ? 'fa-check-circle' : 'fa-times-circle'; ?>"></i>
-                    <p>
-                        <strong>Respuesta del estudiante: <?php echo strtoupper($pregunta['respuesta_usuario']); ?></strong>
-                        <?php if (!$pregunta['es_correcta']): ?>
-                            - La respuesta correcta era: <strong><?php echo strtoupper($pregunta['correcta']); ?></strong>
-                        <?php endif; ?>
-                    </p>
-                </div>
-            </div>
             <?php endforeach; ?>
-            
+
             <div class="actions">
                 <div>
                     <a href="resultados_profesor.php?id=<?php echo $formulario_id; ?>" class="btn btn-outline">
                         <i class="fas fa-arrow-left"></i> Volver a resultados
                     </a>
                 </div>
-                
+
                 <button class="btn btn-danger delete-student-btn">
                     <i class="fas fa-trash-alt"></i> Eliminar respuestas
                 </button>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal para eliminar respuestas del estudiante -->
     <div id="deleteStudentModal" class="modal">
         <div class="modal-content">
@@ -900,7 +938,7 @@ $stmt->close();
                 <h4>Eliminar respuestas</h4>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar todas las respuestas de <strong><?php echo htmlspecialchars($estudiante['nombre']); ?></strong> para este formulario?</p>
+                <p>¿Estás seguro de que deseas eliminar todas las respuestas de <strong><?php echo htmlspecialchars($estudiante['nombre']); ?></strong> para este simulacro?</p>
                 <p><small>Esta acción no se puede deshacer.</small></p>
             </div>
             <div class="modal-actions">
@@ -913,9 +951,10 @@ $stmt->close();
             </div>
         </div>
     </div>
-    
+
     <footer class="footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
 </body>
+
 </html>
