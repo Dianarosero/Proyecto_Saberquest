@@ -2,9 +2,9 @@
 session_start();
 include("../../base de datos/con_db.php");
 
-// Validar que el usuario esté logueado
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../index.php');
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Estudiante') {
+    header('Location: ../../index.php');
     exit;
 }
 
@@ -25,7 +25,9 @@ if ($ya_respondio > 0) {
     <html lang='es'>
     <head>
         <meta charset='UTF-8'>
-        <title>Formulario ya respondido</title>
+        <title>Simulacro ya respondido</title>
+        <link href='../../assets/img/favicon.png' rel='icon'>
+        <link href='../../assets/img/favicon.png' rel='apple-touch-icon'>
         <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
         <style>
             body { font-family: Arial, sans-serif; background: #f5f5f5; }
@@ -36,9 +38,9 @@ if ($ya_respondio > 0) {
     </head>
     <body>
         <div class='container'>
-            <h2><i class='fas fa-exclamation-circle'></i> Ya has respondido este formulario</h2>
-            <p>No puedes volver a realizar este formulario.</p>
-            <a href='formularios_estudiante.php' class='btn'><i class='fas fa-home'></i> Volver al inicio</a>
+            <h2><i class='fas fa-exclamation-circle'></i> Ya has respondido este Simulacro</h2>
+            <p>No puedes volver a realizar este simulacro.</p>
+            <a href='formularios_estudiante.php' class='btn'><i></i> Volver a ver simulacros</a>
         </div>
     </body>
     </html>";
@@ -52,12 +54,12 @@ $stmt->bind_param("i", $formulario_id);
 $stmt->execute();
 $stmt->bind_result($titulo, $descripcion, $mostrar_respuestas, $imagen_fondo);
 if (!$stmt->fetch()) {
-    die("Formulario no encontrado.");
+    die("Simulacro no encontrado.");
 }
 $stmt->close();
 
 // Establecer imagen de fondo predeterminada si no hay una en la base de datos
-$imagen_fondo = !empty($imagen_fondo) ? $imagen_fondo : 'img/default-bg.svg';
+$imagen_fondo = !empty($imagen_fondo) ? $imagen_fondo : '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png';
 
 // Obtener preguntas con la respuesta correcta y opciones
 $stmt = $conex->prepare("SELECT id, enunciado, opciones, correcta FROM preguntas WHERE formulario_id = ?");
@@ -109,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     <head>
         <meta charset='UTF-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Resultados - Universidad CESMAG</title>
+        <title>Resultados - SABERQUEST</title>
         <link href='../../assets/img/favicon.png' rel='icon'>
         <link href='../../assets/img/favicon.png' rel='apple-touch-icon'>
         <link rel='preconnect' href='https://fonts.googleapis.com'>
@@ -174,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
             .header {
                 background-color: var(--primary);
                 color: white;
-                padding: 1.2rem 2rem;
+                padding: 1.2rem 12rem;
                 width: 100%;
                 box-shadow: var(--shadow-md);
                 display: flex;
@@ -461,26 +463,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
                     padding: 10px;
                 }
             }
+
+            .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         </style>
     </head>
     <body>
         <div class='bg-container'></div>
         
         <header class='header'>
-            <div class='university-logo'>
-                <i class='fas fa-graduation-cap'></i>
-                <span>Universidad CESMAG</span>
+            <div class='logo-space'>
+                <img width='120' height='50' fill='none' src='../../assets/img/Logo_fondoazul.png'>
             </div>
-            <div class='header-actions'>
-                <a href='formularios_estudiante.php' class='btn btn-outline'>
-                    <i class='fas fa-home'></i> Inicio
-                </a>
+
+            <div class='nav-controls'>
+                <nav class='nav'>
+                    <div class='nav-list'>
+                        <a class='nav-link' href='../index_estudiante.php#projects'>Inicio</a>
+                    </div>
+                </nav>
             </div>
         </header>
         
         <div class='results-container'>
             <div class='form-header'>
-                <h2>¡Formulario enviado!</h2>
+                <h2>¡Simulacro enviado!</h2>
             </div>
             
             <div class='result-summary'>
@@ -494,7 +546,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
         foreach ($respuestas_usuario as $idx => $resp) {
             $num = $idx + 1;
             $result_class = $resp['es_correcta'] ? 'correct-result' : 'incorrect-result';
-            $icon = $resp['es_correcta'] ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+            $icon = $resp['es_correcta'] ? '<i></i>' : '<i class="fas fa-times-circle"></i>';
 
             echo "<div class='result-item $result_class'>";
             echo "<strong><span class='pregunta-numero'>$num.</span> " . htmlspecialchars($resp['enunciado']) . "</strong>";
@@ -538,7 +590,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     echo "</div>
     
     <footer class='footer'>
-        <p>&copy; " . date('Y') . "SABERQUEST. Todos los derechos reservados.</p>
+        <p>&copy; " . date('Y') . " SABERQUEST. Todos los derechos reservados.</p>
     </footer>
     
     </body>
@@ -553,7 +605,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($titulo); ?> - Universidad CESMAG</title>
+    <title><?php echo htmlspecialchars($titulo); ?> - SABERQUEST</title>
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -619,7 +671,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     .header {
         background-color: var(--primary);
         color: white;
-        padding: 1.2rem 2rem;
+        padding: 1.2rem 12rem;
         width: 100%;
         box-shadow: var(--shadow-md);
         display: flex;
@@ -1127,6 +1179,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
             font-size: 0.9rem;
         }
     }
+
+    
     </style>
 </head>
 
@@ -1134,13 +1188,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     <div class="bg-container"></div>
 
     <header class="header">
-        <div class="university-logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Universidad CESMAG</span>
-        </div>
+        <div class="logo-space">
+                <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
+            </div>
+
         <div class="header-actions">
-            <a href="formularios_estudiante.php" class="btn btn-outline btn-disabled">
-                <i class="fas fa-home"></i> Inicio
+            <a href="../index_estudiante.php" class="btn btn-outline btn-disabled">
+                <i></i> Inicio
             </a>
         </div>
     </header>
@@ -1237,10 +1291,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     </div>
 
     <footer class="footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
 
-    <script src="js/form-handler.js"></script>
+    <script src="../../assets/js_responder/form-handler.js"></script>
 </body>
 
 </html>

@@ -1,15 +1,12 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+session_start();
+include("../../base de datos/con_db.php");
 
-if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
-    // Redirigir a la página de login si no está autenticado
-    header('Location: ../index.php');
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Estudiante') {
+    header('Location: ../../index.php');
     exit;
 }
-
-include("../../base de datos/con_db.php");
 
 // Consulta para obtener todos los
 $sql = "SELECT id, titulo, descripcion, imagen FROM formularios ORDER BY id DESC";
@@ -19,11 +16,10 @@ $result = $conex->query($sql);
 function obtenerImagenPredeterminada($id)
 {
     $imagenes = [
-        "https://pixabay.com/get/g2cdd6215e9923eb45eff99da4cb73dec61633a27d58bcacbce124d37d542e5d7d4126cd75a0202c26a4ea57296846d6352dca9d5a2e58479f9e097b7e1c5a9ca_1280.png",
-        "https://pixabay.com/get/ge66fb416f468cd5a304f6a49a6ab37d4757803662e6a400a4b5b5644bff9e18cb2c8711001d174ba0c83f8745b137af4481a813c816869785bbdffec1e55ab54_1280.jpg",
-        "https://pixabay.com/get/ga0815f0c6b966482a27e89590757a3402e56b04bb4dd33d0c7ef37115d8cabf4582f4a0a76054dcaf70bfb4d35766175369baa29f4f6b000eeae3c175f3895d6_1280.png",
-        "https://pixabay.com/get/gcce9a682e2a210902b914dcb1b60d4d22f72fd750a809b31ce76f2f1a70439fa7d5d98b7b2c9419c9398116bbd2f8b3071130f4ac49114cd3e1d45e7a0c74d16_1280.jpg",
-        "https://pixabay.com/get/gad054b70b69a9bd13cfd80785acd73e716352b67c499723e63f0933020c2a9f8590a515ba06513727dd3eb0475a119b582aaeb6b2ebb106ae3fd923162405799_1280.jpg"
+        "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada1.png",
+        "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png",
+        "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada3.png",
+        "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada4.png"
     ];
     $index = $id % count($imagenes);
     return $imagenes[$index];
@@ -51,437 +47,370 @@ function obtenerImagenPredeterminada($id)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
-    // Script para garantizar el footer al fondo
-    document.addEventListener('DOMContentLoaded', function() {
-        function adjustFooter() {
-            const bodyHeight = document.body.offsetHeight;
-            const windowHeight = window.innerHeight;
-            const footer = document.querySelector('.main-footer');
+        // Script para garantizar el footer al fondo
+        document.addEventListener('DOMContentLoaded', function() {
+            function adjustFooter() {
+                const bodyHeight = document.body.offsetHeight;
+                const windowHeight = window.innerHeight;
+                const footer = document.querySelector('.main-footer');
 
-            if (bodyHeight < windowHeight) {
-                footer.style.position = 'fixed';
-                footer.style.bottom = '0';
-            } else {
-                footer.style.position = 'relative';
-                footer.style.bottom = 'auto';
+                if (bodyHeight < windowHeight) {
+                    footer.style.position = 'fixed';
+                    footer.style.bottom = '0';
+                } else {
+                    footer.style.position = 'relative';
+                    footer.style.bottom = 'auto';
+                }
             }
-        }
 
-        // Ejecutar al cargar y al cambiar el tamaño de la ventana
-        adjustFooter();
-        window.addEventListener('resize', adjustFooter);
-    });
+            // Ejecutar al cargar y al cambiar el tamaño de la ventana
+            adjustFooter();
+            window.addEventListener('resize', adjustFooter);
+        });
     </script>
 
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    html,
-    body {
-        font-family: 'Lato', sans-serif;
-        background-color: #f5f5f5;
-        color: #333333;
-        line-height: 1.6;
-        min-height: 100vh;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    body {
-        position: relative;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        color: #003366;
-    }
-
-    a {
-        text-decoration: none;
-        color: #003366;
-    }
-
-    /* Header Styles */
-    .top-header {
-        background-color: #003366;
-        color: #FFFFFF;
-        padding: 1.2rem 2rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .header-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .logo-space {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo-placeholder {
-        color: #FFFFFF;
-        font-weight: bold;
-        font-size: 1.2rem;
-        font-family: 'Montserrat', sans-serif;
-        border: 2px dashed #FFFFFF;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-    }
-
-    .nav-controls {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .search-container {
-        display: flex;
-        align-items: center;
-        background-color: #FFFFFF;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-
-    .search-container input {
-        border: none;
-        padding: 0.6rem 1rem;
-        width: 250px;
-        font-size: 0.9rem;
-        outline: none;
-    }
-
-    .search-btn {
-        background-color: #003366;
-        border: none;
-        padding: 0.6rem 1rem;
-        color: #FFFFFF;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .search-btn:hover {
-        background-color: #004488;
-    }
-
-    .home-btn {
-        padding: 0.6rem 1.2rem;
-        color: #FFFFFF;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-    }
-
-    .home-btn:hover {
-        background-color: #E0E0E0;
-    }
-
-    .page-title {
-        text-align: center;
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #004488;
-        /* Azul oscuro similar al de la imagen */
-        font-family: 'Poppins', sans-serif;
-        margin-top: 40px;
-        margin-bottom: 20px;
-        letter-spacing: 1px;
-    }
-
-    .title-underline {
-        width: 60px;
-        height: 5px;
-        background-color: #a51c1c;
-        /* Rojo similar al de la línea */
-        margin: 16px auto 0 auto;
-        border-radius: 2px;
-    }
-
-
-
-
-    /* Main Content Container */
-    .main-content {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-        flex: 1;
-    }
-
-    /* Forms Grid Container */
-    .forms-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Siempre 3 columnas */
-    gap: 1.5rem;
-}
-
-
-    /* Card Styles */
-    .card {
-        background-color: #FFFFFF;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Create Form Card */
-    .create-form-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        height: 100%;
-        border: 2px dashed #E0E0E0;
-        min-height: 250px;
-    }
-
-    .create-form-card:hover {
-        border-color: #003366;
-    }
-
-    .create-icon {
-        font-size: 3.5rem;
-        color: #003366;
-        margin-bottom: 1rem;
-        transition: color 0.3s;
-    }
-
-    .create-form-card:hover .create-icon {
-        color: #004488;
-    }
-
-    .create-form-card h2 {
-        margin-bottom: 0.5rem;
-    }
-
-    .create-form-card p {
-        color: #666;
-        font-size: 0.9rem;
-    }
-
-    /* Form Card */
-    .form-card {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .card-image {
-        height: 150px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s;
-    }
-
-    .form-card:hover .card-image img {
-        transform: scale(1.05);
-    }
-
-    .card-content {
-        padding: 1.2rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card-content h3 {
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
-    }
-
-    .form-description {
-        color: #666;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        line-height: 1.4;
-    }
-
-    .card-actions {
-        margin-top: auto;
-        display: flex;
-        justify-content: space-between;
-        gap: 0.5rem;
-    }
-
-    /* Button Styles */
-    .btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 500;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .edit-btn {
-        background-color: #003366;
-        color: #FFFFFF;
-        flex: 1;
-    }
-
-    .edit-btn:hover {
-        background-color: #004488;
-        transform: translateY(-2px);
-    }
-
-    .delete-btn {
-        background-color: #B22222;
-        color: #FFFFFF;
-        flex: 1;
-    }
-
-    .delete-btn:hover {
-        background-color: #D22F2F;
-        transform: translateY(-2px);
-    }
-
-    .btn i {
-        font-size: 0.9rem;
-    }
-
-    /* Footer Styles */
-    .main-footer {
-        text-align: center;
-        padding: 1.5rem;
-        margin-top: 2rem;
-        background-color: #003366;
-        color: #FFFFFF;
-        font-size: 0.9rem;
-        width: 100%;
-    }
-
-    /* Responsive Styles */
-    @media screen and (max-width: 992px) {
-        .forms-container {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .header-content {
-            padding: 0 1rem;
-        }
-
-        .search-container input {
-            width: 200px;
-        }
-
-        .nav-controls {
-            gap: 0.5rem;
-        }
-    }
-
-    @media screen and (max-width: 768px) {
-        .header-content {
+        html,
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f5f5f5;
+            color: #333333;
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
             flex-direction: column;
-            gap: 1rem;
-            align-items: stretch;
+        }
+
+        body {
+            position: relative;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #003366;
+        }
+
+        a {
+            text-decoration: none;
+            color: #003366;
+        }
+
+        /* Header Styles */
+        .top-header {
+            background-color: #003366;
+            color: #FFFFFF;
+            padding: 1.2rem 12rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo-space {
-            justify-content: center;
-            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-placeholder {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            border: 2px dashed #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
         }
 
         .nav-controls {
-            flex-direction: column;
-            gap: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .page-title h1 {
-            font-size: 1.5rem;
+
+        .page-title {
             text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #004488;
+            /* Azul oscuro similar al de la imagen */
+            font-family: 'Poppins', sans-serif;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
         }
 
-        .search-container {
-            width: 100%;
+        .title-underline {
+            width: 60px;
+            height: 5px;
+            background-color: #a51c1c;
+            /* Rojo similar al de la línea */
+            margin: 16px auto 0 auto;
+            border-radius: 2px;
         }
 
-        .search-container input {
-            width: 100%;
-        }
 
-        .home-btn {
-            width: 100%;
-        }
 
+
+        /* Main Content Container */
         .main-content {
-            padding: 0 1rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
         }
 
+        /* Forms Grid Container */
         .forms-container {
-            grid-template-columns: 1fr;
-            gap: 1.2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* Siempre 3 columnas */
+            gap: 1.5rem;
         }
-    }
 
-    @media screen and (max-width: 480px) {
-        .card-actions {
+
+        /* Card Styles */
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Form Card */
+        .form-card {
+            display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
-        .btn {
+        .card-image {
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image img {
             width: 100%;
-            margin-bottom: 0.5rem;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
         }
 
-        .top-header {
-            padding: 1rem;
+        .form-card:hover .card-image img {
+            transform: scale(1.05);
         }
 
-        .create-form-card {
-            padding: 1.5rem;
-        }
-
-        .create-icon {
-            font-size: 3rem;
+        .card-content {
+            padding: 1.2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .card-content h3 {
-            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
         }
-    }
 
-    /* Focus states for accessibility */
-    .search-container input:focus,
-    .btn:focus {
-        outline: 2px solid #003366;
-        outline-offset: 2px;
-    }
+        .form-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .edit-btn {
+            background-color: #003366;
+            color: #FFFFFF;
+            flex: 1;
+        }
+
+        .edit-btn:hover {
+            background-color: #004488;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background-color: #B22222;
+            color: #FFFFFF;
+            flex: 1;
+        }
+
+        .delete-btn:hover {
+            background-color: #D22F2F;
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        /* Footer Styles */
+        .main-footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            background-color: #003366;
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 992px) {
+            .forms-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .nav-controls {
+                gap: 0.5rem;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .logo-space {
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-controls {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .forms-container {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .top-header {
+                padding: 1rem;
+            }
+
+            .card-content h3 {
+                font-size: 1rem;
+            }
+        }
+
+       
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 
@@ -492,15 +421,11 @@ function obtenerImagenPredeterminada($id)
                 <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
             </div>
             <div class="nav-controls">
-                <div class="search-container">
-                    <input type="text" placeholder="Buscar simulacros...">
-                    <button class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-
-                <a class="btn home-btn" href="../index_admin.php">Inicio</a>
-
+                <nav class="nav">
+                    <div class="nav-list">
+                        <a class="nav-link" href="../index_estudiante.php#projects">Inicio</a>
+                    </div>
+                </nav>
             </div>
         </div>
     </header>
@@ -511,48 +436,46 @@ function obtenerImagenPredeterminada($id)
             <div class="title-underline"></div>
         </div>
         <section class="forms-container">
-            <!-- Create New Form Card -->
-
             <!-- Existing Forms Grid -->
             <?php if ($result && $result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()):
-    // Usar imagen del formulario si existe, si no, imagen predeterminada
-    if (!empty($row['imagen'])) {
-        $imagen = $row['imagen'];
-    } else {
-        $imagen = obtenerImagenPredeterminada($row['id']);
-    }
+                <?php while ($row = $result->fetch_assoc()):
+                    // Usar imagen del formulario si existe, si no, imagen predeterminada
+                    if (!empty($row['imagen'])) {
+                        $imagen = $row['imagen'];
+                    } else {
+                        $imagen = obtenerImagenPredeterminada($row['id']);
+                    }
 
-    // Obtener un resumen corto de la descripción
-    $descripcion_corta = substr(htmlspecialchars($row['descripcion']), 0, 100);
-    if (strlen($row['descripcion']) > 100) {
-        $descripcion_corta .= '...';
-    }
-?>
-            <div class="card form-card">
-                <div class="card-image">
-                    <img src="<?php echo htmlspecialchars($imagen); ?>"
-                        alt="<?php echo htmlspecialchars($row['titulo']); ?>">
-                </div>
-                <div class="card-content">
-                    <h3><?php echo htmlspecialchars($row['titulo']); ?></h3>
-                    <p class="form-description"><?php echo nl2br($descripcion_corta); ?></p>
-                    <div class="card-actions">
-                        <a href="responder_formulario.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
+                    // Obtener un resumen corto de la descripción
+                    $descripcion_corta = substr(htmlspecialchars($row['descripcion']), 0, 100);
+                    if (strlen($row['descripcion']) > 100) {
+                        $descripcion_corta .= '...';
+                    }
+                ?>
+                    <div class="card form-card">
+                        <div class="card-image">
+                            <img src="<?php echo htmlspecialchars($imagen); ?>"
+                                alt="<?php echo htmlspecialchars($row['titulo']); ?>">
+                        </div>
+                        <div class="card-content">
+                            <h3><?php echo htmlspecialchars($row['titulo']); ?></h3>
+                            <p class="form-description"><?php echo nl2br($descripcion_corta); ?></p>
+                            <div class="card-actions">
+                                <a href="responder_formulario.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
+                                    <i class="fas fa-arrow-circle-right"></i> Realizar simulacro
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
 
             <?php else: ?>
-            <div class="no-forms-message"
-                style="grid-column: span 3; text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
-                <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #003366; margin-bottom: 1rem;"></i>
-                <h3>No hay Simulacros disponibles</h3>
-                <p>Crea tu primer formulario haciendo clic en "Crear un Simulacro"</p>
-            </div>
+                <div class="no-forms-message"
+                    style="grid-column: span 3; text-align: center; padding: 2rem; background: #fff; border-radius: 8px;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #003366; margin-bottom: 1rem;"></i>
+                    <h3>No hay Simulacros disponibles</h3>
+                    <p>Crea tu primer simulacro haciendo clic en "Crear un Simulacro"</p>
+                </div>
             <?php endif; ?>
         </section>
     </main>

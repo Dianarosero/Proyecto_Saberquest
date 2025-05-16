@@ -36,7 +36,7 @@ $result = mysqli_query($conex, $query);
                     </a>
                 </div>
                 <nav class="nav">
-                    <a href="../index_estudiante.php" class="nav-link">Inicio</a>
+                    <a href="../index_estudiante.php#projects" class="nav-link">Inicio</a>
                 </nav>
             </div>
         </div>
@@ -85,7 +85,7 @@ $result = mysqli_query($conex, $query);
      <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <p>&copy; 2024 SABERQUEST. Todos los derechos reservados.</p>
+                <p>&copy; 2025 SABERQUEST. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>

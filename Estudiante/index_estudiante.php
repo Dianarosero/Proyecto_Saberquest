@@ -1,14 +1,12 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+session_start();
+include("../base de datos/con_db.php");
 
-if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
-    // Redirigir a la página de login si no está autenticado
+// Validar que el usuario esté logueado y sea profesor
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Estudiante') {
     header('Location: ../index.php');
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -128,7 +126,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
             </div>
             <div class="projects-grid">
                 <!-- Card 1 -->
-                <a href="Practicar/practicar.php" target="_blank" class="project-card" data-category="Practicar">
+                <a href="Practicar/practicar.php" class="project-card" data-category="Practicar">
                     <div class="project-image">
                         <img src="../assets/src_index/img/pr.png" alt="Practicar">
                     </div>
@@ -138,7 +136,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                     </div>
                 </a>
                 <!-- Card 2 -->
-                 <a href="Simulacros/formularios_estudiante.php" target="_blank" class="project-card" data-category="Simulacro">
+                 <a href="Simulacros/formularios_estudiante.php" class="project-card" data-category="Simulacro">
                     <div class="project-image">
                         <img src="../assets/src_index/img/vs.png" alt="Ver Simulacros">
                     </div>
@@ -148,7 +146,7 @@ if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
                     </div>
                 </a>
                 <!-- Card 3 -->
-                <a href="Simulacros/mis_resultados.php" target="_blank" class="project-card" data-category="Resultados">
+                <a href="Simulacros/mis_resultados.php" class="project-card" data-category="Resultados">
                     <div class="project-image">
                         <img src="../assets/src_index/img/re.png" alt="Visualizar Resultados">
                     </div>
