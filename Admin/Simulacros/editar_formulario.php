@@ -19,15 +19,15 @@ if ($formulario_id == 0) {
 }
 
 // Obtener datos del formulario
-$stmt = $conex->prepare("SELECT titulo, descripcion, imagen FROM formularios WHERE id = ?");
+$stmt = $conex->prepare("SELECT titulo, descripcion, imagen, mostrar_respuestas FROM formularios WHERE id = ?");
 $stmt->bind_param("i", $formulario_id);
 $stmt->execute();
-$stmt->bind_result($titulo, $descripcion, $imagen);
+$stmt->bind_result($titulo, $descripcion, $imagen, $mostrar_respuestas);
 $formulario_encontrado = $stmt->fetch();
 $stmt->close();
 
 if (!$formulario_encontrado) {
-    header("Location: index.php?error=formulario_no_encontrado");
+    header("Location: index.php?error=simulacro_no_encontrado");
     exit;
 }
 
@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titulo_nuevo = $_POST['titulo'] ?? '';
     $descripcion_nueva = $_POST['descripcion'] ?? '';
     $imagen_ruta = $imagen; // Mantener la imagen actual por defecto
+    $mostrar_respuestas_nuevo = isset($_POST['mostrar_respuestas']) && $_POST['mostrar_respuestas'] == '1' ? 1 : 0; // 1 si está marcado, 0 si no
 
     // Procesar la imagen si se ha subido una nueva
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
@@ -61,17 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validar datos
     if (empty($titulo_nuevo)) {
-        $error = "El título del formulario no puede estar vacío.";
+        $error = "El título del simulacro no puede estar vacío.";
     } else if (empty($error)) { // Solo proceder si no hay errores
         // Actualizar formulario
-        $stmt_update = $conex->prepare("UPDATE formularios SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?");
-        $stmt_update->bind_param("sssi", $titulo_nuevo, $descripcion_nueva, $imagen_ruta, $formulario_id);
+        $stmt_update = $conex->prepare("UPDATE formularios SET titulo = ?, descripcion = ?, imagen = ?, mostrar_respuestas = ? WHERE id = ?");
+        $stmt_update->bind_param("sssii", $titulo_nuevo, $descripcion_nueva, $imagen_ruta, $mostrar_respuestas_nuevo, $formulario_id);
 
         if ($stmt_update->execute()) {
             $mensaje = "Formulario actualizado correctamente.";
             $titulo = $titulo_nuevo;
             $descripcion = $descripcion_nueva;
             $imagen = $imagen_ruta;
+            $mostrar_respuestas = $mostrar_respuestas_nuevo; // Actualizar el valor local para reflejar el cambio
         } else {
             $error = "Error al actualizar el formulario: " . $conex->error;
         }
@@ -246,7 +248,7 @@ if (isset($_POST['agregar_pregunta'])) {
             filter: blur(8px);
             opacity: 0.12;
             z-index: -1;
-            background-image: url('https://pixabay.com/get/g8386919d873394672d9c4f2b4a58bfdf6ddbc88918bd7be5af792f69144340e15c8134ca7a5df3c89411ba0b9f15bc66048659caff8143cbeee94118364b59da_1280.jpg');
+            background-image: url('../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png');
         }
 
         .header {
@@ -384,7 +386,7 @@ if (isset($_POST['agregar_pregunta'])) {
             left: 0;
             width: 40%;
             height: 3px;
-            background-color: var(--accent);
+            background-color: #B22222;
             border-radius: 3px;
         }
 
@@ -802,6 +804,28 @@ if (isset($_POST['agregar_pregunta'])) {
             text-decoration: none;
             color: inherit;
         }
+
+        .form-group label[for="mostrar_respuestas"] {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            /* Color del checkbox cuando está marcado */
+        }
+
+        .form-group input[type="checkbox"]:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
     </style>
 
     <script>
@@ -897,6 +921,13 @@ if (isset($_POST['agregar_pregunta'])) {
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4"><?php echo htmlspecialchars($descripcion); ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="mostrar_respuestas">
+                    <input type="checkbox" id="mostrar_respuestas" name="mostrar_respuestas" value="1" <?php echo $mostrar_respuestas == 1 ? 'checked' : ''; ?>>
+                    Mostrar resultados estudiante
+                </label>
             </div>
 
             <div class="form-group">

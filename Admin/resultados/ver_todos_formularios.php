@@ -35,11 +35,7 @@ $formularios = [];
 while ($row = $result->fetch_assoc()) {
     // Determinar si el formulario tiene respuestas
     $row['tiene_respuestas'] = ($row['total_respondidos'] > 0);
-    
-    // Ya no se usa es_creador, así que elimina estas líneas
-    // $row['tipo_badge'] = $row['es_creador'] ? 'badge-success' : 'badge-info';
-    // $row['etiqueta_badge'] = $row['es_creador'] ? 'Creador' : 'Colaborador';
-    
+
     $formularios[] = $row;
 }
 $stmt->close();
@@ -57,10 +53,11 @@ $formularios_agrupados = [
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formularios Disponibles - Universidad CESMAG</title>
+    <title>Resultados Simulacros - SABERQUEST</title>
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,7 +94,7 @@ $formularios_agrupados = [
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--neutral-light);
@@ -108,11 +105,11 @@ $formularios_agrupados = [
             min-height: 100vh;
             line-height: 1.6;
         }
-        
+
         .header {
             background-color: var(--primary);
             color: white;
-            padding: 1.2rem 2rem;
+            padding: 1.2rem 11rem;
             width: 100%;
             box-shadow: var(--shadow-md);
             display: flex;
@@ -123,28 +120,16 @@ $formularios_agrupados = [
             z-index: 100;
             transition: var(--transition);
         }
-        
+
         .header:hover {
             box-shadow: var(--shadow-lg);
         }
-        
-        .university-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-        
-        .university-logo i {
-            margin-right: 10px;
-            color: var(--accent);
-        }
-        
+
         .header-actions {
             display: flex;
             gap: 10px;
         }
-        
+
         .main-container {
             max-width: 1200px;
             width: 100%;
@@ -152,7 +137,7 @@ $formularios_agrupados = [
             padding: 0 1rem;
             flex: 1;
         }
-        
+
         .page-title {
             margin-bottom: 2rem;
             color: var(--primary);
@@ -160,7 +145,7 @@ $formularios_agrupados = [
             position: relative;
             display: inline-block;
         }
-        
+
         .page-title::after {
             content: '';
             position: absolute;
@@ -171,18 +156,18 @@ $formularios_agrupados = [
             background-color: var(--secondary);
             border-radius: 3px;
         }
-        
+
         .creador-section {
             margin: 3rem 0;
         }
-        
+
         .formularios-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
-        
+
         .form-card {
             background: var(--background);
             border-radius: var(--border-radius);
@@ -193,19 +178,19 @@ $formularios_agrupados = [
             flex-direction: column;
             height: 100%;
         }
-        
+
         .form-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
-        
+
         .card-image {
             height: 160px;
             background-size: cover;
             background-position: center;
             position: relative;
         }
-        
+
         .card-overlay {
             position: absolute;
             top: 0;
@@ -217,7 +202,7 @@ $formularios_agrupados = [
             align-items: center;
             justify-content: center;
         }
-        
+
         .card-badge {
             position: absolute;
             top: 15px;
@@ -228,54 +213,54 @@ $formularios_agrupados = [
             font-size: 0.75rem;
             color: white;
         }
-        
+
         .badge-success {
             background-color: var(--success);
         }
-        
+
         .badge-info {
             background-color: var(--info);
         }
-        
+
         .card-content {
             padding: 1.5rem;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-        
+
         .card-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary);
             margin-bottom: 0.8rem;
         }
-        
+
         .card-description {
             color: var(--text-light);
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
             flex: 1;
         }
-        
+
         .card-stats {
             background: var(--neutral-light);
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--neutral);
         }
-        
+
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-label {
             color: var(--text);
             font-weight: 500;
         }
-        
+
         .badge {
             display: inline-flex;
             align-items: center;
@@ -286,34 +271,34 @@ $formularios_agrupados = [
             font-size: 0.75rem;
             min-width: 30px;
         }
-        
+
         .badge-success {
             background-color: rgba(39, 174, 96, 0.1);
             color: var(--success);
         }
-        
+
         .badge-info {
             background-color: rgba(52, 152, 219, 0.1);
             color: var(--info);
         }
-        
+
         .badge-warning {
             background-color: rgba(243, 156, 18, 0.1);
             color: var(--warning);
         }
-        
+
         .badge-error {
             background-color: rgba(198, 40, 40, 0.1);
             color: var(--error);
         }
-        
+
         .card-actions {
             display: flex;
             justify-content: flex-end;
             margin-top: 1rem;
             gap: 0.5rem;
         }
-        
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -329,65 +314,65 @@ $formularios_agrupados = [
             text-decoration: none;
             gap: 8px;
         }
-        
+
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.85rem;
         }
-        
+
         .btn-primary {
             background-color: var(--primary);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-        
+
         .btn-outline:hover {
             background-color: var(--primary);
             color: white;
             transform: translateY(-2px);
         }
-        
+
         .btn-secondary {
             background-color: var(--info);
             color: white;
             border: 2px solid transparent;
         }
-        
+
         .btn-secondary:hover {
             background-color: #2980b9;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
             transform: translateY(-2px);
         }
-        
+
         .btn-outline-light {
             background-color: transparent;
             color: white;
             border: 2px solid white;
         }
-        
+
         .btn-outline-light:hover {
             background-color: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
-        
+
         .btn-disabled {
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
@@ -395,24 +380,24 @@ $formularios_agrupados = [
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-md);
         }
-        
+
         .empty-state i {
             font-size: 4rem;
             color: var(--neutral);
             margin-bottom: 1.5rem;
         }
-        
+
         .empty-state h3 {
             font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 1rem;
         }
-        
+
         .empty-state p {
             color: var(--text-light);
             margin-bottom: 1.5rem;
         }
-        
+
         .footer {
             margin-top: auto;
             background-color: var(--primary);
@@ -421,24 +406,24 @@ $formularios_agrupados = [
             text-align: center;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .footer a {
             color: var(--accent);
             text-decoration: none;
             transition: var(--transition);
         }
-        
+
         .footer a:hover {
             color: var(--accent-light);
             text-decoration: underline;
         }
-        
+
         /* Status inactivo */
         .disabled-card {
             opacity: 0.7;
             position: relative;
         }
-        
+
         .disabled-card::before {
             content: 'Sin respuestas disponibles';
             position: absolute;
@@ -453,48 +438,95 @@ $formularios_agrupados = [
             z-index: 10;
             white-space: nowrap;
         }
-        
+
         .disabled-card .card-content,
         .disabled-card .card-stats,
         .disabled-card .card-actions {
             filter: blur(2px);
             pointer-events: none;
         }
-        
+
         /* Responsividad */
         @media (max-width: 768px) {
             .header {
                 padding: 1rem;
             }
-            
+
             .main-container {
                 padding: 0 0.8rem;
             }
-            
+
             .formularios-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
-            
+
             .page-title {
                 font-size: 1.6rem;
             }
-            
-            
+
+
         }
-        
+
         @media (max-width: 480px) {
             .formularios-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .card-content {
                 padding: 1.2rem;
             }
-            
+
             .card-stats {
                 padding: 1rem;
             }
-            
+
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
     <script>
@@ -502,13 +534,13 @@ $formularios_agrupados = [
             // Tabs functionality
             const tabItems = document.querySelectorAll('.tab-item');
             const tabContents = document.querySelectorAll('.tab-content');
-            
+
             tabItems.forEach(item => {
                 item.addEventListener('click', function() {
                     // Remove active class from all tabs
                     tabItems.forEach(tab => tab.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
-                    
+
                     // Add active class to clicked tab
                     this.classList.add('active');
                     const tabId = this.getAttribute('data-tab');
@@ -518,74 +550,90 @@ $formularios_agrupados = [
         });
     </script>
 </head>
+
 <body>
     <header class="header">
-        <div class="university-logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Universidad CESMAG</span>
+        <div class="logo-space">
+            <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
         </div>
-        <div class="header-actions">
-            <a href="formularios_profesor.php" class="btn btn-outline-light">
-                <i class="fas fa-home"></i> Inicio
-            </a>
+        <div class="nav-controls">
+            <nav class="nav">
+                <div class="nav-list">
+                    <a class="nav-link" href="../index_admin.php#projects">Inicio</a>
+                </div>
+            </nav>
         </div>
     </header>
-    
+
     <div class="main-container">
-        <h1 class="page-title">Formularios Disponibles</h1>
-        
+        <h1 class="page-title">Simulacros Disponibles</h1>
+
         <?php if (empty($formularios)): ?>
-        <div class="empty-state">
-            <i class="fas fa-clipboard-list"></i>
-            <h3>No hay formularios disponibles</h3>
-            <p>Aún no se han creado formularios en el sistema.</p>
-        </div>
-        <?php else: ?>
-        
-        <!-- Tab: Todos los formularios -->
-        <div id="tab-todos" class="tab-content active">
-            <?php foreach ($formularios_agrupados as $creador_id => $grupo): ?>
-            <div class="creador-section">
-                <div class="formularios-grid">
-                    <?php foreach ($grupo['formularios'] as $form): ?>
-                        <div class="form-card <?php echo !$form['tiene_respuestas'] ? 'disabled-card' : ''; ?>">
-    <div class="card-image" style="background-image: url('<?php echo htmlspecialchars(!empty($form['imagen']) ? $form['imagen'] : 'Captura de pantalla 2023-06-26 211347.png'); ?>')">
-        <div class="card-overlay"></div>
-    </div>
-    <div class="card-content">
-        <h3 class="card-title"><?php echo htmlspecialchars($form['titulo']); ?></h3>
-        <p class="card-description"><?php echo htmlspecialchars(mb_strimwidth($form['descripcion'], 0, 120, '...')); ?></p>
-    </div>
-    <div class="card-stats">
-        <div class="stat-item">
-            <span class="stat-label">Preguntas:</span>
-            <span class="badge badge-info"><?php echo $form['total_preguntas']; ?></span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-label">Respondido por:</span>
-            <span class="badge badge-<?php echo $form['total_respondidos'] > 0 ? 'success' : 'warning'; ?>">
-                <?php echo $form['total_respondidos']; ?> estudiantes
-            </span>
-        </div>
-    </div>
-    <div class="card-actions">
-        <a href="resultados_profesor.php?id=<?php echo $form['id']; ?>" class="btn btn-primary btn-sm <?php echo !$form['tiene_respuestas'] ? 'btn-disabled' : ''; ?>">
-            <i class="fas fa-chart-bar"></i> Ver resultados
-        </a>
-    </div>
-</div>
-                    <?php endforeach; ?>
-                </div>
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No hay simulacros disponibles</h3>
+                <p>Aún no se han creado simulacros en el sistema.</p>
             </div>
-            <?php endforeach; ?>
-        </div>
-        
-        
+        <?php else: ?>
+
+            <!-- Tab: Todos los formularios -->
+            <div id="tab-todos" class="tab-content active">
+                <?php foreach ($formularios_agrupados as $creador_id => $grupo): ?>
+                    <div class="creador-section">
+                        <div class="formularios-grid">
+                            <?php foreach ($grupo['formularios'] as $form): ?>
+                                <div class="form-card <?php echo !$form['tiene_respuestas'] ? 'disabled-card' : ''; ?>">
+                                    <?php
+                                    // Array of default images
+                                    $default_images = [
+                                        '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada1.png',
+                                        '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png',
+                                        '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada3.png',
+                                        '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada4.png'
+                                    ];
+
+                                    // Select a random image if no image is provided in the database
+                                    $card_image = !empty($form['imagen']) ? $form['imagen'] : $default_images[array_rand($default_images)];
+                                    ?>
+
+                                    <div class="card-image" style="background-image: url('<?php echo htmlspecialchars($card_image); ?>')">
+                                        <div class="card-overlay"></div>
+                                    </div>
+                                    <div class="card-content">
+                                        <h3 class="card-title"><?php echo htmlspecialchars($form['titulo']); ?></h3>
+                                        <p class="card-description"><?php echo htmlspecialchars(mb_strimwidth($form['descripcion'], 0, 120, '...')); ?></p>
+                                    </div>
+                                    <div class="card-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-label">Preguntas:</span>
+                                            <span class="badge badge-info"><?php echo $form['total_preguntas']; ?></span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Respondido por:</span>
+                                            <span class="badge badge-<?php echo $form['total_respondidos'] > 0 ? 'success' : 'warning'; ?>">
+                                                <?php echo $form['total_respondidos']; ?> estudiantes
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-actions">
+                                        <a href="resultados_profesor.php?id=<?php echo $form['id']; ?>" class="btn btn-primary btn-sm <?php echo !$form['tiene_respuestas'] ? 'btn-disabled' : ''; ?>">
+                                            <i class="fas fa-chart-bar"></i> Ver resultados
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+
         <?php endif; ?>
     </div>
-    
+
     <footer class="footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
 </body>
+
 </html>

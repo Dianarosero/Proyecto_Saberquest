@@ -205,7 +205,7 @@ if ($stats['promedio_aciertos'] >= 80) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados del Formulario - Universidad CESMAG</title>
+    <title>Resultados del simulacro - SABERQUEST</title>
     <link href="../../assets/img/favicon.png" rel="icon">
     <link href="../../assets/img/favicon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
