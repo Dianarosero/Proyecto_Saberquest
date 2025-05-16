@@ -13,7 +13,7 @@ $formulario_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Validar que formulario_id sea un número válido
 if ($formulario_id <= 0) {
-    $_SESSION['error'] = "ID de formulario no válido.";
+    $_SESSION['error'] = "ID de simulacro no válido.";
     header('Location: ver_todos_formularios.php');
     exit;
 }
@@ -29,7 +29,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    $_SESSION['error'] = "Formulario no encontrado.";
+    $_SESSION['error'] = "Simulacro no encontrado.";
     header('Location: ver_todos_formularios.php');
     exit;
 }
@@ -260,7 +260,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('<?php echo htmlspecialchars(!empty($formulario["imagen"]) ? $formulario["imagen"] : "img/default-bg.svg"); ?>');
+            background-image: url('<?php echo htmlspecialchars(!empty($formulario["imagen"]) ? $formulario["imagen"] : "../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png"); ?>');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -272,7 +272,7 @@ if ($stats['promedio_aciertos'] >= 80) {
         .header {
             background-color: var(--primary);
             color: white;
-            padding: 1.2rem 2rem;
+            padding: 1.2rem 11rem;
             width: 100%;
             box-shadow: var(--shadow-md);
             display: flex;
@@ -786,7 +786,52 @@ if ($stats['promedio_aciertos'] >= 80) {
             }
         }
 
-        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centra el contenido */
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            padding-bottom: 5px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            /* Color más brillante al hacer hover */
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FFFFFF;
+            /* Blanco, como en la imagen */
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -856,14 +901,15 @@ if ($stats['promedio_aciertos'] >= 80) {
     <div class="bg-container"></div>
 
     <header class="header">
-        <div class="university-logo">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Universidad CESMAG</span>
+        <div class="logo-space">
+            <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
         </div>
-        <div class="header-actions">
-            <a href="../index_docente.php#projects" class="btn btn-outline-light">
-                <i class="fas fa-home"></i> Inicio
-            </a>
+        <div class="nav-controls">
+            <nav class="nav">
+                <div class="nav-list">
+                    <a class="nav-link" href="../index_admin.php#projects">Inicio</a>
+                </div>
+            </nav>
         </div>
     </header>
 
@@ -877,7 +923,7 @@ if ($stats['promedio_aciertos'] >= 80) {
         <?php if (isset($_GET['reset']) && $_GET['reset'] == 'success'): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
-                <p>Todas las respuestas del formulario han sido eliminadas correctamente.</p>
+                <p>Todas las respuestas del simulacro han sido eliminadas correctamente.</p>
             </div>
         <?php endif; ?>
 
@@ -894,7 +940,7 @@ if ($stats['promedio_aciertos'] >= 80) {
 
                 <div>
                     <button class="btn btn-danger reset-form-btn" <?php echo empty($estudiantes) ? 'disabled' : ''; ?>>
-                        <i class="fas fa-trash-alt"></i> Reiniciar formulario
+                        <i class="fas fa-trash-alt"></i> Reiniciar simulacro
                     </button>
                 </div>
             </div>
@@ -903,7 +949,7 @@ if ($stats['promedio_aciertos'] >= 80) {
                 <div class="empty-state">
                     <i class="fas fa-clipboard-list"></i>
                     <h3>No hay respuestas todavía</h3>
-                    <p>Ningún estudiante ha respondido este formulario aún.</p>
+                    <p>Ningún estudiante ha respondido este simulacro aún.</p>
                 </div>
             <?php else: ?>
 
@@ -1049,7 +1095,7 @@ if ($stats['promedio_aciertos'] >= 80) {
             </div>
             <div class="modal-body">
                 <p>¿Estás seguro de que deseas eliminar todas las respuestas de <strong id="deleteUserName"></strong>
-                    para este formulario?</p>
+                    para este simulacro?</p>
                 <p><small>Esta acción no se puede deshacer.</small></p>
             </div>
             <div class="modal-actions">
@@ -1068,11 +1114,11 @@ if ($stats['promedio_aciertos'] >= 80) {
         <div class="modal-content">
             <div class="modal-title">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h4>Reiniciar formulario</h4>
+                <h4>Reiniciar simulacro</h4>
             </div>
             <div class="modal-body">
                 <p>¿Estás seguro de que deseas eliminar <strong>todas las respuestas</strong> de todos los estudiantes
-                    para este formulario?</p>
+                    para este simulacro?</p>
                 <p><small>Esta acción no se puede deshacer y afectará a <?php echo $stats['total_estudiantes']; ?>
                         estudiantes.</small></p>
             </div>
@@ -1080,14 +1126,14 @@ if ($stats['promedio_aciertos'] >= 80) {
                 <button type="button" class="btn btn-outline close-modal">Cancelar</button>
                 <form method="post">
                     <input type="hidden" name="reset_form" value="1">
-                    <button type="submit" class="btn btn-danger">Reiniciar formulario</button>
+                    <button type="submit" class="btn btn-danger">Reiniciar simulacro</button>
                 </form>
             </div>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; <?php echo date('Y'); ?> Universidad CESMAG. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
 </body>
 
