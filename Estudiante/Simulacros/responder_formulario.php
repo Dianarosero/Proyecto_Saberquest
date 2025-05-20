@@ -510,6 +510,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
             text-decoration: none;
             color: inherit;
         }
+        
+        /* Add to existing <style> in the form section */
+.description,
+.question-card h3,
+.option label,
+.result-item p {
+  text-align: justify;
+}
+
+.footer p {
+  text-align: center;
+}
 
         </style>
     </head>
@@ -1180,6 +1192,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
         }
     }
 
+    /* Add to existing <style> in the form section */
+.description,
+.question-card h3,
+.option label,
+.result-item p {
+  text-align: justify;
+}
+
+.footer p {
+  text-align: center;
+}
     
     </style>
 </head>

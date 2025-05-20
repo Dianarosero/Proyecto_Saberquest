@@ -98,7 +98,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                             <i class="fas fa-gamepad"></i>
                             <div>
                                 <h3>Enseña</h3>
-                                <p>Mediante juegos Interactivos</p>
+                                <p>Mediante juegos</p>
                             </div>
                         </div>
                         <div class="about-detail">

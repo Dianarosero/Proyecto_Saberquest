@@ -49,6 +49,14 @@ body {
   overflow-x: hidden;
 }
 
+p {
+  text-align: justify;
+}
+
+.footer p {
+  text-align: center; /* Override to maintain centered text in the footer */
+}
+
 ul {
   list-style: none;
 }
