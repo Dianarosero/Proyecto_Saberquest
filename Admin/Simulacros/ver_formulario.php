@@ -40,7 +40,7 @@ $totalPreguntasStmt->close();
 $totalPaginas = ceil($totalPreguntas / $preguntasPorPagina);
 
 // Obtener preguntas (agregando id) con paginación
-$stmt = $conex->prepare("SELECT id, enunciado, opciones, correcta FROM preguntas WHERE formulario_id = ? LIMIT ?, ?");
+$stmt = $conex->prepare("SELECT id, enunciado, imagen, opciones, correcta FROM preguntas WHERE formulario_id = ? LIMIT ?, ?");
 $stmt->bind_param("iii", $formulario_id, $inicio, $preguntasPorPagina);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -923,23 +923,65 @@ $result = $stmt->get_result();
                             <span class="pregunta-numero"><?php echo ($paginaActual - 1) * $preguntasPorPagina + $num++; ?>.</span>
                             <span><?php echo htmlspecialchars($row['enunciado']); ?></span>
                         </div>
+                        <div class="pregunta-enunciado">
+                            <?php if (!empty($row['imagen'])): ?>
+                                <img src="<?php echo htmlspecialchars($row['imagen']); ?>" alt="Imagen de la pregunta" style="max-width: 100%; height: auto; margin-top: 10px; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                            <?php endif; ?>
+                        </div>
 
                         <div class="opciones-container">
                             <div class="opcion<?php if ($correcta == 'a') echo ' correcta'; ?>">
                                 <span class="opcion-letra">A</span>
-                                <span class="opcion-texto"><?php echo htmlspecialchars($opciones['a']); ?></span>
+                                <span class="opcion-texto">
+                                <?php
+                                $op_a = $opciones['a'] ?? '';
+                                if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $op_a)) {
+                                    echo '<img src="' . htmlspecialchars($op_a) . '" alt="Opción A" style="max-width:120px;max-height:120px;object-fit:contain;">';
+                                } else {
+                                    echo htmlspecialchars($op_a);
+                                }
+                                ?>
+                                </span>
+                            
                             </div>
                             <div class="opcion<?php if ($correcta == 'b') echo ' correcta'; ?>">
                                 <span class="opcion-letra">B</span>
-                                <span class="opcion-texto"><?php echo htmlspecialchars($opciones['b']); ?></span>
+                                <span class="opcion-texto">
+                                <?php
+                                $op_b = $opciones['b'] ?? '';
+                                if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $op_b)) {
+                                    echo '<img src="' . htmlspecialchars($op_b) . '" alt="Opción B" style="max-width:120px;max-height:120px;object-fit:contain;">';
+                                } else {
+                                    echo htmlspecialchars($op_b);
+                                }
+                                ?>
+                                </span>
                             </div>
                             <div class="opcion<?php if ($correcta == 'c') echo ' correcta'; ?>">
                                 <span class="opcion-letra">C</span>
-                                <span class="opcion-texto"><?php echo htmlspecialchars($opciones['c']); ?></span>
+                                <span class="opcion-texto">
+                                <?php
+                                $op_c = $opciones['c'] ?? '';
+                                if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $op_c)) {
+                                    echo '<img src="' . htmlspecialchars($op_c) . '" alt="Opción C" style="max-width:120px;max-height:120px;object-fit:contain;">';
+                                } else {
+                                    echo htmlspecialchars($op_c);
+                                }
+                                ?>
+                                </span>
                             </div>
                             <div class="opcion<?php if ($correcta == 'd') echo ' correcta'; ?>">
                                 <span class="opcion-letra">D</span>
-                                <span class="opcion-texto"><?php echo htmlspecialchars($opciones['d']); ?></span>
+                                <span class="opcion-texto">
+                                <?php
+                                $op_d = $opciones['d'] ?? '';
+                                if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $op_d)) {
+                                    echo '<img src="' . htmlspecialchars($op_d) . '" alt="Opción D" style="max-width:120px;max-height:120px;object-fit:contain;">';
+                                } else {
+                                    echo htmlspecialchars($op_d);
+                                }
+                                ?>
+                                </span>
                             </div>
                         </div>
                     </div>

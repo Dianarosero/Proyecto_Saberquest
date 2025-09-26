@@ -62,7 +62,7 @@ $stmt->close();
 $imagen_fondo = !empty($imagen_fondo) ? $imagen_fondo : '../../assets/src_simulacros/img_simulacros/predeterminadas/predeterminada2.png';
 
 // Obtener preguntas con la respuesta correcta y opciones
-$stmt = $conex->prepare("SELECT id, enunciado, opciones, correcta FROM preguntas WHERE formulario_id = ?");
+$stmt = $conex->prepare("SELECT id, enunciado, imagen, opciones, correcta FROM preguntas WHERE formulario_id = ?");
 $stmt->bind_param("i", $formulario_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -1249,16 +1249,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
 
                         echo "<div class='question-card'>";
                         echo "<h3><span class='pregunta-numero'>$num.</span> " . htmlspecialchars($pregunta['enunciado']) . "</h3>";
+                        if (!empty($pregunta['imagen'])) {
+                            echo '<div style="text-align:center;margin-bottom:0.6rem;">'
+                            . '<img src="' . htmlspecialchars($pregunta['imagen']) . '" alt="Enunciado imagen" style="max-width:32}0px;max-height:400px;border-radius:10px;border:1.5px solid #bbb;margin:0 auto;">'
+                            . '</div>';
+                        }
                         echo "<div class='options'>";
-
                         foreach (['a', 'b', 'c', 'd'] as $letra) {
                             $option_id = "q{$pregunta['id']}_$letra";
+                            $valor_opcion = $pregunta['opciones'][$letra] ?? '';
                             echo "<div class='option'>";
                             echo "<input type='radio' id='$option_id' name='respuesta_{$pregunta['id']}' value='$letra' required>";
-                            echo "<label for='$option_id'><span class='option-letter'>$letra</span>" . htmlspecialchars($pregunta['opciones'][$letra]) . "</label>";
+                            echo "<label for='$option_id'><span class='option-letter'>$letra</span>";
+                            if (preg_match('/\\.(jpg|jpeg|png|gif|webp)$/i', $valor_opcion)) {
+                                echo '<img src="' . htmlspecialchars($valor_opcion) . '" alt="Opción ' . strtoupper($letra) . '" style="max-width:120px;max-height:120px;object-fit:contain;">';
+                            } else {
+                                echo htmlspecialchars($valor_opcion);
+                            }
+                            echo "</label>";
                             echo "</div>";
                         }
-
                         echo "</div>";
                         echo "</div>";
                     }

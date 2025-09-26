@@ -104,7 +104,7 @@ if (isset($_POST['editar_pregunta'])) {
     $opcion_d = $_POST['opcion_d'] ?? '';
     $correcta = $_POST['correcta'] ?? '';
 
-    if (empty($enunciado) || empty($opcion_a) || empty($opcion_b) || empty($opcion_c) || empty($opcion_d) || empty($correcta)) {
+    if (empty($enunciado) ||empty($enunciado) || empty($opcion_a) || empty($opcion_b) || empty($opcion_c) || empty($opcion_d) || empty($correcta)) {
         $error = "Todos los campos de la pregunta son obligatorios.";
     } else {
         $opciones = json_encode([
