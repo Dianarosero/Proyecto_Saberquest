@@ -106,12 +106,48 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                     placeholder="Escriba su pregunta aquí" required>
                             </div>
 
+                            <div class="form-group">
+                                <label for="question-image-1">Imagen de la pregunta</label>
+                                <div class="image-upload-container">
+                                    <input type="file" id="question-image-1" name="imagen_pregunta[]" accept="image/*"
+                                        class="file-input" style="display:none;">
+                                    <button type="button" class="btn btn-upload"
+                                        onclick="uploadImage(this, 'question-image-1')">
+                                        <i class="fas fa-image"></i> Insertar imagen
+                                    </button>
+                                    <div id="question-image-preview-container-1" class="image-preview-container hidden">
+                                        <img id="question-image-preview-1" src="#" alt="Vista previa de la imagen">
+                                        <button type="button" class="btn btn-delete btn-remove-image"
+                                            onclick="removeImage(this, 'question-image-1')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="options-container">
                                 <div class="option-row">
                                     <div class="option-label">a)</div>
                                     <div class="form-group option-input">
                                         <input type="text" id="option-a-1" name="option_a[]" placeholder="Opción a"
                                             required>
+                                        <div class="image-upload-container">
+                                            <input type="file" id="option-a-image-1" name="imagen_opcion_a[]"
+                                                accept="image/*" class="file-input" style="display:none;">
+                                            <button type="button" class="btn btn-upload"
+                                                onclick="uploadImage(this, 'option-a-image-1')">
+                                                <i class="fas fa-image"></i> Insertar imagen
+                                            </button>
+                                            <div id="option-a-image-preview-container-1"
+                                                class="image-preview-container hidden">
+                                                <img id="option-a-image-preview-1" src="#"
+                                                    alt="Vista previa de la imagen">
+                                                <button type="button" class="btn btn-delete btn-remove-image"
+                                                    onclick="removeImage(this, 'option-a-image-1')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -120,6 +156,23 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                     <div class="form-group option-input">
                                         <input type="text" id="option-b-1" name="option_b[]" placeholder="Opción b"
                                             required>
+                                        <div class="image-upload-container">
+                                            <input type="file" id="option-b-image-1" name="imagen_opcion_b[]"
+                                                accept="image/*" class="file-input" style="display:none;">
+                                            <button type="button" class="btn btn-upload"
+                                                onclick="uploadImage(this, 'option-b-image-1')">
+                                                <i class="fas fa-image"></i> Insertar imagen
+                                            </button>
+                                            <div id="option-b-image-preview-container-1"
+                                                class="image-preview-container hidden">
+                                                <img id="option-b-image-preview-1" src="#"
+                                                    alt="Vista previa de la imagen">
+                                                <button type="button" class="btn btn-delete btn-remove-image"
+                                                    onclick="removeImage(this, 'option-b-image-1')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -128,6 +181,23 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                     <div class="form-group option-input">
                                         <input type="text" id="option-c-1" name="option_c[]" placeholder="Opción c"
                                             required>
+                                        <div class="image-upload-container">
+                                            <input type="file" id="option-c-image-1" name="imagen_opcion_c[]"
+                                                accept="image/*" class="file-input" style="display:none;">
+                                            <button type="button" class="btn btn-upload"
+                                                onclick="uploadImage(this, 'option-c-image-1')">
+                                                <i class="fas fa-image"></i> Insertar imagen
+                                            </button>
+                                            <div id="option-c-image-preview-container-1"
+                                                class="image-preview-container hidden">
+                                                <img id="option-c-image-preview-1" src="#"
+                                                    alt="Vista previa de la imagen">
+                                                <button type="button" class="btn btn-delete btn-remove-image"
+                                                    onclick="removeImage(this, 'option-c-image-1')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -136,6 +206,23 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                     <div class="form-group option-input">
                                         <input type="text" id="option-d-1" name="option_d[]" placeholder="Opción d"
                                             required>
+                                        <div class="image-upload-container">
+                                            <input type="file" id="option-d-image-1" name="imagen_opcion_d[]"
+                                                accept="image/*" class="file-input" style="display:none;">
+                                            <button type="button" class="btn btn-upload"
+                                                onclick="uploadImage(this, 'option-d-image-1')">
+                                                <i class="fas fa-image"></i> Insertar imagen
+                                            </button>
+                                            <div id="option-d-image-preview-container-1"
+                                                class="image-preview-container hidden">
+                                                <img id="option-d-image-preview-1" src="#"
+                                                    alt="Vista previa de la imagen">
+                                                <button type="button" class="btn btn-delete btn-remove-image"
+                                                    onclick="removeImage(this, 'option-d-image-1')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

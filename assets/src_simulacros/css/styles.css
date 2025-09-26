@@ -264,6 +264,9 @@ select:focus {
 .option-input {
   flex-grow: 1;
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Espaciado entre el input y el botón */
 }
 
 .correct-answer {
@@ -555,6 +558,47 @@ footer {
   padding: 0 1rem;
 }
 
+/* Cambiar el diseño de los botones de "Insertar imagen" para que estén al lado del input */
+.option-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Espaciado entre el input y el botón */
+}
+
+.option-input .btn-upload {
+  max-width: 120px; /* Ajustar el ancho del botón */
+  padding: 0.4rem; /* Reducir el relleno para hacerlo más compacto */
+  font-size: 0.85rem; /* Ajustar el tamaño de la fuente */
+}
+
+/* Ajustar los botones de "Insertar imagen" para mostrar solo el ícono en dispositivos pequeños */
+@media (max-width: 600px) {
+  .btn-upload {
+    justify-content: center; /* Centrar el contenido */
+    padding: 0.5rem; /* Ajustar el relleno */
+  }
+
+  .btn-upload i {
+    font-size: 1.2rem; /* Aumentar el tamaño del ícono */
+  }
+
+  .btn-upload span {
+    display: none; /* Ocultar el texto */
+  }
+}
+
+/* Ajustes responsivos para pantallas pequeñas */
+@media (max-width: 600px) {
+  .option-input {
+    flex-direction: column; /* Cambiar a diseño vertical en pantallas pequeñas */
+    align-items: flex-start;
+  }
+
+  .option-input .btn-upload {
+    width: 100%; /* Botón ocupa todo el ancho disponible */
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .form-actions {
@@ -616,8 +660,8 @@ footer {
   color: var(--accent-color);
 }
 
-.btn-inicio::after{
-  content: '';
+.btn-inicio::after {
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -626,10 +670,9 @@ footer {
   background-color: var(--accent-color);
   transition: var(--transition);
 }
-.btn-inicio:hover::after{
+.btn-inicio:hover::after {
   width: 100%;
 }
-
 
 /* En pantallas pequeñas */
 @media (max-width: 600px) {
