@@ -41,6 +41,7 @@ if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
         exit();
     }
 
+    // Guardar ruta relativa para servir desde web
     $imagen_ruta = $ruta_archivo;
 }
 
@@ -73,6 +74,13 @@ if (
     $opciones_c = $_POST['option_c'];
     $opciones_d = $_POST['option_d'];
     $correctas = $_POST['correcta'];
+    // Imágenes de preguntas: nombre imagen_pregunta[index][]
+    $imagenes_pregunta = $_FILES['imagen_pregunta'] ?? null;
+    // Imágenes de opciones
+    $img_op_a = $_FILES['imagen_opcion_a'] ?? null;
+    $img_op_b = $_FILES['imagen_opcion_b'] ?? null;
+    $img_op_c = $_FILES['imagen_opcion_c'] ?? null;
+    $img_op_d = $_FILES['imagen_opcion_d'] ?? null;
 
     $count = count($enunciados);
     for ($i = 0; $i < $count; $i++) {
@@ -83,27 +91,49 @@ if (
         $op_d = trim($opciones_d[$i]);
         $correcta = $correctas[$i];
 
-        if (empty($enunciado) || empty($op_a) || empty($op_b) || empty($op_c) || empty($op_d) || empty($correcta)) {
+        // Validaciones: enunciado y correcta obligatorios
+        if (empty($enunciado) || empty($correcta)) {
             continue;
         }
 
+        // Subir imágenes de opciones (una por opción, opcionales)
+        $ruta_img_op_a = subirImagenOpcion($img_op_a, $i, 'a');
+        $ruta_img_op_b = subirImagenOpcion($img_op_b, $i, 'b');
+        $ruta_img_op_c = subirImagenOpcion($img_op_c, $i, 'c');
+        $ruta_img_op_d = subirImagenOpcion($img_op_d, $i, 'd');
+
+        // Cada opción debe tener texto o imagen
+        $has_a = (strlen($op_a) > 0) || $ruta_img_op_a;
+        $has_b = (strlen($op_b) > 0) || $ruta_img_op_b;
+        $has_c = (strlen($op_c) > 0) || $ruta_img_op_c;
+        $has_d = (strlen($op_d) > 0) || $ruta_img_op_d;
+        if (!$has_a || !$has_b || !$has_c || !$has_d) {
+            continue;
+        }
+
+        // Si una opción tiene imagen, ignorar texto vacío en validación (ya manejado en front), aquí permitimos vacío.
         $opciones_json = json_encode([
-            'a' => $op_a,
-            'b' => $op_b,
-            'c' => $op_c,
-            'd' => $op_d
-        ]);
+            'a' => ['texto' => $op_a, 'imagen' => $ruta_img_op_a],
+            'b' => ['texto' => $op_b, 'imagen' => $ruta_img_op_b],
+            'c' => ['texto' => $op_c, 'imagen' => $ruta_img_op_c],
+            'd' => ['texto' => $op_d, 'imagen' => $ruta_img_op_d],
+        ], JSON_UNESCAPED_UNICODE);
 
         $tipo = 'opcion_multiple';
 
-        $stmt_preg = $conex->prepare("INSERT INTO preguntas (formulario_id, tipo, enunciado, opciones, correcta) VALUES (?, ?, ?, ?, ?)");
+        // Subir imágenes de la pregunta i (pueden ser múltiples)
+        $rutas_imgs_preg = subirImagenesPregunta($imagenes_pregunta, $i);
+        $imgs_preg_json = !empty($rutas_imgs_preg) ? json_encode($rutas_imgs_preg, JSON_UNESCAPED_SLASHES) : null;
+
+        // Se agregó columna 'imagen' tipo texto en preguntas (guardamos JSON de rutas o null)
+        $stmt_preg = $conex->prepare("INSERT INTO preguntas (formulario_id, tipo, enunciado, opciones, correcta, imagen) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt_preg) {
             $_SESSION['mensaje'] = 'Error en la preparación de pregunta: ' . $conex->error;
             $_SESSION['mensaje_tipo'] = 'error';
             header('Location: create_formulario.php');
             exit();
         }
-        $stmt_preg->bind_param("issss", $formulario_id, $tipo, $enunciado, $opciones_json, $correcta);
+        $stmt_preg->bind_param("isssss", $formulario_id, $tipo, $enunciado, $opciones_json, $correcta, $imgs_preg_json);
         if (!$stmt_preg->execute()) {
             $_SESSION['mensaje'] = 'Error al guardar la pregunta: ' . $stmt_preg->error;
             $_SESSION['mensaje_tipo'] = 'error';
@@ -119,3 +149,47 @@ $_SESSION['mensaje'] = 'Simulacro guardado exitosamente';
 $_SESSION['mensaje_tipo'] = 'success';
 header('Location: create_formulario.php');
 exit();
+
+// ==================== Helpers ====================
+function subirImagenesPregunta($imagenes_pregunta, $indexPregunta) {
+    $rutas = [];
+    if (!$imagenes_pregunta) return $rutas;
+    $carpeta = "../../assets/src_simulacros/img_simulacros/img_preguntas/";
+    if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
+
+    // Estructura esperada: $_FILES['imagen_pregunta']['name'][$indexPregunta][$k]
+    if (!isset($imagenes_pregunta['name'][$indexPregunta])) return $rutas;
+    $names = $imagenes_pregunta['name'][$indexPregunta];
+    $tmps = $imagenes_pregunta['tmp_name'][$indexPregunta];
+    $errors = $imagenes_pregunta['error'][$indexPregunta];
+
+    $permitidos = ['jpg','jpeg','png','gif','webp'];
+    for ($k = 0; $k < count($names); $k++) {
+        if ($errors[$k] !== UPLOAD_ERR_OK) continue;
+        $ext = strtolower(pathinfo($names[$k], PATHINFO_EXTENSION));
+        if (!in_array($ext, $permitidos)) continue;
+        $nombre = uniqid('preg_'.$indexPregunta.'_')."_".basename($names[$k]);
+        $dest = $carpeta.$nombre;
+        if (move_uploaded_file($tmps[$k], $dest)) {
+            $rutas[] = $dest; // puedes convertir a ruta relativa si lo prefieres
+        }
+    }
+    return $rutas;
+}
+
+function subirImagenOpcion($filesGroup, $indexPregunta, $letra) {
+    // Estructura de $_FILES simple por opción: ['name'][$indexPregunta]
+    if (!$filesGroup || !isset($filesGroup['name'][$indexPregunta])) return null;
+    if ($filesGroup['error'][$indexPregunta] !== UPLOAD_ERR_OK) return null;
+    $ext = strtolower(pathinfo($filesGroup['name'][$indexPregunta], PATHINFO_EXTENSION));
+    $permitidos = ['jpg','jpeg','png','gif','webp'];
+    if (!in_array($ext, $permitidos)) return null;
+    $carpeta = "../../assets/src_simulacros/img_simulacros/img_opciones/";
+    if (!is_dir($carpeta)) mkdir($carpeta, 0777, true);
+    $nombre = uniqid('op_'.$indexPregunta.'_'.$letra.'_')."_".basename($filesGroup['name'][$indexPregunta]);
+    $dest = $carpeta.$nombre;
+    if (move_uploaded_file($filesGroup['tmp_name'][$indexPregunta], $dest)) {
+        return $dest;
+    }
+    return null;
+}

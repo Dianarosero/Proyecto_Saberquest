@@ -269,6 +269,47 @@ select:focus {
   gap: 1rem; /* Espaciado entre el input y el botón */
 }
 
+/* Hover preview para imágenes en opciones de respuesta */
+.option-input .image-upload-container {
+  position: relative; /* Para posicionar el popup */
+}
+.option-input .image-preview-container {
+  /* Como popup por defecto oculto, visible al hover */
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--background);
+  border: 1px solid var(--neutral);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  z-index: 100;
+  width: min(420px, 90vw);
+  max-height: 360px;
+}
+.option-input .image-preview-container img {
+  max-width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+  display: block;
+}
+.option-input
+  .image-upload-container:hover
+  .image-preview-container:not(.hidden) {
+  display: block;
+}
+.option-input .image-preview-container .btn-remove-image {
+  top: -10px;
+  right: -10px;
+}
+
+/* Señal visual cuando la opción ya tiene imagen */
+.option-input .image-upload-container.has-image .btn-upload {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .correct-answer {
   display: flex;
   align-items: center;
@@ -505,6 +546,51 @@ select:focus {
   display: block;
 }
 
+/* Carousel para previsualizar múltiples imágenes de la pregunta */
+.image-preview-container .carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.image-preview-container .carousel-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+.image-preview-container .carousel-track img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  flex: 0 0 100%;
+}
+.image-preview-container .carousel-prev,
+.image-preview-container .carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+.image-preview-container .carousel-prev {
+  left: 8px;
+}
+.image-preview-container .carousel-next {
+  right: 8px;
+}
+.image-preview-container .carousel-indicator {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
 .preview-question {
   background-color: #f9f9f9;
   border: 1px solid var(--neutral);
@@ -571,31 +657,40 @@ footer {
   font-size: 0.85rem; /* Ajustar el tamaño de la fuente */
 }
 
-/* Ajustar los botones de "Insertar imagen" para mostrar solo el ícono en dispositivos pequeños */
+/* Mostrar solo ícono en móviles, únicamente para botones de opciones de respuesta */
 @media (max-width: 600px) {
-  .btn-upload {
+  .option-input .btn-upload {
     justify-content: center; /* Centrar el contenido */
-    padding: 0.5rem; /* Ajustar el relleno */
+    padding: 0.45rem; /* Más compacto */
   }
-
-  .btn-upload i {
-    font-size: 1.2rem; /* Aumentar el tamaño del ícono */
+  .option-input .btn-upload i {
+    font-size: 1.1rem;
   }
-
-  .btn-upload span {
-    display: none; /* Ocultar el texto */
+  .option-input .btn-upload .btn-text {
+    display: none; /* Ocultar el texto solo en botones de opciones */
   }
 }
 
-/* Ajustes responsivos para pantallas pequeñas */
+/* Mantener botón al lado del input también en móviles */
 @media (max-width: 600px) {
   .option-input {
-    flex-direction: column; /* Cambiar a diseño vertical en pantallas pequeñas */
-    align-items: flex-start;
+    flex-direction: row; /* Mantener en fila */
+    align-items: center;
+    gap: 0.5rem; /* Menor espacio para que quepa el icono */
+    flex-wrap: nowrap;
   }
-
+  .option-input input[type="text"] {
+    flex: 1 1 auto; /* Priorizar el ancho del input */
+    min-width: 0; /* Permitir encogerse sin overflow */
+  }
+  .option-input .image-upload-container {
+    flex: 0 0 auto; /* No crecer, ancho contenido */
+    display: flex;
+    align-items: center;
+  }
   .option-input .btn-upload {
-    width: 100%; /* Botón ocupa todo el ancho disponible */
+    width: auto; /* No ocupar todo el ancho */
+    max-width: 40px; /* Mantener compacto al ser solo icono */
   }
 }
 
