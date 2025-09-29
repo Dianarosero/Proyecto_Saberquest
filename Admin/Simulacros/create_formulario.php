@@ -303,6 +303,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 
     <script src="../../assets/src_simulacros/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>.swal2-title::after{content:none!important;}</style>
 
     <script>
     const mensaje = <?php echo json_encode($mensaje); ?>;

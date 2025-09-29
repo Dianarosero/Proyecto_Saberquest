@@ -79,9 +79,9 @@ $result = mysqli_query($conex, $query);
                         echo '<a href="editar_juego.php?id=' . htmlspecialchars($row['id']) . '" class="btn edit-btn">';
                         echo '<i class="fas fa-edit"></i> Editar';
                         echo '</a>';
-                        echo '<form action="eliminar_juego.php" method="POST" style="flex: 1; display: flex;">';
+                        echo '<form action="eliminar_juego.php" method="POST" style="flex: 1; display: flex;" class="form-delete-game">';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($row['id']) . '">';
-                        echo '<button type="submit" class="btn delete-btn" style="width: 100%;" onclick="return confirm(\'¿Estás seguro de que deseas eliminar este juego?\');">';
+                        echo '<button type="submit" class="btn delete-btn" style="width: 100%;">';
                         echo '<i class="fas fa-trash"></i> Eliminar';
                         echo '</button>';
                         echo '</form>';
@@ -110,6 +110,10 @@ $result = mysqli_query($conex, $query);
     </footer>
 
     <!-- JavaScript para interactividad -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .swal2-title::after { content: none !important; }
+    </style>
     <script>
         // Funcionalidad para tarjetas al pasar el ratón (hover)
         document.addEventListener('DOMContentLoaded', function() {
@@ -126,6 +130,28 @@ $result = mysqli_query($conex, $query);
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
                     this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                });
+            });
+
+            // Confirmación SweetAlert2 al eliminar juego
+            document.querySelectorAll('form.form-delete-game').forEach(function(form){
+                form.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    const f = this;
+                    if (window.Swal) {
+                        Swal.fire({
+                            title: '¿Eliminar juego?',
+                            text: 'Esta acción no se puede deshacer.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((res)=>{
+                            if (res.isConfirmed) { f.submit(); }
+                        });
+                    } else {
+                        if (confirm('¿Estás seguro de que deseas eliminar este juego?')) { f.submit(); }
+                    }
                 });
             });
         });

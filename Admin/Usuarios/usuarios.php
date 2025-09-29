@@ -61,6 +61,8 @@ $result_docentes = $conex->query($sql_docentes);
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../assets/src_usuarios/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>.swal2-title::after{content:none!important;}</style>
 </head>
 <body>
     <header class="header" id="header">
@@ -206,5 +208,28 @@ $result_docentes = $conex->query($sql_docentes);
     </footer>
 
     <script src="../../assets/src_usuarios/js/scripts.js"></script>
+    <script>
+    // Confirmación con SweetAlert2 para eliminar usuarios
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('a.btn-delete').forEach(function(link){
+            link.addEventListener('click', function(e){
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                if (window.Swal) {
+                    Swal.fire({
+                        title: '¿Eliminar usuario?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((res)=>{ if (res.isConfirmed) window.location.href = href; });
+                } else {
+                    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) window.location.href = href;
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

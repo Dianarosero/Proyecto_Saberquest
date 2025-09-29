@@ -197,6 +197,7 @@ if (isset($_POST['agregar_pregunta'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --primary: #003366;
@@ -826,6 +827,7 @@ if (isset($_POST['agregar_pregunta'])) {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
         }
+        .swal2-title::after { content: none !important; }
     </style>
 
     <script>
@@ -1019,7 +1021,7 @@ if (isset($_POST['agregar_pregunta'])) {
                                         <i class="fas fa-save"></i> Guardar Pregunta
                                     </button>
 
-                                    <a href="eliminar_pregunta.php?id=<?php echo $pregunta['id']; ?>&formulario_id=<?php echo $formulario_id; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta pregunta?');">
+                                    <a href="eliminar_pregunta.php?id=<?php echo $pregunta['id']; ?>&formulario_id=<?php echo $formulario_id; ?>" class="btn btn-danger link-eliminar-pregunta">
                                         <i class="fas fa-trash-alt"></i> Eliminar
                                     </a>
                                 </div>
@@ -1111,6 +1113,29 @@ if (isset($_POST['agregar_pregunta'])) {
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> SABERQUEST - Todos los derechos reservados</p>
     </footer>
+    <script>
+        // Interceptar eliminación de pregunta para usar SweetAlert2
+        document.addEventListener('DOMContentLoaded', function(){
+            document.querySelectorAll('a.link-eliminar-pregunta').forEach(function(link){
+                link.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    if (window.Swal) {
+                        Swal.fire({
+                            title: '¿Eliminar pregunta?',
+                            text: 'Esta acción no se puede deshacer.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((res)=>{ if (res.isConfirmed) window.location.href = href; });
+                    } else {
+                        if (confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) window.location.href = href;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

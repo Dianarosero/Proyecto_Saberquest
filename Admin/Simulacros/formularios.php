@@ -457,7 +457,11 @@ function obtenerImagenPredeterminada($id)
             text-decoration: none;
             color: inherit;
         }
+
+        /* Evitar subrayado heredado en títulos de SweetAlert */
+        .swal2-title::after { content: none !important; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -521,8 +525,7 @@ function obtenerImagenPredeterminada($id)
                                 <a href="ver_formulario.php?id=<?php echo $row['id']; ?>" class="btn edit-btn">
                                     <i class="fas fa-eye"></i> Ver
                                 </a>
-                                <a href="eliminar_formulario.php?id=<?php echo $row['id']; ?>" class="btn delete-btn"
-                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este simulacro?');">
+                                <a href="eliminar_formulario.php?id=<?php echo $row['id']; ?>" class="btn delete-btn" data-action="delete-formulario" data-title="<?php echo htmlspecialchars($row['titulo']); ?>">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </a>
                             </div>
@@ -544,6 +547,40 @@ function obtenerImagenPredeterminada($id)
     <footer class="main-footer">
         <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
+    <script>
+        // Confirmación con SweetAlert2 para eliminar simulacros
+        document.addEventListener('DOMContentLoaded', function () {
+            function confirmDelete(href, titulo) {
+                if (window.Swal) {
+                    Swal.fire({
+                        title: '¿Eliminar simulacro?',
+                        html: titulo ? 'Se eliminará: <strong>' + titulo + '</strong><br>Esta acción no se puede deshacer.' : 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = href;
+                        }
+                    });
+                } else {
+                    if (confirm('¿Estás seguro de que deseas eliminar este simulacro?')) {
+                        window.location.href = href;
+                    }
+                }
+            }
+
+            document.querySelectorAll('a[data-action="delete-formulario"]').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    const titulo = this.getAttribute('data-title') || '';
+                    confirmDelete(href, titulo);
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

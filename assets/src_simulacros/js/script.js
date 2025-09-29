@@ -74,6 +74,41 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// Helper SweetAlert2 con fallback nativo
+function swalAlert({
+  title = "",
+  text = "",
+  icon = "info",
+  confirmButtonText = "Aceptar",
+  timer = undefined,
+}) {
+  if (window.Swal) {
+    return Swal.fire({ title, text, icon, confirmButtonText, timer });
+  }
+  alert(title || text || "");
+  return Promise.resolve();
+}
+function swalConfirm({
+  title = "¿Estás seguro?",
+  text = "Esta acción no se puede deshacer.",
+  icon = "warning",
+  confirmButtonText = "Sí",
+  cancelButtonText = "Cancelar",
+}) {
+  if (window.Swal) {
+    return Swal.fire({
+      title,
+      text,
+      icon,
+      showCancelButton: true,
+      confirmButtonText,
+      cancelButtonText,
+    });
+  }
+  const ok = confirm(title + (text ? "\n" + text : ""));
+  return Promise.resolve({ isConfirmed: ok });
+}
+
 /**
  * Adds a new question to the form
  */
@@ -228,23 +263,33 @@ function deleteQuestion(button) {
   // Check if this is the only question
   const allQuestions = document.querySelectorAll(".question-card");
   if (allQuestions.length === 1) {
-    showAlert("No puedes eliminar la única pregunta del simulacro.");
+    swalAlert({
+      icon: "warning",
+      title: "Acción no permitida",
+      text: "No puedes eliminar la única pregunta del simulacro.",
+    });
     return;
   }
 
-  // Confirm deletion
-  if (confirm("¿Estás seguro de que deseas eliminar esta pregunta?")) {
-    // Remove the question card with animation
-    questionCard.style.opacity = "0";
-    questionCard.style.transform = "translateY(10px)";
-    questionCard.style.transition = "opacity 0.3s, transform 0.3s";
+  // Confirm deletion con SweetAlert2
+  swalConfirm({
+    title: "¿Eliminar pregunta?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      questionCard.style.opacity = "0";
+      questionCard.style.transform = "translateY(10px)";
+      questionCard.style.transition = "opacity 0.3s, transform 0.3s";
 
-    setTimeout(() => {
-      questionCard.remove();
-      // Re-number the questions
-      renumberQuestions();
-    }, 300);
-  }
+      setTimeout(() => {
+        questionCard.remove();
+        renumberQuestions();
+      }, 300);
+    }
+  });
 }
 
 /**
@@ -518,7 +563,7 @@ function collectFormData() {
  * @param {string} message - The message to show
  */
 function showAlert(message) {
-  alert(message);
+  swalAlert({ icon: "warning", title: "Atención", text: message });
 }
 
 /**
@@ -823,7 +868,7 @@ function updatePreview() {
  */
 function showSuccessMessage() {
   // In a real application, you might redirect to a success page or show a modal
-  alert("¡Simulacro guardado exitosamente!");
+  swalAlert({ icon: "success", title: "¡Simulacro guardado exitosamente!" });
 
   // Reset the form for a new entry
   document.getElementById("form-builder").reset();

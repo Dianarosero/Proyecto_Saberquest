@@ -796,7 +796,10 @@ $result = $stmt->get_result();
         outline: 2px solid var(--primary);
         outline-offset: 2px;
     }
+    /* Evitar subrayado heredado en títulos de SweetAlert */
+    .swal2-title::after { content: none !important; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
     // Función para actualizar el estado de mostrar_respuestas
@@ -819,7 +822,15 @@ $result = $stmt->get_result();
                     console.error("Error al actualizar el estado: " + response.error);
                     // Si hay un error, revertir el estado del checkbox
                     checkbox.checked = !checkbox.checked;
-                    alert("Hubo un error al actualizar el estado. Por favor, intenta de nuevo.");
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un error al actualizar el estado. Por favor, intenta de nuevo.'
+                        });
+                    } else {
+                        alert("Hubo un error al actualizar el estado. Por favor, intenta de nuevo.");
+                    }
                 }
             }
         };

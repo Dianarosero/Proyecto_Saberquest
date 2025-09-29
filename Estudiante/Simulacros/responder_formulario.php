@@ -2,6 +2,12 @@
 session_start();
 include("../../base de datos/con_db.php");
 
+// Deshabilitar caché del navegador para evitar que se muestre contenido obsoleto al volver
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+header('Expires: 0');
+
 // Validar que el usuario esté logueado y sea profesor
 if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Estudiante') {
     header('Location: ../../index.php');
@@ -521,6 +527,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
 
 .footer p {
   text-align: center;
+}
+
+/* Evitar subrayado global en el título de SweetAlert2 */
+.swal2-title::after {
+    content: none !important;
 }
 
         </style>
@@ -1193,17 +1204,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     }
 
     /* Add to existing <style> in the form section */
-.description,
-.question-card h3,
-.option label,
-.result-item p {
-  text-align: justify;
-}
+    .description,
+    .question-card h3,
+    .option label,
+    .result-item p {
+        text-align: justify;
+    }
 
-.footer p {
-  text-align: center;
-}
-    
+    .footer p {
+        text-align: center;
+    }
+
+    /* Evitar subrayado global en el título de SweetAlert2 */
+    .swal2-title::after {
+        content: none !important;
+    }
     </style>
 </head>
 
@@ -1212,8 +1227,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
 
     <header class="header">
         <div class="logo-space">
-                <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
-            </div>
+            <img width="120" height="50" fill="none" src="../../assets/img/Logo_fondoazul.png" alt="" srcset="">
+        </div>
 
         <div class="header-actions">
             <a href="../index_estudiante.php" class="btn btn-outline btn-disabled">
@@ -1328,6 +1343,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['final_submit'])) {
     </footer>
 
     <script src="../../assets/js_responder/form-handler.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    // Interceptar navegación (botón Atrás/cerrar/ir a otro lado) si ya se respondió alguna pregunta
+    (function() {
+        const form = document.getElementById('questionForm');
+        if (!form) return;
+
+        let hasAnswered = false;
+        let submissionInProgress = false;
+
+        // Marcar cuando el estudiante selecciona alguna opción
+        form.addEventListener('change', (e) => {
+            if (e.target && e.target.matches('input[type="radio"]')) {
+                hasAnswered = true;
+            }
+        });
+
+        // Al enviar, permitir la salida sin advertencias
+        form.addEventListener('submit', () => {
+            submissionInProgress = true;
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            window.removeEventListener('popstate', popStateHandler);
+        });
+
+        const warningMsg = 'Atención: Tus respuestas no se guardarán y deberás realizar el formulario nuevamente.';
+
+        function beforeUnloadHandler(e) {
+            if (hasAnswered && !submissionInProgress) {
+                e.preventDefault();
+                e.returnValue = warningMsg; // Algunos navegadores ignorarán el texto, pero mostrarán el diálogo
+                return warningMsg;
+            }
+        }
+
+        function popStateHandler() {
+            if (hasAnswered && !submissionInProgress) {
+                // Reinsertar el estado inmediatamente para evitar abandonar la página mientras se muestra el modal
+                history.pushState({
+                    guard: true
+                }, '', window.location.href);
+                Swal.fire({
+                    title: '¿Salir del simulacro?',
+                    text: warningMsg,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Salir',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirigir al listado de simulacros
+                        window.removeEventListener('beforeunload', beforeUnloadHandler);
+                        window.removeEventListener('popstate', popStateHandler);
+                        window.location.href = 'formularios_estudiante.php';
+                    }
+                    // Si cancela, no hacemos nada: ya reinsertamos el estado
+                });
+            }
+        }
+
+        // Activa advertencia al abandonar
+        window.addEventListener('beforeunload', beforeUnloadHandler);
+
+        // Inserta un estado para capturar el primer "Atrás"
+        history.pushState({
+            guard: true
+        }, '', window.location.href);
+        window.addEventListener('popstate', popStateHandler);
+    })();
+    </script>
 </body>
 
 </html>
