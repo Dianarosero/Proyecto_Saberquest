@@ -602,8 +602,11 @@ function handleImageUpload(event) {
     previewImage.src = e.target.result;
     previewImageContainer.classList.remove("hidden");
 
-    // Show the preview section if it's hidden
-    document.getElementById("form-preview-section").classList.remove("hidden");
+    // Show the preview section if it's hidden (si existe)
+    const previewSection = document.getElementById("form-preview-section");
+    if (previewSection) {
+      previewSection.classList.remove("hidden");
+    }
 
     // Update the full preview
     updatePreview();
@@ -672,6 +675,12 @@ function handleFieldImageUpload(input) {
       if (uploadContainer) uploadContainer.classList.add("has-image");
     };
     reader.readAsDataURL(file);
+    // Actualizar vista previa del modal
+    reader.onloadend = () => {
+      try {
+        updatePreview();
+      } catch (e) {}
+    };
     return;
   }
   // Preguntas (múltiples imágenes)
@@ -694,10 +703,20 @@ function handleFieldImageUpload(input) {
       if (previewImg) previewImg.style.display = "";
     };
     reader.readAsDataURL(validFiles[0]);
+    // Refrescar la vista previa del modal cuando termine
+    reader.onloadend = () => {
+      try {
+        updatePreview();
+      } catch (e) {}
+    };
     return;
   }
   // Múltiples imágenes: construir carrusel
   buildQuestionCarousel(id, previewBox, validFiles);
+  // Actualizar vista previa del modal
+  try {
+    updatePreview();
+  } catch (e) {}
 }
 
 // Limpia la imagen y oculta la previsualización
@@ -722,6 +741,10 @@ function removeFieldImage(btn, inputId) {
   // remover marca visual en opciones
   const uploadContainer = input.closest(".image-upload-container");
   if (uploadContainer) uploadContainer.classList.remove("has-image");
+  // Actualizar vista previa del modal
+  try {
+    updatePreview();
+  } catch (e) {}
 }
 
 // Construye un carrusel simple para las imágenes de una pregunta
@@ -733,47 +756,110 @@ function buildQuestionCarousel(inputId, previewBox, files) {
   if (carousel) carousel.remove();
   carousel = document.createElement("div");
   carousel.className = "carousel";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.type = "button";
+  prevBtn.className = "carousel-btn prev";
+  prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+
+  const nextBtn = document.createElement("button");
+  nextBtn.type = "button";
+  nextBtn.className = "carousel-btn next";
+  nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+
   const track = document.createElement("div");
   track.className = "carousel-track";
   files.forEach((file) => {
+    const slide = document.createElement("div");
+    slide.className = "carousel-slide";
     const img = document.createElement("img");
     const reader = new FileReader();
     reader.onload = (e) => {
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-    track.appendChild(img);
+    slide.appendChild(img);
+    track.appendChild(slide);
   });
-  const prevBtn = document.createElement("button");
-  prevBtn.type = "button";
-  prevBtn.className = "btn btn-add carousel-prev";
-  prevBtn.innerHTML = "‹";
-  const nextBtn = document.createElement("button");
-  nextBtn.type = "button";
-  nextBtn.className = "btn btn-add carousel-next";
-  nextBtn.innerHTML = "›";
-  const indicator = document.createElement("div");
-  indicator.className = "carousel-indicator";
-  let current = 0;
-  const total = files.length;
-  function update() {
-    track.style.transform = `translateX(-${current * 100}%)`;
-    indicator.textContent = `${current + 1} / ${total}`;
+
+  const dots = document.createElement("div");
+  dots.className = "carousel-dots";
+  for (let i = 0; i < files.length; i++) {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+    dot.dataset.index = String(i);
+    dots.appendChild(dot);
   }
-  prevBtn.addEventListener("click", () => {
-    current = (current - 1 + total) % total;
-    update();
-  });
-  nextBtn.addEventListener("click", () => {
-    current = (current + 1) % total;
-    update();
-  });
-  carousel.appendChild(track);
+
   carousel.appendChild(prevBtn);
+  carousel.appendChild(track);
   carousel.appendChild(nextBtn);
-  carousel.appendChild(indicator);
+  carousel.appendChild(dots);
   previewBox.appendChild(carousel);
   previewBox.classList.remove("hidden");
+
+  let index = 0;
+  const total = files.length;
+  const dotEls = Array.from(dots.children);
+  const update = () => {
+    track.style.transform = `translateX(-${index * 100}%)`;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === total - 1;
+    dotEls.forEach((d, i) => d.classList.toggle("active", i === index));
+  };
+  prevBtn.addEventListener("click", () => {
+    if (index > 0) {
+      index--;
+      update();
+    }
+  });
+  nextBtn.addEventListener("click", () => {
+    if (index < total - 1) {
+      index++;
+      update();
+    }
+  });
+  dotEls.forEach((d) =>
+    d.addEventListener("click", () => {
+      const i = parseInt(d.dataset.index || "0", 10);
+      if (!isNaN(i)) {
+        index = i;
+        update();
+      }
+    })
+  );
+
+  // soporte táctil
+  let startX = 0,
+    deltaX = 0,
+    dragging = false;
+  track.addEventListener(
+    "touchstart",
+    (e) => {
+      dragging = true;
+      startX = e.touches[0].clientX;
+      deltaX = 0;
+    },
+    { passive: true }
+  );
+  track.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!dragging) return;
+      deltaX = e.touches[0].clientX - startX;
+    },
+    { passive: true }
+  );
+  track.addEventListener("touchend", () => {
+    if (!dragging) return;
+    dragging = false;
+    const threshold = 50;
+    if (deltaX > threshold && index > 0) index--;
+    else if (deltaX < -threshold && index < total - 1) index++;
+    update();
+  });
+
   update();
 }
 
@@ -820,18 +906,14 @@ function updatePreview() {
     const questionText =
       document.getElementById(`question-text-${questionId}`).value.trim() ||
       `Pregunta ${index + 1}`;
-    const optionA =
-      document.getElementById(`option-a-${questionId}`).value.trim() ||
-      "Opción a";
-    const optionB =
-      document.getElementById(`option-b-${questionId}`).value.trim() ||
-      "Opción b";
-    const optionC =
-      document.getElementById(`option-c-${questionId}`).value.trim() ||
-      "Opción c";
-    const optionD =
-      document.getElementById(`option-d-${questionId}`).value.trim() ||
-      "Opción d";
+    const optionAInput = document.getElementById(`option-a-${questionId}`);
+    const optionBInput = document.getElementById(`option-b-${questionId}`);
+    const optionCInput = document.getElementById(`option-c-${questionId}`);
+    const optionDInput = document.getElementById(`option-d-${questionId}`);
+    const optionA = optionAInput ? optionAInput.value.trim() : "";
+    const optionB = optionBInput ? optionBInput.value.trim() : "";
+    const optionC = optionCInput ? optionCInput.value.trim() : "";
+    const optionD = optionDInput ? optionDInput.value.trim() : "";
     const correctAnswer = document.getElementById(
       `correct-answer-${questionId}`
     ).value;
@@ -839,25 +921,279 @@ function updatePreview() {
     // Create preview question element
     const questionElement = document.createElement("div");
     questionElement.className = "preview-question";
-    questionElement.innerHTML = `
-            <div class="preview-question-text">${
-              index + 1
-            }. ${questionText}</div>
-            <div class="preview-options">
-                <div class="preview-option ${
-                  correctAnswer === "a" ? "correct" : ""
-                }">a) ${optionA}</div>
-                <div class="preview-option ${
-                  correctAnswer === "b" ? "correct" : ""
-                }">b) ${optionB}</div>
-                <div class="preview-option ${
-                  correctAnswer === "c" ? "correct" : ""
-                }">c) ${optionC}</div>
-                <div class="preview-option ${
-                  correctAnswer === "d" ? "correct" : ""
-                }">d) ${optionD}</div>
-            </div>
-        `;
+    // Cabecera de pregunta
+    const qText = document.createElement("div");
+    qText.className = "preview-question-text";
+    qText.textContent = `${index + 1}. ${questionText}`;
+    questionElement.appendChild(qText);
+
+    // Imágenes de la pregunta (si existen). Preferir leer desde el input de archivos
+    const qInput = document.getElementById(`question-image-${questionId}`);
+    const qPrevBox = document.getElementById(
+      `question-image-preview-container-${questionId}`
+    );
+    const mediaWrap = document.createElement("div");
+    mediaWrap.className = "preview-question-media";
+    let addedQImages = 0;
+    if (qInput && qInput.files && qInput.files.length > 0) {
+      const files = Array.from(qInput.files).filter(
+        (f) => f.type && f.type.startsWith("image/")
+      );
+      const count = files.length;
+      if (count === 1) {
+        const img = document.createElement("img");
+        img.alt = "Imagen de la pregunta";
+        const url = URL.createObjectURL(files[0]);
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+        const single = document.createElement("div");
+        single.className = "pregunta-imagen-unica";
+        single.appendChild(img);
+        mediaWrap.appendChild(single);
+        addedQImages++;
+      } else if (count >= 2) {
+        const carousel = document.createElement("div");
+        carousel.className = "carousel";
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.className = "carousel-btn prev";
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.className = "carousel-btn next";
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        const track = document.createElement("div");
+        track.className = "carousel-track";
+        files.forEach((file) => {
+          const slide = document.createElement("div");
+          slide.className = "carousel-slide";
+          const img = document.createElement("img");
+          const url = URL.createObjectURL(file);
+          img.src = url;
+          img.alt = "Imagen de la pregunta";
+          img.onload = () => URL.revokeObjectURL(url);
+          slide.appendChild(img);
+          track.appendChild(slide);
+          addedQImages++;
+        });
+        const dots = document.createElement("div");
+        dots.className = "carousel-dots";
+        for (let i = 0; i < files.length; i++) {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+          dot.dataset.index = String(i);
+          dots.appendChild(dot);
+        }
+        carousel.appendChild(prevBtn);
+        carousel.appendChild(track);
+        carousel.appendChild(nextBtn);
+        carousel.appendChild(dots);
+        mediaWrap.appendChild(carousel);
+        let index = 0;
+        const total = files.length;
+        const dotEls = Array.from(dots.children);
+        const update = () => {
+          track.style.transform = `translateX(-${index * 100}%)`;
+          prevBtn.disabled = index === 0;
+          nextBtn.disabled = index === total - 1;
+          dotEls.forEach((d, i) => d.classList.toggle("active", i === index));
+        };
+        prevBtn.addEventListener("click", () => {
+          if (index > 0) {
+            index--;
+            update();
+          }
+        });
+        nextBtn.addEventListener("click", () => {
+          if (index < total - 1) {
+            index++;
+            update();
+          }
+        });
+        dotEls.forEach((d) =>
+          d.addEventListener("click", () => {
+            const i = parseInt(d.dataset.index || "0", 10);
+            if (!isNaN(i)) {
+              index = i;
+              update();
+            }
+          })
+        );
+        // soporte táctil
+        let startX = 0,
+          deltaX = 0,
+          dragging = false;
+        track.addEventListener(
+          "touchstart",
+          (e) => {
+            dragging = true;
+            startX = e.touches[0].clientX;
+            deltaX = 0;
+          },
+          { passive: true }
+        );
+        track.addEventListener(
+          "touchmove",
+          (e) => {
+            if (!dragging) return;
+            deltaX = e.touches[0].clientX - startX;
+          },
+          { passive: true }
+        );
+        track.addEventListener("touchend", () => {
+          if (!dragging) return;
+          dragging = false;
+          const threshold = 50;
+          if (deltaX > threshold && index > 0) index--;
+          else if (deltaX < -threshold && index < total - 1) index++;
+          update();
+        });
+        update();
+      }
+    } else if (qPrevBox && !qPrevBox.classList.contains("hidden")) {
+      // Fallback: clonar desde la previsualización
+      const trackImgs = qPrevBox.querySelectorAll(
+        ".carousel .carousel-track img"
+      );
+      if (trackImgs.length > 0) {
+        const carousel = document.createElement("div");
+        carousel.className = "carousel";
+        const prevBtn = document.createElement("button");
+        prevBtn.type = "button";
+        prevBtn.className = "carousel-btn prev";
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        const nextBtn = document.createElement("button");
+        nextBtn.type = "button";
+        nextBtn.className = "carousel-btn next";
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        const track = document.createElement("div");
+        track.className = "carousel-track";
+        trackImgs.forEach((img) => {
+          const slide = document.createElement("div");
+          slide.className = "carousel-slide";
+          const clone = document.createElement("img");
+          clone.src = img.src;
+          clone.alt = "Imagen de la pregunta";
+          slide.appendChild(clone);
+          track.appendChild(slide);
+          addedQImages++;
+        });
+        const dots = document.createElement("div");
+        dots.className = "carousel-dots";
+        for (let i = 0; i < trackImgs.length; i++) {
+          const dot = document.createElement("button");
+          dot.type = "button";
+          dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+          dot.dataset.index = String(i);
+          dots.appendChild(dot);
+        }
+        carousel.appendChild(prevBtn);
+        carousel.appendChild(track);
+        carousel.appendChild(nextBtn);
+        carousel.appendChild(dots);
+        mediaWrap.appendChild(carousel);
+        let index = 0;
+        const total = trackImgs.length;
+        const dotEls = Array.from(dots.children);
+        const update = () => {
+          track.style.transform = `translateX(-${index * 100}%)`;
+          prevBtn.disabled = index === 0;
+          nextBtn.disabled = index === total - 1;
+          dotEls.forEach((d, i) => d.classList.toggle("active", i === index));
+        };
+        prevBtn.addEventListener("click", () => {
+          if (index > 0) {
+            index--;
+            update();
+          }
+        });
+        nextBtn.addEventListener("click", () => {
+          if (index < total - 1) {
+            index++;
+            update();
+          }
+        });
+        dotEls.forEach((d) =>
+          d.addEventListener("click", () => {
+            const i = parseInt(d.dataset.index || "0", 10);
+            if (!isNaN(i)) {
+              index = i;
+              update();
+            }
+          })
+        );
+        update();
+      } else {
+        const img = qPrevBox.querySelector("img");
+        if (img && img.src && img.src !== "#") {
+          const single = document.createElement("div");
+          single.className = "pregunta-imagen-unica";
+          const clone = document.createElement("img");
+          clone.src = img.src;
+          clone.alt = "Imagen de la pregunta";
+          single.appendChild(clone);
+          mediaWrap.appendChild(single);
+          addedQImages++;
+        }
+      }
+    }
+    if (addedQImages > 0) {
+      questionElement.appendChild(mediaWrap);
+    }
+
+    // Opciones
+    const optionsWrap = document.createElement("div");
+    optionsWrap.className = "preview-options";
+
+    [
+      { key: "a", text: optionA },
+      { key: "b", text: optionB },
+      { key: "c", text: optionC },
+      { key: "d", text: optionD },
+    ].forEach((opt) => {
+      const optDiv = document.createElement("div");
+      optDiv.className = `preview-option ${
+        correctAnswer === opt.key ? "correct" : ""
+      }`;
+
+      // Texto de la opción
+      const labelSpan = document.createElement("span");
+      labelSpan.className = "preview-option-text";
+      // Mantener placeholder solo si no hay imagen ni texto
+      let displayText = opt.text;
+      if (!displayText) {
+        // Si no hay texto, evitamos poner el placeholder para no confundir si habrá imagen
+        displayText = "";
+      }
+      labelSpan.textContent = `${opt.key}) ${displayText}`.trim();
+      optDiv.appendChild(labelSpan);
+
+      // Imagen de la opción si existe
+      const optPrevBox = document.getElementById(
+        `option-${opt.key}-image-preview-container-${questionId}`
+      );
+      const optPrevImg = document.getElementById(
+        `option-${opt.key}-image-preview-${questionId}`
+      );
+      if (
+        optPrevBox &&
+        !optPrevBox.classList.contains("hidden") &&
+        optPrevImg &&
+        optPrevImg.src &&
+        optPrevImg.src !== "#"
+      ) {
+        const img = document.createElement("img");
+        img.className = "preview-option-image";
+        img.src = optPrevImg.src;
+        img.alt = `Imagen opción ${opt.key}`;
+        optDiv.appendChild(img);
+      }
+
+      optionsWrap.appendChild(optDiv);
+    });
+
+    questionElement.appendChild(optionsWrap);
 
     previewQuestionsContainer.appendChild(questionElement);
   });

@@ -30,6 +30,36 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+    /* Estilos de carrusel reutilizados de ver_formulario.php */
+    .pregunta-imagen-unica { margin: 10px 0 5px 0; }
+    .pregunta-imagen-unica img {
+        max-width: 100%; width: 100%; max-height: 320px; height: auto;
+        border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        object-fit: contain; background: #fff;
+    }
+    .carousel {
+        position: relative; margin: 10px 0 5px 0; overflow: hidden;
+        border-radius: 8px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .carousel-track { display: flex; transition: transform 0.35s ease; will-change: transform; }
+    .carousel-slide { min-width: 100%; display: flex; align-items: center; justify-content: center; background: #fff; }
+    .carousel-slide img { max-width: 100%; width: 100%; max-height: 360px; height: auto; object-fit: contain; background: #fff; }
+    .carousel-btn {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E0E0E0;
+        background: rgba(255,255,255,0.9); color: #003366; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 2;
+    }
+    .carousel-btn:hover { background: #003366; color: #fff; border-color: #003366; transform: translateY(-50%) scale(1.05); }
+    .carousel-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .carousel-btn.prev { left: 10px; }
+    .carousel-btn.next { right: 10px; }
+    .carousel-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; display: flex; gap: 6px; z-index: 1; }
+    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.15); border: none; cursor: pointer; transition: all 0.3s ease; }
+    .carousel-dot:hover { background: rgba(0,0,0,0.3); }
+    .carousel-dot.active { background: #003366; }
+    </style>
 </head>
 
 <body>

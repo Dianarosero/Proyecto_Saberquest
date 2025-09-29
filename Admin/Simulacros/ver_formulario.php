@@ -721,6 +721,121 @@ $result = $stmt->get_result();
         animation-delay: 0.4s;
     }
 
+    /* Carrusel de imágenes de la pregunta */
+    .pregunta-imagen-unica {
+        margin: 10px 0 5px 0;
+    }
+
+    .pregunta-imagen-unica img {
+        max-width: 100%;
+        width: 100%;
+        max-height: 320px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        object-fit: contain;
+        background: #fff;
+    }
+
+    .carousel {
+        position: relative;
+        margin: 10px 0 5px 0;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.35s ease;
+        will-change: transform;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+    }
+
+    .carousel-slide img {
+        max-width: 100%;
+        width: 100%;
+        max-height: 360px;
+        height: auto;
+        object-fit: contain;
+        background: #fff;
+    }
+
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--neutral);
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        z-index: 2;
+    }
+
+    .carousel-btn:hover {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .carousel-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .carousel-btn.prev {
+        left: 10px;
+    }
+
+    .carousel-btn.next {
+        right: 10px;
+    }
+
+    .carousel-dots {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 8px;
+        display: flex;
+        gap: 6px;
+        z-index: 1;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.15);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .carousel-dot:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .carousel-dot.active {
+        background: var(--primary);
+    }
+
     .nav-controls {
         display: flex;
         align-items: center;
@@ -796,8 +911,11 @@ $result = $stmt->get_result();
         outline: 2px solid var(--primary);
         outline-offset: 2px;
     }
+
     /* Evitar subrayado heredado en títulos de SweetAlert */
-    .swal2-title::after { content: none !important; }
+    .swal2-title::after {
+        content: none !important;
+    }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -955,14 +1073,48 @@ $result = $stmt->get_result();
                     <span><?php echo htmlspecialchars($row['enunciado']); ?></span>
                 </div>
 
-                <?php if (!empty($imgsArray)): ?>
-                <div class="pregunta-imagenes" style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 5px 0;">
-                    <?php foreach ($imgsArray as $imgSrc): if (empty($imgSrc)) continue; ?>
-                    <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="Imagen de la pregunta"
-                        style="max-width: 100%; width:220px; height:auto; border-radius: 8px; box-shadow: var(--shadow-sm); object-fit:contain; background:#fff;">
-                    <?php endforeach; ?>
+                <?php
+                    if (!empty($imgsArray)) {
+                        // Filtrar imágenes válidas (no vacías)
+                        $validImgs = array_values(array_filter($imgsArray, function($src) {
+                            return isset($src) && strlen(trim((string)$src)) > 0;
+                        }));
+                        $imgCount = count($validImgs);
+                        if ($imgCount === 1) {
+                            $imgSrc = $validImgs[0];
+                ?>
+                <div class="pregunta-imagen-unica">
+                    <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="Imagen de la pregunta">
                 </div>
-                <?php endif; ?>
+                <?php
+                        } elseif ($imgCount > 1) {
+                            // Carrusel cuando hay más de una imagen
+                ?>
+                <div class="carousel" data-current="0">
+                    <button class="carousel-btn prev" type="button" aria-label="Anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="carousel-track">
+                        <?php foreach ($validImgs as $imgSrc): ?>
+                        <div class="carousel-slide">
+                            <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="Imagen de la pregunta">
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button class="carousel-btn next" type="button" aria-label="Siguiente">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-dots">
+                        <?php for ($i = 0; $i < $imgCount; $i++): ?>
+                        <button class="carousel-dot<?php echo $i === 0 ? ' active' : ''; ?>" type="button"
+                            data-index="<?php echo $i; ?>" aria-label="Ir a la imagen <?php echo $i + 1; ?>"></button>
+                        <?php endfor; ?>
+                    </div>
+                </div>
+                <?php
+                        }
+                    }
+                ?>
 
                 <div class="opciones-container">
                     <?php
@@ -1085,5 +1237,84 @@ $result = $stmt->get_result();
     </footer>
     <?php endif; ?>
 </body>
+
+<script>
+// Inicialización ligera de carruseles por pregunta
+document.addEventListener('DOMContentLoaded', function() {
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(function(carousel) {
+        const track = carousel.querySelector('.carousel-track');
+        if (!track) return;
+        const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+        const prevBtn = carousel.querySelector('.carousel-btn.prev');
+        const nextBtn = carousel.querySelector('.carousel-btn.next');
+        const dots = Array.from(carousel.querySelectorAll('.carousel-dot'));
+
+        let index = 0;
+
+        function update() {
+            track.style.transform = 'translateX(' + (-index * 100) + '%)';
+            if (prevBtn) prevBtn.disabled = index === 0;
+            if (nextBtn) nextBtn.disabled = index === slides.length - 1;
+            if (dots.length) {
+                dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            }
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', function() {
+            if (index > 0) {
+                index--;
+                update();
+            }
+        });
+        if (nextBtn) nextBtn.addEventListener('click', function() {
+            if (index < slides.length - 1) {
+                index++;
+                update();
+            }
+        });
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                const i = parseInt(dot.getAttribute('data-index'), 10);
+                if (!isNaN(i)) {
+                    index = i;
+                    update();
+                }
+            });
+        });
+
+        // Soporte básico de arrastre táctil
+        let startX = 0,
+            deltaX = 0,
+            isDragging = false;
+        track.addEventListener('touchstart', function(e) {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            deltaX = 0;
+        }, {
+            passive: true
+        });
+        track.addEventListener('touchmove', function(e) {
+            if (!isDragging) return;
+            deltaX = e.touches[0].clientX - startX;
+        }, {
+            passive: true
+        });
+        track.addEventListener('touchend', function() {
+            if (!isDragging) return;
+            isDragging = false;
+            const threshold = 50; // px
+            if (deltaX > threshold && index > 0) {
+                index--;
+            } else if (deltaX < -threshold && index < slides.length - 1) {
+                index++;
+            }
+            update();
+        });
+
+        update();
+    });
+});
+</script>
 
 </html>
