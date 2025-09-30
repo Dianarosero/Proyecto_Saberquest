@@ -292,51 +292,67 @@ $result = $stmt->get_result();
         align-items: flex-start;
     }
 
+    /* Opciones mejoradas para vista previa */
     .opciones-container {
         display: grid;
-        gap: 12px;
-        margin-top: 20px;
+        gap: 18px;
+        margin-top: 24px;
     }
 
     .opcion {
         display: flex;
-        align-items: center;
-        padding: 12px 15px;
-        border-radius: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 20px;
+        border-radius: 12px;
         background: var(--background);
-        border: 1px solid var(--neutral);
+        border: 1.5px solid var(--neutral);
         transition: var(--transition);
         cursor: default;
         position: relative;
         overflow: hidden;
-    }
-
-    .opcion:hover {
-        border-color: var(--primary-light);
+        min-height: 110px;
         box-shadow: var(--shadow-sm);
     }
 
     .opcion-letra {
         font-weight: 700;
-        margin-right: 10px;
-        width: 28px;
-        height: 28px;
+        margin-bottom: 10px;
+        width: 32px;
+        height: 32px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: var(--neutral);
         border-radius: 50%;
         color: var(--text);
-        transition: var(--transition);
+        font-size: 1.1rem;
     }
 
     .opcion-texto {
-        flex: 1;
-        font-size: 1rem;
+        width: 100%;
+        font-size: 1.08rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: var(--primary);
+        text-align: left;
+        word-break: break-word;
+    }
+
+    .opcion-imagen {
+        width: 400px;
+        max-width: 100%;
+        max-height: 350px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+        margin: 10px auto 0 auto;
+        display: block;
     }
 
     .correcta {
-        background-color: rgba(39, 174, 96, 0.1);
+        background-color: rgba(39, 174, 96, 0.12);
         border-color: var(--success);
     }
 
@@ -347,12 +363,13 @@ $result = $stmt->get_result();
 
     .correcta::after {
         content: '\f00c';
-        /* fa-check */
         font-family: 'Font Awesome 6 Free';
         font-weight: 900;
         position: absolute;
-        right: 15px;
+        right: 18px;
+        top: 18px;
         color: var(--success);
+        font-size: 1.3rem;
     }
 
     hr {
@@ -1120,25 +1137,22 @@ $result = $stmt->get_result();
                     <?php
                             $letras = ['a' => 'A', 'b' => 'B', 'c' => 'C', 'd' => 'D'];
                             foreach ($letras as $key => $label):
+                                // Si tus opciones vienen como array con texto e imagen:
                                 $op = $opciones[$key] ?? null;
-                                // Soportar formato antiguo (string) o el nuevo (array con texto/imagen)
                                 $texto = is_array($op) ? ($op['texto'] ?? '') : (is_string($op) ? $op : '');
                                 $imagen = is_array($op) ? ($op['imagen'] ?? '') : '';
                             ?>
                     <div class="opcion<?php if ($correcta === $key) echo ' correcta'; ?>">
                         <span class="opcion-letra"><?php echo $label; ?></span>
-                        <span class="opcion-texto" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                            <?php if (!empty($imagen)): ?>
-                            <img src="<?php echo htmlspecialchars($imagen); ?>" alt="Opción <?php echo $label; ?>"
-                                style="max-width:120px;max-height:120px;object-fit:contain;border-radius:6px;background:#fff;">
-                            <?php endif; ?>
-                            <?php if (strlen(trim((string)$texto)) > 0): ?>
-                            <span><?php echo htmlspecialchars($texto); ?></span>
-                            <?php endif; ?>
-                            <?php if (empty($imagen) && strlen(trim((string)$texto)) === 0): ?>
+                        <?php if (strlen(trim((string)$texto)) > 0): ?>
+                            <span class="opcion-texto"><?php echo htmlspecialchars($texto); ?></span>
+                        <?php endif; ?>
+                        <?php if (!empty($imagen)): ?>
+                            <img src="<?php echo htmlspecialchars($imagen); ?>" alt="Opción <?php echo $label; ?>" class="opcion-imagen">
+                        <?php endif; ?>
+                        <?php if (empty($imagen) && strlen(trim((string)$texto)) === 0): ?>
                             <span style="color:var(--text-light);font-style:italic;">(Sin contenido)</span>
-                            <?php endif; ?>
-                        </span>
+                        <?php endif; ?>
                     </div>
                     <?php endforeach; ?>
                 </div>
