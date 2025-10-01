@@ -11,21 +11,26 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio Admin</title>
-    <meta name="description" content="Personal portfolio of John Doe, a web developer specializing in frontend development.">
+    <meta name="description"
+        content="Personal portfolio of John Doe, a web developer specializing in frontend development.">
     <link rel="stylesheet" href="../assets/src_index/css/style.css">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <link href="../assets/img/favicon.png" rel="icon">
     <link href="../assets/img/favicon.png" rel="apple-touch-icon">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header" id="header">
@@ -35,10 +40,10 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     <a href="#home">
                         <img src="../assets/img/Logo_fondoazul.png" alt="Logo SaberQuest" style="height:50px;">
                     </a>
-                </div>                
+                </div>
                 <nav class="nav">
                     <ul class="nav-list">
-                        <li><a href="http://localhost/proyecto_saberquest/base%20de%20datos/cerrar.php" class="nav-link">Cerrar Sesion</a></li>
+                        <li><a href="../base de datos/cerrar.php" class="nav-link">Cerrar Sesion</a></li>
                     </ul>
                 </nav>
                 <div class="hamburger">
@@ -56,7 +61,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
             <div class="hero-content">
                 <div class="hero-text">
                     <h1>Bienvenido Administrador</h1>
-                    <p>La plataforma educativa para aprender, practicar y crecer, impulsando el progreso profesional de cada estudiante.</p>
+                    <p>La plataforma educativa para aprender, practicar y crecer, impulsando el progreso profesional de
+                        cada estudiante.</p>
                     <div class="hero-btns">
                         <a href="#projects" class="btn btn-primary">Gestionar</a>
                     </div>
@@ -83,9 +89,20 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
             </div>
             <div class="about-content">
                 <div class="about-text">
-                    <p>En SaberQuest, entendemos que una gestión académica eficiente requiere herramientas que no solo faciliten la enseñanza, sino que impulsen el rendimiento institucional. Nacimos como una iniciativa académica con la visión de transformar la forma en que se administra y accede al conocimiento, y hoy somos una plataforma integral diseñada para fortalecer la calidad educativa desde la administración.</p>
-                    <p>Nuestra solución permite a los administradores monitorear y optimizar procesos clave como la creación de simulacros, la gestión de prácticas académicas, el uso de recursos interactivos y la visualización de resultados en tiempo real. Con SaberQuest, las instituciones cuentan con un sistema que respalda la toma de decisiones basada en datos, mejora la experiencia educativa y promueve la innovación pedagógica.</p>
-                    <p>Gracias al trabajo de un equipo multidisciplinario comprometido con la educación y la tecnología, continuamos evolucionando para adaptarnos a las necesidades cambiantes del entorno académico. SaberQuest es hoy un aliado estratégico para estudiantes y docentes que buscan una educación más dinámica, inclusiva y orientada a resultados.</p>
+                    <p>En SaberQuest, entendemos que una gestión académica eficiente requiere herramientas que no solo
+                        faciliten la enseñanza, sino que impulsen el rendimiento institucional. Nacimos como una
+                        iniciativa académica con la visión de transformar la forma en que se administra y accede al
+                        conocimiento, y hoy somos una plataforma integral diseñada para fortalecer la calidad educativa
+                        desde la administración.</p>
+                    <p>Nuestra solución permite a los administradores monitorear y optimizar procesos clave como la
+                        creación de simulacros, la gestión de prácticas académicas, el uso de recursos interactivos y la
+                        visualización de resultados en tiempo real. Con SaberQuest, las instituciones cuentan con un
+                        sistema que respalda la toma de decisiones basada en datos, mejora la experiencia educativa y
+                        promueve la innovación pedagógica.</p>
+                    <p>Gracias al trabajo de un equipo multidisciplinario comprometido con la educación y la tecnología,
+                        continuamos evolucionando para adaptarnos a las necesidades cambiantes del entorno académico.
+                        SaberQuest es hoy un aliado estratégico para estudiantes y docentes que buscan una educación más
+                        dinámica, inclusiva y orientada a resultados.</p>
                     <div class="about-details">
                         <div class="about-detail">
                             <i class="fas fa-book-reader"></i>
@@ -138,7 +155,9 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Crear Simulacro</h3>
-                        <p class="project-description">Accede a la herramienta para diseñar simulacros educativos adaptados a distintos temas y niveles, con opciones de personalización y gestión flexible.</p>
+                        <p class="project-description">Accede a la herramienta para diseñar simulacros educativos
+                            adaptados a distintos temas y niveles, con opciones de personalización y gestión flexible.
+                        </p>
                     </div>
                 </a>
                 <!-- Card 2 -->
@@ -148,7 +167,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Ver Simulacros</h3>
-                        <p class="project-description">Consulta los simulacros disponibles en la plataforma, visualiza su contenido y realiza un seguimiento de su uso.</p>
+                        <p class="project-description">Consulta los simulacros disponibles en la plataforma, visualiza
+                            su contenido y realiza un seguimiento de su uso.</p>
                     </div>
                 </a>
                 <!-- Card 3 -->
@@ -158,7 +178,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Crear Juego</h3>
-                        <p class="project-description">Diseña y gestiona juegos educativos interactivos que promuevan el aprendizaje dinámico y la participación activa de los usuarios.</p>
+                        <p class="project-description">Diseña y gestiona juegos educativos interactivos que promuevan el
+                            aprendizaje dinámico y la participación activa de los usuarios.</p>
                     </div>
                 </a>
                 <!-- Card 4 -->
@@ -168,7 +189,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Practicar</h3>
-                        <p class="project-description">Explora actividades y ejercicios diseñados para reforzar conocimientos mediante la práctica continua y personalizada.</p>
+                        <p class="project-description">Explora actividades y ejercicios diseñados para reforzar
+                            conocimientos mediante la práctica continua y personalizada.</p>
                     </div>
                 </a>
                 <!-- Card 5 -->
@@ -178,7 +200,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Visualizar Resultados</h3>
-                        <p class="project-description">Consulta los resultados obtenidos en las diferentes actividades para evaluar el progreso y desempeño de los estudiantes.</p>
+                        <p class="project-description">Consulta los resultados obtenidos en las diferentes actividades
+                            para evaluar el progreso y desempeño de los estudiantes.</p>
                     </div>
                 </a>
                 <!-- Card 6 -->
@@ -188,21 +211,22 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">Gestionar Usuarios</h3>
-                        <p class="project-description">Administra la información y el acceso de los usuarios registrados en la plataforma de forma organizada y segura.</p>
+                        <p class="project-description">Administra la información y el acceso de los usuarios registrados
+                            en la plataforma de forma organizada y segura.</p>
                     </div>
                 </a>
-            </div>            
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-            <div class="footer-container">
-                <p>&copy; 2025 SABERQUEST. Todos los derechos reservados.</p>
-            </div>
+        <div class="footer-container">
+            <p>&copy; 2025 SABERQUEST. Todos los derechos reservados.</p>
+        </div>
 
     </footer>
-    
+
 
     <!-- Back to Top Button -->
     <a href="#home" class="back-to-top" id="backToTop">
@@ -212,4 +236,5 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'Administrador') {
     <!-- JavaScript -->
     <script src="../assets/src_index/js/script.js"></script>
 </body>
+
 </html>
