@@ -301,8 +301,9 @@ $result = $stmt->get_result();
 
     .opcion {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        /* Permite que la imagen baje a la siguiente línea */
         padding: 18px 20px;
         border-radius: 12px;
         background: var(--background);
@@ -311,35 +312,49 @@ $result = $stmt->get_result();
         cursor: default;
         position: relative;
         overflow: hidden;
-        min-height: 110px;
+        min-height: auto;
+        /* Ajuste para que no fuerce altura innecesaria */
         box-shadow: var(--shadow-sm);
+        gap: 10px;
+        /* Espacio entre letra y texto */
     }
 
     .opcion-letra {
         font-weight: 700;
-        margin-bottom: 10px;
+        margin: 0;
+        /* Quita margen inferior para alinear lateralmente */
+        margin-right: 10px;
         width: 32px;
         height: 32px;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         background: var(--neutral);
         border-radius: 50%;
         color: var(--text);
         font-size: 1.1rem;
+        flex: 0 0 auto;
     }
 
     .opcion-texto {
-        width: 100%;
         font-size: 1.08rem;
         font-weight: 500;
-        margin-bottom: 10px;
+        margin: 0;
+        /* Alinea a la misma altura que la letra */
         color: var(--primary);
         text-align: left;
         word-break: break-word;
+        flex: 1 1 auto;
+        /* Ocupa el resto de la fila */
+        min-width: 0;
+        /* Evita overflow por palabras largas */
     }
 
     .opcion-imagen {
+        order: 2;
+        /* Fuerza que la imagen quede debajo */
+        flex: 1 1 100%;
+        /* Ocupa toda la fila inferior */
         width: 400px;
         max-width: 100%;
         max-height: 350px;
@@ -1145,13 +1160,14 @@ $result = $stmt->get_result();
                     <div class="opcion<?php if ($correcta === $key) echo ' correcta'; ?>">
                         <span class="opcion-letra"><?php echo $label; ?></span>
                         <?php if (strlen(trim((string)$texto)) > 0): ?>
-                            <span class="opcion-texto"><?php echo htmlspecialchars($texto); ?></span>
+                        <span class="opcion-texto"><?php echo htmlspecialchars($texto); ?></span>
                         <?php endif; ?>
                         <?php if (!empty($imagen)): ?>
-                            <img src="<?php echo htmlspecialchars($imagen); ?>" alt="Opción <?php echo $label; ?>" class="opcion-imagen">
+                        <img src="<?php echo htmlspecialchars($imagen); ?>" alt="Opción <?php echo $label; ?>"
+                            class="opcion-imagen">
                         <?php endif; ?>
                         <?php if (empty($imagen) && strlen(trim((string)$texto)) === 0): ?>
-                            <span style="color:var(--text-light);font-style:italic;">(Sin contenido)</span>
+                        <span style="color:var(--text-light);font-style:italic;">(Sin contenido)</span>
                         <?php endif; ?>
                     </div>
                     <?php endforeach; ?>

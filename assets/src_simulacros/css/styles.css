@@ -180,6 +180,25 @@ label {
   display: block;
 }
 
+/* Asegurar que las imágenes de previsualización dentro de cada pregunta escalen sin desbordarse */
+.question-card .image-preview-container {
+  background: #fff;
+  border-radius: 6px;
+}
+.question-card .image-preview-container > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 320px; /* altura razonable en la tarjeta */
+  object-fit: contain; /* escalar manteniendo proporción */
+}
+
+@media (min-width: 992px) {
+  .question-card .image-preview-container > img {
+    max-height: 360px; /* un poco más alto en escritorio */
+  }
+}
+
 .btn-remove-image {
   position: absolute;
   top: -10px;
@@ -816,6 +835,9 @@ select:focus {
     > .image-preview-container:not(.hidden) {
     width: min(960px, 70vw) !important; /* similar a modal de 960px */
     max-height: min(70vh, 560px) !important; /* altura moderada */
+    display: flex; /* centrar contenido dentro del contenedor */
+    align-items: center;
+    justify-content: center;
     left: 50% !important;
     transform: translateX(-50%) !important;
   }

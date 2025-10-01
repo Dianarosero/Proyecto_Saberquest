@@ -221,15 +221,19 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 
     #preview-modal .opcion {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        /* Permite que la imagen pase a la siguiente línea */
         padding: 18px 20px;
         border-radius: 12px;
         background: #FFFFFF;
         border: 1.5px solid #E0E0E0;
         position: relative;
-        min-height: 110px;
+        min-height: auto;
+        /* Evita forzar altura fija */
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        gap: 10px;
+        /* Espacio entre letra y texto */
     }
 
     #preview-modal .opcion-letra {
@@ -242,19 +246,29 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         background: #E0E0E0;
         color: #333333;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin: 0 10px 0 0;
+        /* Alinea lateral, separa del texto */
+        flex: 0 0 auto;
     }
 
     #preview-modal .opcion-texto {
-        width: 100%;
         font-size: 1.05rem;
         font-weight: 500;
         color: #003366;
-        margin-bottom: 10px;
+        margin: 0;
+        /* En línea con la letra */
         word-break: break-word;
+        flex: 1 1 auto;
+        /* Ocupa el restante de la fila */
+        min-width: 0;
+        /* Evita overflow por palabras largas */
     }
 
     #preview-modal .opcion-imagen {
+        order: 2;
+        /* Imagen debajo del texto */
+        flex: 1 1 100%;
+        /* Ocupar el ancho completo en la fila inferior */
         width: 400px;
         max-width: 100%;
         max-height: 350px;
