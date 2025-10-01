@@ -87,7 +87,7 @@ $fecha_formateada = $fecha->format('d/m/Y H:i');
 // Obtener preguntas y respuestas del estudiante
 $stmt = $conex->prepare("
     SELECT 
-        p.id, p.enunciado, p.opciones, p.correcta,
+        p.id, p.enunciado, p.imagen, p.opciones, p.correcta,
         r.respuesta as respuesta_usuario
     FROM preguntas p
     LEFT JOIN respuestas r ON p.id = r.pregunta_id AND r.usuario_id = ? AND r.formulario_id = ?
@@ -791,6 +791,85 @@ $stmt->close();
             text-decoration: none;
             color: inherit;
         }
+    /* Carrusel de imágenes de la pregunta (reutilizado) */
+        .carousel {
+            position: relative;
+            margin: 10px 0 5px 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.35s ease;
+            will-change: transform;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+        .carousel-slide img {
+            max-width: 100%;
+            width: 100%;
+            max-height: 360px;
+            height: auto;
+            object-fit: contain;
+            background: #fff;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--neutral);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            z-index: 2;
+        }
+        .carousel-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-50%) scale(1.05);
+        }
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+        .carousel-dots {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 8px;
+            display: flex;
+            gap: 6px;
+            z-index: 1;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.15);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .carousel-dot:hover { background: rgba(0, 0, 0, 0.3); }
+        .carousel-dot.active { background: var(--primary); }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -885,6 +964,42 @@ $stmt->close();
                         </div>
                     </div>
 
+                    <?php
+                        // Mostrar imágenes de la pregunta si existen (carrusel si hay varias)
+                        $imgsPregunta = json_decode($pregunta['imagen'] ?? '', true);
+                        $imgsArray = is_array($imgsPregunta) ? $imgsPregunta : [];
+                        if (!$imgsArray && !empty($pregunta['imagen']) && is_string($pregunta['imagen'])) {
+                            // Compatibilidad con registro de una sola imagen como string
+                            $imgsArray = [$pregunta['imagen']];
+                        }
+                        $validImgs = array_values(array_filter($imgsArray, function($src) {
+                            return isset($src) && strlen(trim((string)$src)) > 0;
+                        }));
+                        $imgCount = count($validImgs);
+                        if ($imgCount === 1) {
+                            $imgSrc = $validImgs[0];
+                            echo '<div style="text-align:center;margin:8px 0 10px 0;">'
+                               . '<img src="' . htmlspecialchars($imgSrc) . '" alt="Imagen de la pregunta" style="display:block;margin:6px auto;max-width:100%;max-height:320px;object-fit:contain;border-radius:8px;border:1px solid #ccc;background:#fff;">'
+                               . '</div>';
+                        } elseif ($imgCount > 1) {
+                            echo '<div class="carousel" data-current="0">';
+                            echo '<button class="carousel-btn prev" type="button" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>';
+                            echo '<div class="carousel-track">';
+                            foreach ($validImgs as $imgSrc) {
+                                echo '<div class="carousel-slide"><img src="' . htmlspecialchars($imgSrc) . '" alt="Imagen de la pregunta"></div>';
+                            }
+                            echo '</div>';
+                            echo '<button class="carousel-btn next" type="button" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>';
+                            echo '<div class="carousel-dots">';
+                            for ($ci = 0; $ci < $imgCount; $ci++) {
+                                $active = $ci === 0 ? ' active' : '';
+                                echo '<button class="carousel-dot' . $active . '" type="button" data-index="' . $ci . '" aria-label="Ir a la imagen ' . ($ci + 1) . '"></button>';
+                            }
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    ?>
+
                     <div class="options-list">
                         <?php foreach (['a', 'b', 'c', 'd'] as $letra): ?>
                             <?php
@@ -899,7 +1014,32 @@ $stmt->close();
                             ?>
                             <div class="option <?php echo $option_class; ?> <?php echo $user_selected; ?>">
                                 <span class="option-letter"><?php echo $letra; ?></span>
-                                <?php echo htmlspecialchars($pregunta['opciones'][$letra]); ?>
+                                <?php
+                                    $op = $pregunta['opciones'][$letra] ?? '';
+                                    $texto_opcion = '';
+                                    $imagen_opcion = '';
+                                    if (is_array($op)) {
+                                        $texto_opcion = $op['texto'] ?? '';
+                                        $imagen_opcion = $op['imagen'] ?? '';
+                                    } else {
+                                        if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', (string)$op)) {
+                                            $imagen_opcion = (string)$op;
+                                        } else {
+                                            $texto_opcion = (string)$op;
+                                        }
+                                    }
+                                    echo '<div style="display:flex;flex-direction:column;align-items:flex-start;width:100%;">';
+                                    if (!empty($texto_opcion)) {
+                                        echo '<span style="font-size:1rem;color:#003366;word-break:break-word;display:block;margin-bottom:8px;">' . htmlspecialchars($texto_opcion) . '</span>';
+                                    }
+                                    if (!empty($imagen_opcion)) {
+                                        echo '<img src="' . htmlspecialchars($imagen_opcion) . '" alt="Opción ' . strtoupper($letra) . '" style="display:block;margin:8px auto 0 auto;max-width:380px;max-height:320px;object-fit:contain;border-radius:10px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">';
+                                    }
+                                    if (empty($texto_opcion) && empty($imagen_opcion)) {
+                                        echo '<span style="color:#666;font-style:italic;">(Sin contenido)</span>';
+                                    }
+                                    echo '</div>';
+                                ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -907,7 +1047,7 @@ $stmt->close();
                     <div class="result-info <?php echo $pregunta['es_correcta'] ? 'correct' : 'incorrect'; ?>">
                         <i class="fas <?php echo $pregunta['es_correcta'] ? 'fa-check-circle' : 'fa-times-circle'; ?>"></i>
                         <p>
-                            <strong>Respuesta del estudiante: <?php echo strtoupper($pregunta['respuesta_usuario']); ?></strong>
+                            <strong>Respuesta del estudiante: <?php echo strtoupper(htmlspecialchars((string)($pregunta['respuesta_usuario'] ?? ''))); ?></strong>
                             <?php if (!$pregunta['es_correcta']): ?>
                                 - La respuesta correcta era: <strong><?php echo strtoupper($pregunta['correcta']); ?></strong>
                             <?php endif; ?>
@@ -955,6 +1095,72 @@ $stmt->close();
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> SABERQUEST. Todos los derechos reservados.</p>
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousels = document.querySelectorAll('.carousel');
+        carousels.forEach(function(carousel) {
+            const track = carousel.querySelector('.carousel-track');
+            if (!track) return;
+            const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+            const prevBtn = carousel.querySelector('.carousel-btn.prev');
+            const nextBtn = carousel.querySelector('.carousel-btn.next');
+            const dots = Array.from(carousel.querySelectorAll('.carousel-dot'));
+
+            let index = 0;
+
+            function update() {
+                track.style.transform = 'translateX(' + (-index * 100) + '%)';
+                if (prevBtn) prevBtn.disabled = index === 0;
+                if (nextBtn) nextBtn.disabled = index === slides.length - 1;
+                if (dots.length) {
+                    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+                }
+            }
+
+            if (prevBtn) prevBtn.addEventListener('click', function() {
+                if (index > 0) {
+                    index--;
+                    update();
+                }
+            });
+            if (nextBtn) nextBtn.addEventListener('click', function() {
+                if (index < slides.length - 1) {
+                    index++;
+                    update();
+                }
+            });
+            dots.forEach(function(dot, i) {
+                dot.addEventListener('click', function() {
+                    index = i;
+                    update();
+                });
+            });
+
+            // Soporte táctil básico
+            let startX = 0, deltaX = 0, isDragging = false;
+            track.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                deltaX = 0;
+            }, { passive: true });
+            track.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                deltaX = e.touches[0].clientX - startX;
+            }, { passive: true });
+            track.addEventListener('touchend', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                const threshold = 50;
+                if (deltaX > threshold && index > 0) { index--; }
+                else if (deltaX < -threshold && index < slides.length - 1) { index++; }
+                update();
+            });
+
+            update();
+        });
+    });
+    </script>
 </body>
 
 </html>
