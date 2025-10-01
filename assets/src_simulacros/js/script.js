@@ -3,6 +3,17 @@ let questionCounter = 1;
 
 // DOM Ready event listener
 document.addEventListener("DOMContentLoaded", function () {
+  // Forzar desactivar previews en móviles/táctiles con una clase global
+  const enforceMobileNoPreview = () => {
+    const isCoarse = window.matchMedia(
+      "(hover: none), (pointer: coarse)"
+    ).matches;
+    const isNarrow = window.matchMedia("(max-width: 900px)").matches;
+    document.body.classList.toggle("no-preview-mobile", isCoarse || isNarrow);
+  };
+  enforceMobileNoPreview();
+  window.addEventListener("resize", enforceMobileNoPreview);
+  window.addEventListener("orientationchange", enforceMobileNoPreview);
   // Add event listeners
   document
     .getElementById("add-question")
@@ -72,6 +83,56 @@ document.addEventListener("DOMContentLoaded", function () {
       handleFieldImageUpload(input);
     }
   });
+
+  // Delegación: abrir lightbox al hacer clic en imágenes de opción dentro de popups o en la vista previa del modal
+  document.addEventListener("click", function (e) {
+    const img = e.target.closest(
+      ".image-preview-container img, .preview-option-image, .opcion-imagen"
+    );
+    // Evitar abrir en móvil/táctil si la preview está desactivada
+    if (document.body.classList.contains("no-preview-mobile")) return;
+    if (img && img.src && img.src !== "#") {
+      openLightbox(img.src, img.alt || "Vista ampliada");
+    }
+  });
+
+  // Mantener abierto el popup mientras el puntero transita del botón al popup
+  const hoverState = new WeakMap();
+  document.addEventListener("mouseover", (e) => {
+    const container = e.target.closest(".option-input .image-upload-container");
+    if (!container) return;
+    container.classList.add("preview-open");
+    if (hoverState.has(container)) {
+      clearTimeout(hoverState.get(container));
+      hoverState.delete(container);
+    }
+  });
+  document.addEventListener("mouseout", (e) => {
+    const container = e.target.closest(".option-input .image-upload-container");
+    if (!container) return;
+    // Si el mouse se mueve a un descendiente del mismo contenedor, no cerrar
+    const toEl = e.relatedTarget;
+    if (toEl && container.contains(toEl)) return;
+    // Retardo para permitir entrar al popup y pulsar el botón eliminar
+    const t = setTimeout(() => {
+      container.classList.remove("preview-open");
+      hoverState.delete(container);
+    }, 180);
+    hoverState.set(container, t);
+  });
+
+  // Cerrar lightbox
+  const lb = document.getElementById("img-lightbox");
+  const lbClose = document.getElementById("img-lightbox-close");
+  if (lb && lbClose) {
+    lbClose.addEventListener("click", () => closeLightbox());
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) closeLightbox();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lb.classList.contains("open")) closeLightbox();
+    });
+  }
 });
 
 // Helper SweetAlert2 con fallback nativo
@@ -144,8 +205,8 @@ function addNewQuestion() {
                 </button>
                 <div id="question-image-preview-container-${questionCounter}" class="image-preview-container hidden">
                     <img id="question-image-preview-${questionCounter}" src="#" alt="Vista previa de la imagen">
-                    <button type="button" class="btn btn-delete btn-remove-image" data-target="question-image-${questionCounter}">
-                        <i class="fas fa-times"></i>
+          <button type="button" class="btn btn-delete btn-remove-image" data-target="question-image-${questionCounter}">
+            <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -163,8 +224,8 @@ function addNewQuestion() {
                         </button>
                         <div id="option-a-image-preview-container-${questionCounter}" class="image-preview-container hidden">
                             <img id="option-a-image-preview-${questionCounter}" src="#" alt="Vista previa de la imagen">
-                            <button type="button" class="btn btn-delete btn-remove-image" data-target="option-a-image-${questionCounter}">
-                                <i class="fas fa-times"></i>
+              <button type="button" class="btn btn-delete btn-remove-image" data-target="option-a-image-${questionCounter}">
+                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -182,8 +243,8 @@ function addNewQuestion() {
                         </button>
                         <div id="option-b-image-preview-container-${questionCounter}" class="image-preview-container hidden">
                             <img id="option-b-image-preview-${questionCounter}" src="#" alt="Vista previa de la imagen">
-                            <button type="button" class="btn btn-delete btn-remove-image" data-target="option-b-image-${questionCounter}">
-                                <i class="fas fa-times"></i>
+              <button type="button" class="btn btn-delete btn-remove-image" data-target="option-b-image-${questionCounter}">
+                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -201,8 +262,8 @@ function addNewQuestion() {
                         </button>
                         <div id="option-c-image-preview-container-${questionCounter}" class="image-preview-container hidden">
                             <img id="option-c-image-preview-${questionCounter}" src="#" alt="Vista previa de la imagen">
-                            <button type="button" class="btn btn-delete btn-remove-image" data-target="option-c-image-${questionCounter}">
-                                <i class="fas fa-times"></i>
+              <button type="button" class="btn btn-delete btn-remove-image" data-target="option-c-image-${questionCounter}">
+                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -220,8 +281,8 @@ function addNewQuestion() {
                         </button>
                         <div id="option-d-image-preview-container-${questionCounter}" class="image-preview-container hidden">
                             <img id="option-d-image-preview-${questionCounter}" src="#" alt="Vista previa de la imagen">
-                            <button type="button" class="btn btn-delete btn-remove-image" data-target="option-d-image-${questionCounter}">
-                                <i class="fas fa-times"></i>
+              <button type="button" class="btn btn-delete btn-remove-image" data-target="option-d-image-${questionCounter}">
+                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </div>
@@ -920,11 +981,16 @@ function updatePreview() {
 
     // Create preview question element
     const questionElement = document.createElement("div");
-    questionElement.className = "preview-question";
-    // Cabecera de pregunta
+    questionElement.className = "pregunta";
+    // Cabecera de pregunta (estilo ver_formulario)
     const qText = document.createElement("div");
-    qText.className = "preview-question-text";
-    qText.textContent = `${index + 1}. ${questionText}`;
+    qText.className = "pregunta-enunciado";
+    const numSpan = document.createElement("span");
+    numSpan.className = "pregunta-numero";
+    numSpan.textContent = `${index + 1}.`;
+    qText.appendChild(numSpan);
+    const textNode = document.createTextNode(" " + questionText);
+    qText.appendChild(textNode);
     questionElement.appendChild(qText);
 
     // Imágenes de la pregunta (si existen). Preferir leer desde el input de archivos
@@ -933,7 +999,7 @@ function updatePreview() {
       `question-image-preview-container-${questionId}`
     );
     const mediaWrap = document.createElement("div");
-    mediaWrap.className = "preview-question-media";
+    // no clase específica: usaremos .pregunta-imagen-unica o .carousel directamente
     let addedQImages = 0;
     if (qInput && qInput.files && qInput.files.length > 0) {
       const files = Array.from(qInput.files).filter(
@@ -1142,9 +1208,9 @@ function updatePreview() {
       questionElement.appendChild(mediaWrap);
     }
 
-    // Opciones
+    // Opciones (estructura ver_formulario)
     const optionsWrap = document.createElement("div");
-    optionsWrap.className = "preview-options";
+    optionsWrap.className = "opciones-container";
 
     [
       { key: "a", text: optionA },
@@ -1153,21 +1219,20 @@ function updatePreview() {
       { key: "d", text: optionD },
     ].forEach((opt) => {
       const optDiv = document.createElement("div");
-      optDiv.className = `preview-option ${
-        correctAnswer === opt.key ? "correct" : ""
-      }`;
+      optDiv.className =
+        "opcion" + (correctAnswer === opt.key ? " correcta" : "");
+
+      // Letra de la opción
+      const letra = document.createElement("div");
+      letra.className = "opcion-letra";
+      letra.textContent = opt.key;
+      optDiv.appendChild(letra);
 
       // Texto de la opción
-      const labelSpan = document.createElement("span");
-      labelSpan.className = "preview-option-text";
-      // Mantener placeholder solo si no hay imagen ni texto
-      let displayText = opt.text;
-      if (!displayText) {
-        // Si no hay texto, evitamos poner el placeholder para no confundir si habrá imagen
-        displayText = "";
-      }
-      labelSpan.textContent = `${opt.key}) ${displayText}`.trim();
-      optDiv.appendChild(labelSpan);
+      const textoDiv = document.createElement("div");
+      textoDiv.className = "opcion-texto";
+      textoDiv.textContent = opt.text || "";
+      optDiv.appendChild(textoDiv);
 
       // Imagen de la opción si existe
       const optPrevBox = document.getElementById(
@@ -1184,7 +1249,7 @@ function updatePreview() {
         optPrevImg.src !== "#"
       ) {
         const img = document.createElement("img");
-        img.className = "preview-option-image";
+        img.className = "opcion-imagen";
         img.src = optPrevImg.src;
         img.alt = `Imagen opción ${opt.key}`;
         optDiv.appendChild(img);
@@ -1232,4 +1297,30 @@ function showSuccessMessage() {
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Lightbox helpers
+function openLightbox(src, alt = "") {
+  const lb = document.getElementById("img-lightbox");
+  const img = document.getElementById("img-lightbox-img");
+  if (!lb || !img) return;
+  img.src = src;
+  img.alt = alt;
+  lb.classList.add("open");
+  lb.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  const lb = document.getElementById("img-lightbox");
+  const img = document.getElementById("img-lightbox-img");
+  if (!lb || !img) return;
+  lb.classList.remove("open");
+  lb.setAttribute("aria-hidden", "true");
+  // limpiar src para liberar memoria en blobs/dataURLs largos
+  // setTimeout para permitir animación si existiera
+  setTimeout(() => {
+    img.src = "#";
+  }, 100);
+  document.body.style.overflow = "";
 }

@@ -271,38 +271,113 @@ select:focus {
 
 /* Hover preview para imágenes en opciones de respuesta */
 .option-input .image-upload-container {
-  position: relative; /* Para posicionar el popup */
+  position: relative; /* Ancla del popup */
 }
 .option-input .image-preview-container {
-  /* Como popup por defecto oculto, visible al hover */
-  display: none;
+  /* Popup elegante con animación y efecto glass */
+  display: block; /* controlado por hover con opacidad */
+  position: absolute !important; /* forzar overlay */
+  top: calc(100% + 2px); /* reducir gap para que el cursor alcance el popup */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+  backdrop-filter: blur(8px) saturate(130%);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  display: inline-block;
+  padding: 6px;
+  width: auto; /* base */
+  max-height: none; /* base */
+  box-sizing: border-box;
+  padding: 6px; /* padding reducido para no añadir marco excesivo */
+  width: auto; /* base */
+  max-height: none; /* base */
+  overflow: visible;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  overflow: visible; /* deja que el botón flote sin recortar */
+  z-index: 10000; /* elevar por encima de botones superpuestos */
+}
+.option-input
+  .image-upload-container.preview-open
+  .image-preview-container:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 10000;
+}
+.option-input .image-preview-container::before {
+  /* flecha */
+  content: "";
   position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  background: var(--background);
-  border: 1px solid var(--neutral);
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
-  z-index: 100;
-  width: min(420px, 90vw);
-  max-height: 360px;
+  top: -7px;
+  left: 18px;
+  width: 14px;
+  height: 14px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-left: 1px solid rgba(16, 24, 40, 0.08);
+  border-top: 1px solid rgba(16, 24, 40, 0.08);
+  z-index: -1;
 }
 .option-input .image-preview-container img {
+  width: auto;
+  height: auto;
   max-width: 100%;
-  max-height: 340px;
+  max-height: 330px; /* equilibrado con el contenedor de 350px */
   object-fit: contain;
   display: block;
+  border-radius: 8px;
+  background: #fff;
+  cursor: zoom-in;
+}
+
+/* En escritorio usar 80% del viewport para el popup */
+@media (min-width: 992px) {
+  /* Escritorio: popup moderado 500x350 */
+  .option-input .image-preview-container {
+    width: auto !important;
+    max-width: 500px !important;
+    max-height: 350px !important;
+  }
+  .option-input .image-preview-container img {
+    width: auto !important;
+    height: auto !important;
+    max-height: 330px !important;
+  }
+}
+
+/* En pantallas grandes, aún más grande y cómodo */
+@media (min-width: 1200px) {
+  /* Monitores grandes: mantener 500x350 */
+  .option-input .image-preview-container {
+    width: auto !important;
+    max-width: 500px !important;
+    max-height: 350px !important;
+  }
+  .option-input .image-preview-container img {
+    width: auto !important;
+    height: auto !important;
+    max-height: 330px !important;
+  }
 }
 .option-input
   .image-upload-container:hover
   .image-preview-container:not(.hidden) {
-  display: block;
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 10000;
 }
 .option-input .image-preview-container .btn-remove-image {
-  top: -10px;
-  right: -10px;
+  top: 8px;
+  right: 8px;
+  background: #ffffff;
+  color: var(--secondary);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
 }
+
+/* (Eliminado) Antes se mostraba la previsualización como bloque en móvil; ahora se desactiva totalmente en móvil/táctil. */
 
 /* Señal visual cuando la opción ya tiene imagen */
 .option-input .image-upload-container.has-image .btn-upload {
@@ -622,27 +697,40 @@ select:focus {
 /* Imágenes en las opciones dentro del modal de vista previa */
 .preview-option-image {
   display: block;
-  max-width: 180px;
-  max-height: 140px;
+  max-width: 360px;
+  max-height: 270px;
   object-fit: contain;
   margin-top: 6px;
   border: 1px solid var(--neutral);
   border-radius: 6px;
   background: #fff;
   padding: 4px;
+  cursor: zoom-in;
 }
 
 /* Hacer más grandes las imágenes de opciones en pantallas grandes */
 @media (min-width: 768px) {
   .preview-option-image {
-    max-width: 220px;
-    max-height: 170px;
+    max-width: 420px;
+    max-height: 320px;
   }
 }
 @media (min-width: 992px) {
   .preview-option-image {
-    max-width: 260px;
-    max-height: 200px;
+    max-width: 520px;
+    max-height: 380px;
+  }
+}
+
+/* Ampliar el modal en pantallas grandes */
+@media (min-width: 992px) {
+  .modal-content {
+    max-width: 1200px;
+  }
+}
+@media (min-width: 1400px) {
+  .modal-content {
+    max-width: 1400px;
   }
 }
 
@@ -652,7 +740,7 @@ select:focus {
 }
 .preview-question-media img {
   max-width: 100%;
-  max-height: 300px;
+  max-height: 60vh;
   object-fit: contain;
   display: block;
   margin: 0 auto;
@@ -676,7 +764,7 @@ select:focus {
 }
 .preview-question-media .pm-carousel-track img {
   flex: 0 0 100%;
-  max-height: 300px;
+  max-height: 60vh;
   object-fit: contain;
 }
 .preview-question-media .pm-carousel-prev,
@@ -715,6 +803,27 @@ select:focus {
 
 .btn-preview:hover {
   background-color: var(--hover-primary);
+}
+
+/* ========= Ajuste específico: popup de imagen en opciones (forzar tamaño grande en desktop) ========= */
+@media (min-width: 992px) {
+  .options-container .option-input .image-upload-container {
+    position: relative;
+  }
+  .options-container
+    .option-input
+    .image-upload-container
+    > .image-preview-container:not(.hidden) {
+    width: min(960px, 70vw) !important; /* similar a modal de 960px */
+    max-height: min(70vh, 560px) !important; /* altura moderada */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+  /* Mantener visible mientras se pasa el cursor por el propio popup */
+  .options-container .option-input .image-preview-container:not(.hidden):hover {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
 }
 
 /* Footer styles */
@@ -782,8 +891,67 @@ footer {
   }
 }
 
+/* Lightbox para ver imagen de opción en grande */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.img-lightbox.open {
+  display: flex;
+  animation: fadeIn 0.18s ease;
+}
+.img-lightbox__content {
+  position: relative;
+  max-width: 92vw;
+  max-height: 86vh;
+}
+.img-lightbox__img {
+  max-width: 100%;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.img-lightbox__close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.img-lightbox__close:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  /* Desactivar por completo la previsualización en móvil */
+  .option-input .image-preview-container {
+    display: none !important;
+  }
+  .option-input .image-preview-container.hidden {
+    display: none !important;
+  }
+  .option-input
+    .image-upload-container:hover
+    .image-preview-container:not(.hidden) {
+    display: none !important;
+  }
+
   .form-actions {
     flex-direction: column;
     gap: 0.75rem;
@@ -876,4 +1044,42 @@ footer {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* ===== Fuerza desactivar previsualización en móviles/táctiles ===== */
+@media (max-width: 900px) {
+  .option-input .image-preview-container {
+    display: none !important;
+  }
+  .option-input
+    .image-upload-container:hover
+    .image-preview-container:not(.hidden) {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .option-input .image-preview-container {
+    display: none !important;
+  }
+  .option-input
+    .image-upload-container:hover
+    .image-preview-container:not(.hidden) {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+/* Fallback por clase global si alguna regla anterior se cuela */
+body.no-preview-mobile .option-input .image-preview-container {
+  display: none !important;
+}
+body.no-preview-mobile
+  .option-input
+  .image-upload-container:hover
+  .image-preview-container:not(.hidden) {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }

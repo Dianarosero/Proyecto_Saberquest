@@ -32,33 +32,261 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 
     <style>
     /* Estilos de carrusel reutilizados de ver_formulario.php */
-    .pregunta-imagen-unica { margin: 10px 0 5px 0; }
+    .pregunta-imagen-unica {
+        margin: 10px 0 5px 0;
+    }
+
     .pregunta-imagen-unica img {
-        max-width: 100%; width: 100%; max-height: 320px; height: auto;
-        border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        object-fit: contain; background: #fff;
+        max-width: 100%;
+        width: 100%;
+        max-height: 320px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        object-fit: contain;
+        background: #fff;
     }
+
     .carousel {
-        position: relative; margin: 10px 0 5px 0; overflow: hidden;
-        border-radius: 8px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: relative;
+        margin: 10px 0 5px 0;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
-    .carousel-track { display: flex; transition: transform 0.35s ease; will-change: transform; }
-    .carousel-slide { min-width: 100%; display: flex; align-items: center; justify-content: center; background: #fff; }
-    .carousel-slide img { max-width: 100%; width: 100%; max-height: 360px; height: auto; object-fit: contain; background: #fff; }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.35s ease;
+        will-change: transform;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+    }
+
+    .carousel-slide img {
+        max-width: 100%;
+        width: 100%;
+        max-height: 360px;
+        height: auto;
+        object-fit: contain;
+        background: #fff;
+    }
+
     .carousel-btn {
-        position: absolute; top: 50%; transform: translateY(-50%);
-        width: 36px; height: 36px; border-radius: 50%; border: 1px solid #E0E0E0;
-        background: rgba(255,255,255,0.9); color: #003366; display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 2;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid #E0E0E0;
+        background: rgba(255, 255, 255, 0.9);
+        color: #003366;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        z-index: 2;
     }
-    .carousel-btn:hover { background: #003366; color: #fff; border-color: #003366; transform: translateY(-50%) scale(1.05); }
-    .carousel-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .carousel-btn.prev { left: 10px; }
-    .carousel-btn.next { right: 10px; }
-    .carousel-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: 8px; display: flex; gap: 6px; z-index: 1; }
-    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.15); border: none; cursor: pointer; transition: all 0.3s ease; }
-    .carousel-dot:hover { background: rgba(0,0,0,0.3); }
-    .carousel-dot.active { background: #003366; }
+
+    .carousel-btn:hover {
+        background: #003366;
+        color: #fff;
+        border-color: #003366;
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    .carousel-btn:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+    .carousel-btn.prev {
+        left: 10px;
+    }
+
+    .carousel-btn.next {
+        right: 10px;
+    }
+
+    .carousel-dots {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 8px;
+        display: flex;
+        gap: 6px;
+        z-index: 1;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.15);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-dot:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .carousel-dot.active {
+        background: #003366;
+    }
+
+    /* ===== Estilos de la vista previa (replican ver_formulario.php) ===== */
+    /* Scope al modal para no interferir con otros estilos */
+    #preview-modal .modal-body {
+        background: #F7F7F7;
+    }
+
+    #preview-modal .form-preview-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #FFFFFF;
+        padding: 24px 24px 10px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    #preview-modal .preview-header h3 {
+        color: #003366;
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+    }
+
+    #preview-modal .preview-header p {
+        color: #666666;
+        margin: 0 0 10px 0;
+    }
+
+    #preview-modal .preview-image-box img {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    #preview-modal .preguntas-container {
+        /* contenedor general si se usa */
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    #preview-modal .pregunta {
+        background: #F7F7F7;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #003366;
+        margin-bottom: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    #preview-modal .pregunta-enunciado {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #003366;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: flex-start;
+        line-height: 1.4;
+    }
+
+    #preview-modal .pregunta-numero {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #003366;
+        margin-right: .5rem;
+        line-height: 1.1;
+    }
+
+    #preview-modal .opciones-container {
+        display: grid;
+        gap: 18px;
+        margin-top: 14px;
+    }
+
+    #preview-modal .opcion {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 20px;
+        border-radius: 12px;
+        background: #FFFFFF;
+        border: 1.5px solid #E0E0E0;
+        position: relative;
+        min-height: 110px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    #preview-modal .opcion-letra {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #E0E0E0;
+        color: #333333;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    #preview-modal .opcion-texto {
+        width: 100%;
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: #003366;
+        margin-bottom: 10px;
+        word-break: break-word;
+    }
+
+    #preview-modal .opcion-imagen {
+        width: 400px;
+        max-width: 100%;
+        max-height: 350px;
+        object-fit: contain;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+        margin: 10px auto 0 auto;
+        display: block;
+    }
+
+    #preview-modal .opcion.correcta,
+    #preview-modal .opcion.correcta {
+        background-color: rgba(39, 174, 96, 0.12);
+        border-color: #27ae60;
+    }
+
+    #preview-modal .opcion.correcta .opcion-letra {
+        background-color: #27ae60;
+        color: #fff;
+    }
+
+    #preview-modal .opcion.correcta::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        color: #27ae60;
+        font-size: 1.2rem;
+    }
     </style>
 </head>
 
@@ -107,7 +335,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                 <div id="image-preview-container" class="image-preview-container hidden">
                                     <img id="image-preview" src="#" alt="Vista previa de la imagen">
                                     <button type="button" class="btn btn-delete btn-remove-image" id="remove-image-btn">
-                                        <i class="fas fa-times"></i>
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -149,7 +377,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                         <img id="question-image-preview-1" src="#" alt="Vista previa de la imagen">
                                         <button type="button" class="btn btn-delete btn-remove-image"
                                             data-target="question-image-1">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -173,7 +401,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                                     alt="Vista previa de la imagen">
                                                 <button type="button" class="btn btn-delete btn-remove-image"
                                                     data-target="option-a-image-1">
-                                                    <i class="fas fa-times"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -197,7 +425,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                                     alt="Vista previa de la imagen">
                                                 <button type="button" class="btn btn-delete btn-remove-image"
                                                     data-target="option-b-image-1">
-                                                    <i class="fas fa-times"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -221,7 +449,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                                     alt="Vista previa de la imagen">
                                                 <button type="button" class="btn btn-delete btn-remove-image"
                                                     data-target="option-c-image-1">
-                                                    <i class="fas fa-times"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -245,7 +473,7 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
                                                     alt="Vista previa de la imagen">
                                                 <button type="button" class="btn btn-delete btn-remove-image"
                                                     data-target="option-d-image-1">
-                                                    <i class="fas fa-times"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -305,6 +533,16 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
         </div>
     </footer>
 
+    <!-- Lightbox para ver imágenes de opciones en grande -->
+    <div class="img-lightbox" id="img-lightbox" aria-hidden="true" role="dialog">
+        <div class="img-lightbox__content">
+            <button type="button" class="img-lightbox__close" id="img-lightbox-close" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="img-lightbox__img" id="img-lightbox-img" alt="Vista ampliada" src="#">
+        </div>
+    </div>
+
     <!-- Modal de vista previa -->
     <div class="modal" id="preview-modal">
         <div class="modal-content">
@@ -333,7 +571,11 @@ unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']);
 
     <script src="../../assets/src_simulacros/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>.swal2-title::after{content:none!important;}</style>
+    <style>
+    .swal2-title::after {
+        content: none !important;
+    }
+    </style>
 
     <script>
     const mensaje = <?php echo json_encode($mensaje); ?>;
